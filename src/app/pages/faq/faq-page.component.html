@@ -1,0 +1,24 @@
+<section class="page-shell">
+  <div class="page-header">
+    <p class="eyebrow">Collection FAQs</p>
+    <h1>Cau hoi thuong gap</h1>
+    <p>Danh sach cau tra loi chuan hoa giup sinh vien tra cuu nhanh thay vi phai hoi lap lai.</p>
+  </div>
+
+  @if (loading()) {
+    <p class="status-text">Dang tai FAQ...</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="status-text error">{{ errorMessage() }}</p>
+  }
+
+  <div class="faq-list">
+    @for (item of items(); track item.id ?? item.question) {
+      <article class="faq-card">
+        <h3>{{ item.question }}</h3>
+        <p>{{ item.answer }}</p>
+      </article>
+    }
+  </div>
+</section>

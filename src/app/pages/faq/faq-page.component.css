@@ -1,0 +1,47 @@
+:host {
+  display: block;
+}
+
+.page-shell {
+  display: grid;
+  gap: 18px;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: #2565c7;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.page-header h1,
+.faq-card h3 {
+  margin: 0 0 10px;
+  color: #18345b;
+}
+
+.page-header p,
+.faq-card p,
+.status-text {
+  color: #617899;
+  line-height: 1.7;
+}
+
+.faq-list {
+  display: grid;
+  gap: 16px;
+}
+
+.faq-card {
+  padding: 22px;
+  border-radius: 24px;
+  background: rgba(247, 252, 255, 0.92);
+  box-shadow: 0 18px 48px rgba(17, 48, 95, 0.08);
+  border: 1px solid rgba(188, 223, 255, 0.82);
+}
+
+.status-text.error {
+  color: #b42318;
+}

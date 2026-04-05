@@ -1,0 +1,16 @@
+<section class="page-shell">
+  <div class="page-header">
+    <p class="eyebrow">Collection Departments</p>
+    <h1>Thong tin phong ban</h1>
+    <p>Danh sach cac don vi ho tro sinh vien trong nha truong.</p>
+  </div>
+
+  <div class="department-grid">
+    @for (item of items(); track item.id) {
+      <article class="department-card">
+        <h3>{{ item.name }}</h3>
+        <p>Don vi ho tro nghiep vu va huong dan sinh vien trong he thong tra cuu thong tin.</p>
+      </article>
+    }
+  </div>
+</section>

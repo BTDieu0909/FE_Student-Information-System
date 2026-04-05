@@ -1,0 +1,37 @@
+<div class="shell">
+  <header class="topbar">
+    <div class="brand">
+      <p class="eyebrow">QNU Student Assistant</p>
+      <h1>Student Information System</h1>
+      <p class="subtext">Sinh vien vao web la co the tra cuu ngay. Staff va admin dang nhap o khu vuc rieng de quan tri
+        noi dung.</p>
+    </div>
+
+    <nav class="nav">
+      <a routerLink="/chat" routerLinkActive="active">Sinh vien tra cuu</a>
+      <a *ngIf="!authService.isLoggedIn()" routerLink="/login" routerLinkActive="active">Dang nhap staff/admin</a>
+      <a *ngIf="authService.isLoggedIn()" routerLink="/login" routerLinkActive="active">Trang staff/admin</a>
+      <button *ngIf="authService.isLoggedIn()" type="button" (click)="logout()">Dang xuat</button>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="hero-tag">Tra cuu cong khai cho sinh vien</p>
+      <h2>Hoi dap nhanh ve hoc vu, ho tro va cac bieu mau sinh vien</h2>
+      <p>
+        Sinh vien co the dat cau hoi va xem thong tin ngay tren trang chu. Neu la staff hoac admin,
+        ban co the dang nhap de quan ly du lieu va van hanh he thong.
+      </p>
+    </div>
+
+    <div class="hero-actions">
+      <a class="primary-link" routerLink="/chat">Bat dau tra cuu</a>
+      <a class="secondary-link" routerLink="/login">Khu vuc staff/admin</a>
+    </div>
+  </section>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

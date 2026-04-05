@@ -1,0 +1,106 @@
+<section class="dashboard-page">
+  <section class="hero-card">
+    <div class="hero-copy">
+      <p class="eyebrow">Trang chu he thong</p>
+      <h1>Student Information System</h1>
+      <p class="hero-text">
+        Nen tang tap trung ho tro sinh vien tra cuu thong tin hoc vu, quy che, FAQ va tai lieu
+        bang giao dien dashboard hien dai.
+      </p>
+
+      <div class="hero-search">
+        <input type="text" [ngModel]="question()" (ngModelChange)="question.set($event)" placeholder="Nhap tu khoa hoac cau hoi thong minh..." />
+      </div>
+
+      <div class="suggestion-row">
+        @for (item of heroSuggestions; track item) {
+          <button type="button" (click)="useSuggestion(item)">{{ item }}</button>
+        }
+      </div>
+    </div>
+
+    <div class="hero-side">
+      <div class="stat-card">
+        <strong>{{ categories().length }}</strong>
+        <span>Danh muc tra cuu</span>
+      </div>
+      <div class="stat-card">
+        <strong>{{ documents().length }}</strong>
+        <span>Tai lieu hien co</span>
+      </div>
+      <div class="stat-card">
+        <strong>{{ faqs().length }}</strong>
+        <span>FAQ san sang</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-block">
+    <div class="section-heading">
+      <p class="eyebrow">Danh muc tra cuu</p>
+      <h2>The danh muc lay tu Collection Categories</h2>
+    </div>
+
+    <div class="category-grid">
+      @for (category of categories(); track category.id) {
+        <article class="category-card">
+          <div class="icon-box">{{ category.name.slice(0, 1) }}</div>
+          <h3>{{ category.name }}</h3>
+          <p>{{ getCategoryDocumentCount(category.id) }} tai lieu • {{ getCategoryFaqCount(category.id) }} FAQ</p>
+          <span class="link-chip">Xem ngay</span>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="chat-grid">
+    <aside class="panel prompt-panel">
+      <p class="eyebrow">Tra cuu AI (Z-Bot)</p>
+      <h2>Hoi dap nhanh thong tin sinh vien</h2>
+      <p class="desc">Sinh vien nhap cau hoi tu nhien, he thong se tra loi dua tren tai lieu va FAQ.</p>
+
+      <textarea [ngModel]="question()" (ngModelChange)="question.set($event)" rows="8"></textarea>
+
+      <button type="button" class="submit-button" (click)="submit()" [disabled]="!canSubmit()">
+        {{ loading() ? 'Dang tra cuu...' : 'Gui cau hoi' }}
+      </button>
+
+      <div class="examples">
+        <p>Goi y nhanh</p>
+        @for (item of quickSuggestions; track item) {
+          <button type="button" (click)="useSuggestion(item)">{{ item }}</button>
+        }
+      </div>
+    </aside>
+
+    <section class="panel answer-panel">
+      <p class="eyebrow">Ket qua chatbot</p>
+      <h3>{{ botName() || 'Z-Bot Sinh vien' }}</h3>
+      @if (!answer() && !errorMessage()) {
+        <p class="placeholder">Cau tra loi cua chatbot se hien thi o day sau khi gui cau hoi.</p>
+      }
+      @if (errorMessage()) {
+        <p class="error">{{ errorMessage() }}</p>
+      }
+      @if (answer()) {
+        <div class="answer">{{ answer() }}</div>
+      }
+    </section>
+  </section>
+
+  <section class="section-block">
+    <div class="section-heading">
+      <p class="eyebrow">Phong ban</p>
+      <h2>Thong tin lien he cac don vi ho tro</h2>
+    </div>
+
+    <div class="department-grid">
+      @for (department of departments(); track department.id) {
+        <article class="department-card">
+          <h3>{{ department.name }}</h3>
+          <p>Thong tin don vi ho tro sinh vien trong qua trinh hoc tap va giai quyet thu tuc.</p>
+        </article>
+      }
+    </div>
+  </section>
+</section>

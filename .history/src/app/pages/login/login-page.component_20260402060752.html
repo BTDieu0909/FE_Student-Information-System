@@ -1,0 +1,28 @@
+<section class="login-card">
+  <div class="copy-block">
+    <p class="tag">Khu vuc noi bo</p>
+    <h2>Dang nhap staff/admin</h2>
+    <p class="desc">
+
+    </p>
+    <a class="back-link" routerLink="/chat">Quay lai trang tra cuu sinh vien</a>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <label>
+      <span>Ten dang nhap</span>
+      <input type="text" formControlName="username" />
+    </label>
+
+    <label>
+      <span>Mat khau</span>
+      <input type="password" formControlName="password" />
+    </label>
+
+    <button type="submit" [disabled]="loading()">
+      {{ loading() ? 'Dang dang nhap...' : 'Dang nhap' }}
+    </button>
+
+    <p class="error" *ngIf="errorMessage()">{{ errorMessage() }}</p>
+  </form>
+</section>

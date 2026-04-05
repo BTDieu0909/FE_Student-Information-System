@@ -1,0 +1,36 @@
+﻿<section class="chat-layout">
+  <aside class="panel prompt-panel">
+    <p class="tag">Chat bot</p>
+    <h2>Tra cứu thông tin sinh viên</h2>
+    <p class="desc">Bạn hãy nhập câu hỏi.</p>
+
+    <textarea [(ngModel)]="question" rows="8"></textarea>
+
+    <button type="button" (click)="submit()" [disabled]="!canSubmit()">
+      {{ loading() ? 'Đang tra cứu...' : 'Gửi câu hỏi' }}
+    </button>
+
+    <div class="examples">
+      <p>Gợi ý thuần:</p>
+      <button type="button" (click)="question.set('Chuẩn đầu ra ngoại ngữ?')">Chuẩn đầu ra ngoại ngữ</button>
+      <button type="button" (click)="question.set('Điểm rèn luyện được tính như thế nào?')">Điếm rèn luyện</button>
+      <button type="button" (click)="question.set('Sinh viên xin giấy xác nhận vốn như thế nào?')">Giấy xác nhận vay
+        vốn
+
+      </button>
+    </div>
+  </aside>
+
+  <section class="panel answer-panel">
+    <p class="tag">Kết quả</p>
+    <!-- <h3>{{ botName() || 'Z-Bot Sinh vien' }}</h3> -->
+
+    <div class="meta" *ngIf="answerSource()">
+      <span>Nguồn: {{ answerSource() }}</span>
+    </div>
+
+    <p class="placeholder" *ngIf="!answer() && !errorMessage()">Câu tra lời sẽ hiển thị ở đây sau khi gửi câu hỏi.</p>
+    <p class="error" *ngIf="errorMessage()">{{ errorMessage() }}</p>
+    <div class="answer" *ngIf="answer()">{{ answer() }}</div>
+  </section>
+</section>

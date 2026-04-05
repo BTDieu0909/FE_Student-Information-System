@@ -1,0 +1,111 @@
+.chat-layout {
+  display: grid;
+  grid-template-columns: minmax(340px, 440px) 1fr;
+  gap: 24px;
+  min-height: calc(100vh - 150px);
+  align-items: stretch;
+}
+
+.panel {
+  background: rgba(247, 252, 255, 0.92);
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 24px 60px rgba(12, 32, 63, 0.12);
+  border: 1px solid rgba(191, 225, 255, 0.85);
+  min-height: 100%;
+}
+
+.prompt-panel,
+.answer-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.tag {
+  margin: 0;
+  color: #005a8d;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 12px;
+}
+
+h2,
+h3 {
+  margin: 10px 0 8px;
+}
+
+.desc {
+  margin: 0 0 18px;
+  color: #4b5563;
+}
+
+textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 190px;
+  border: 1px solid #c8e0f7;
+  border-radius: 18px;
+  padding: 16px;
+  font: inherit;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+button {
+  border: 0;
+  border-radius: 16px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #005a8d, #0f172a);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.examples {
+  margin-top: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.examples p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.examples button {
+  text-align: left;
+  background: linear-gradient(180deg, #edf8ff, #e0f0ff);
+  color: #0f172a;
+  border: 1px solid #c9e3fb;
+}
+
+.meta {
+  margin-bottom: 16px;
+  color: #005a8d;
+  font-weight: 600;
+}
+
+.placeholder {
+  color: #6b7280;
+}
+
+.answer {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  flex: 1;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+@media (max-width: 900px) {
+  .chat-layout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+}
