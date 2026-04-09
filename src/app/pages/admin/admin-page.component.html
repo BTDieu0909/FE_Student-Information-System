@@ -4,9 +4,11 @@
       <p class="eyebrow">Quan tri noi dung</p>
       <h1>{{ pageTitle() }}</h1>
       <p class="hero-text">
-        {{ isAdminView()
-        ? 'Admin quan ly toan bo noi dung, thong ke tra cuu va tai khoan noi bo cua he thong.'
-        : 'Staff quan ly noi dung van hanh gom tai lieu, FAQ, danh muc, phong ban va theo doi tra cuu.' }}
+        {{
+        isAdminView()
+        ? "Admin quan ly toan bo noi dung, thong ke tra cuu va tai khoan noi bo cua he thong."
+        : "Staff quan ly noi dung van hanh gom tai lieu, FAQ, danh muc, phong ban va theo doi tra cuu."
+        }}
       </p>
 
       <div class="hero-tags">
@@ -40,7 +42,7 @@
     </nav>
 
     <section class="section-panel">
-      @if (isActiveSection('documents')) {
+      @if (isActiveSection("documents")) {
       <section class="document-admin-grid">
         <article class="module-card">
           <div class="module-head">
@@ -48,7 +50,9 @@
               <p class="card-label">Danh sach tai lieu</p>
               <h3>{{ documents().length }} tai lieu</h3>
             </div>
-            <button type="button" class="secondary-action" (click)="clearDocumentSelection()">+ Thêm mới</button>
+            <button type="button" class="secondary-action" (click)="clearDocumentSelection()">
+              + Thêm mới
+            </button>
           </div>
 
           <div class="data-toolbar">
@@ -60,8 +64,9 @@
 
           <div class="document-grid">
             @for (item of documents(); track item.parentFileId) {
-            <div class="document-card" [class.active-item]="currentDocument()?.parentFileId === item.parentFileId"
-              (click)="selectDocument(item)">
+            <div class="document-card" [class.active-item]="
+                    currentDocument()?.parentFileId === item.parentFileId
+                  " (click)="selectDocument(item)">
               <strong>{{ item.title }}</strong>
               <span>{{ item.fileName }}</span>
             </div>
@@ -72,10 +77,14 @@
 
           @if (documentTotalPages() > 1) {
           <div class="pagination-controls">
-            <button (click)="changeDocumentPage(-1)" [disabled]="documentCurrentPage() === 1">&lt;</button>
-            <span>Trang {{ documentCurrentPage() }} / {{ documentTotalPages() }}</span>
-            <button (click)="changeDocumentPage(1)"
-              [disabled]="documentCurrentPage() === documentTotalPages()">&gt;</button>
+            <button (click)="changeDocumentPage(-1)" [disabled]="documentCurrentPage() === 1">
+              &lt;
+            </button>
+            <span>Trang {{ documentCurrentPage() }} /
+              {{ documentTotalPages() }}</span>
+            <button (click)="changeDocumentPage(1)" [disabled]="documentCurrentPage() === documentTotalPages()">
+              &gt;
+            </button>
           </div>
           }
         </article>
@@ -85,12 +94,19 @@
           <article class="module-card modal-content" (click)="$event.stopPropagation()">
             <div class="module-head">
               <div>
-                <p class="card-label">{{ currentDocument()?.parentFileId ? 'Cập nhật tài liệu' : 'Thêm tài liệu mới' }}
+                <p class="card-label">
+                  {{
+                  currentDocument()?.parentFileId
+                  ? "Cập nhật tài liệu"
+                  : "Thêm tài liệu mới"
+                  }}
                 </p>
-                <h3>{{ currentDocument()?.title || 'Đang tạo mới...' }}</h3>
+                <h3>{{ currentDocument()?.title || "Đang tạo mới..." }}</h3>
               </div>
-              <button type="button" class="danger-action" style="padding: 0 12px; min-height: 32px;"
-                (click)="closeDocumentModal()">X</button>
+              <button type="button" class="danger-action" style="padding: 0 12px; min-height: 32px"
+                (click)="closeDocumentModal()">
+                X
+              </button>
             </div>
 
             <div class="form-grid">
@@ -114,7 +130,8 @@
                 </select>
                 @if (isCurrentDocumentDepartmentMissing()) {
                 <small class="field-warning">
-                  Phong ban cua tai lieu nay dang khong khop voi du lieu hien tai. Ban hay chon lai de cap nhat.
+                  Phong ban cua tai lieu nay dang khong khop voi du lieu
+                  hien tai. Ban hay chon lai de cap nhat.
                 </small>
                 }
               </label>
@@ -134,7 +151,8 @@
                 </select>
                 @if (isCurrentDocumentCategoryMissing()) {
                 <small class="field-warning">
-                  Danh muc dang luu trong tai lieu nay khong ton tai hoac bi sai ID. Ban hay chon lai danh muc dung.
+                  Danh muc dang luu trong tai lieu nay khong ton tai hoac
+                  bi sai ID. Ban hay chon lai danh muc dung.
                 </small>
                 }
               </label>
@@ -149,7 +167,8 @@
               <label class="field-block full-width">
                 <span>Hoặc thêm từ đường Link</span>
                 <input type="text" [(ngModel)]="documentForm.fileLink" placeholder="https://..." />
-                <small class="field-hint">Hệ thống chấp nhận file .pdf, .docx, .txt hoặc Link Google Drive/Docs</small>
+                <small class="field-hint">Hệ thống chấp nhận file .pdf, .docx, .txt hoặc Link
+                  Google Drive/Docs</small>
               </label>
             </div>
 
@@ -161,13 +180,32 @@
             <p class="error-message">{{ documentError() }}</p>
             }
 
+            @if (isChunkingDocument()) {
+            <p class="info-message">
+              Đang tách file... Vui lòng chờ đợi.
+            </p>
+            }
+
             <div class="action-row">
               @if (currentDocument()?.parentFileId) {
-              <button type="button" class="primary-action" (click)="saveDocumentMetadata()">Lưu cập nhật tiêu
-                đề</button>
-              <button type="button" class="danger-action" (click)="deleteSelectedDocument()">Xoá tài liệu</button>
+              <button type="button" class="secondary-action" (click)="chunkDocument()"
+                [disabled]="isChunkingDocument()">
+                {{
+                isChunkingDocument()
+                ? "Đang tách file... Vui lòng chờ đợi"
+                : "Tách file thành chunks"
+                }}
+              </button>
+              <button type="button" class="primary-action" (click)="saveDocumentMetadata()">
+                Lưu cập nhật tiêu đề
+              </button>
+              <button type="button" class="danger-action" (click)="deleteSelectedDocument()">
+                Xoá tài liệu
+              </button>
               } @else {
-              <button type="button" class="primary-action" (click)="uploadDocument()">Tải lên mới</button>
+              <button type="button" class="primary-action" (click)="uploadDocument()">
+                Tải lên mới
+              </button>
               }
             </div>
           </article>
@@ -176,7 +214,7 @@
       </section>
       }
 
-      @if (isActiveSection('faqs')) {
+      @if (isActiveSection("faqs")) {
       <section class="document-admin-grid">
         <article class="module-card">
           <div class="module-head">
@@ -184,7 +222,9 @@
               <p class="card-label">Danh sach FAQ</p>
               <h3>{{ faqs().length }} cau hoi</h3>
             </div>
-            <button type="button" class="secondary-action" (click)="clearFaqSelection()">+ Thêm mới</button>
+            <button type="button" class="secondary-action" (click)="clearFaqSelection()">
+              + Thêm mới
+            </button>
           </div>
           <div class="document-grid">
             @for (item of faqs(); track item.id ?? item.question) {
@@ -203,11 +243,15 @@
           <article class="module-card modal-content" (click)="$event.stopPropagation()">
             <div class="module-head">
               <div>
-                <p class="card-label">{{ currentFaq()?.id ? 'Cập nhật FAQ' : 'Thêm FAQ mới' }}</p>
-                <h3>{{ currentFaq()?.question || 'Đang tạo mới...' }}</h3>
+                <p class="card-label">
+                  {{ currentFaq()?.id ? "Cập nhật FAQ" : "Thêm FAQ mới" }}
+                </p>
+                <h3>{{ currentFaq()?.question || "Đang tạo mới..." }}</h3>
               </div>
-              <button type="button" class="danger-action" style="padding: 0 12px; min-height: 32px;"
-                (click)="closeFaqModal()">X</button>
+              <button type="button" class="danger-action" style="padding: 0 12px; min-height: 32px"
+                (click)="closeFaqModal()">
+                X
+              </button>
             </div>
 
             <div class="form-grid">
@@ -252,10 +296,16 @@
 
             <div class="action-row">
               @if (currentFaq()?.id) {
-              <button type="button" class="primary-action" (click)="saveFaq()">Lưu cập nhật</button>
-              <button type="button" class="danger-action" (click)="deleteSelectedFaq()">Xoá FAQ</button>
+              <button type="button" class="primary-action" (click)="saveFaq()">
+                Lưu cập nhật
+              </button>
+              <button type="button" class="danger-action" (click)="deleteSelectedFaq()">
+                Xoá FAQ
+              </button>
               } @else {
-              <button type="button" class="primary-action" (click)="createFaq()">Tạo FAQ mới</button>
+              <button type="button" class="primary-action" (click)="createFaq()">
+                Tạo FAQ mới
+              </button>
               }
             </div>
           </article>
@@ -264,7 +314,7 @@
       </section>
       }
 
-      @if (isActiveSection('categories')) {
+      @if (isActiveSection("categories")) {
       <article class="module-card">
         <div class="module-head">
           <div>
@@ -282,7 +332,7 @@
       </article>
       }
 
-      @if (isActiveSection('departments')) {
+      @if (isActiveSection("departments")) {
       <article class="module-card">
         <div class="module-head">
           <div>
@@ -300,7 +350,7 @@
       </article>
       }
 
-      @if (isActiveSection('search-logs')) {
+      @if (isActiveSection("search-logs")) {
       <article class="module-card">
         <div class="module-head">
           <div>
@@ -332,7 +382,8 @@
           @for (item of logPreview(); track item.createdAt + item.query) {
           <li>
             <strong>{{ item.query }}</strong>
-            <span>{{ item.answerSource }} - {{ item.answerPreview || 'Khong co trich doan' }}</span>
+            <span>{{ item.answerSource }} -
+              {{ item.answerPreview || "Khong co trich doan" }}</span>
           </li>
           } @empty {
           <li class="empty">Chua co lich su tra cuu.</li>
@@ -341,7 +392,7 @@
       </article>
       }
 
-      @if (isAdminView() && isActiveSection('actors')) {
+      @if (isAdminView() && isActiveSection("actors")) {
       <article class="module-card accent-card">
         <div class="module-head">
           <div>

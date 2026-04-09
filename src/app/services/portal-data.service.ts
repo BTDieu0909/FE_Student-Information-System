@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpClient } from "@angular/common/http";
+import { Injectable } from "@angular/core";
+import { Observable } from "rxjs";
 
 export interface DocumentItem {
   parentFileId?: string;
@@ -99,11 +99,13 @@ export interface FaqPayload {
   categoryId: string;
 }
 
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class PortalDataService {
-  constructor(private readonly http: HttpClient) { }
+  constructor(private readonly http: HttpClient) {}
 
-  getDocuments(params?: Record<string, string | number>): Observable<DocumentResponse> {
+  getDocuments(
+    params?: Record<string, string | number>,
+  ): Observable<DocumentResponse> {
     const searchParams = new URLSearchParams();
 
     Object.entries(params ?? {}).forEach(([key, value]) => {
@@ -113,20 +115,22 @@ export class PortalDataService {
     });
 
     const query = searchParams.toString();
-    const url = query ? `/api/Document?${query}` : '/api/Document?Page=1&PageSize=10';
+    const url = query
+      ? `/api/Document?${query}`
+      : "/api/Document?Page=1&PageSize=10";
     return this.http.get<DocumentResponse>(url);
   }
 
   getFaqs(): Observable<FaqItem[]> {
-    return this.http.get<FaqItem[]>('/api/Faq');
+    return this.http.get<FaqItem[]>("/api/Faq");
   }
 
   getCategories(): Observable<CategoryItem[]> {
-    return this.http.get<CategoryItem[]>('/api/Category');
+    return this.http.get<CategoryItem[]>("/api/Category");
   }
 
   getDepartments(): Observable<DepartmentItem[]> {
-    return this.http.get<DepartmentItem[]>('/api/Department');
+    return this.http.get<DepartmentItem[]>("/api/Department");
   }
 
   getSearchLogs(limit = 6): Observable<SearchLogItem[]> {
@@ -134,27 +138,34 @@ export class PortalDataService {
   }
 
   getSearchLogSummary(): Observable<SearchLogSummary> {
-    return this.http.get<SearchLogSummary>('/api/SearchLog/summary');
+    return this.http.get<SearchLogSummary>("/api/SearchLog/summary");
   }
 
   getActors(): Observable<ActorItem[]> {
-    return this.http.get<ActorItem[]>('/api/Actor');
+    return this.http.get<ActorItem[]>("/api/Actor");
   }
 
   uploadDocument(payload: UploadDocumentPayload): Observable<unknown> {
     const formData = new FormData();
-    formData.append('file', payload.file);
-    formData.append('Title', payload.title);
-    formData.append('DepartmentId', payload.departmentId);
-    formData.append('CategoryId', payload.categoryId);
-    return this.http.post('/api/Document/upload', formData);
+    formData.append("file", payload.file);
+    formData.append("Title", payload.title);
+    formData.append("DepartmentId", payload.departmentId);
+    formData.append("CategoryId", payload.categoryId);
+    return this.http.post("/api/Document/upload", formData);
   }
 
   uploadDocumentLink(payload: UploadDocumentLinkPayload): Observable<unknown> {
-    return this.http.post('/api/Document/upload-link', payload);
+    return this.http.post("/api/Document/upload-link", payload);
   }
 
-  updateDocument(parentFileId: string, payload: UpdateDocumentPayload): Observable<unknown> {
+  processDocumentChunks(parentFileId: string): Observable<unknown> {
+    return this.http.post(`/api/Document/${parentFileId}/process-chunks`, {});
+  }
+
+  updateDocument(
+    parentFileId: string,
+    payload: UpdateDocumentPayload,
+  ): Observable<unknown> {
     return this.http.put(`/api/Document/${parentFileId}`, payload);
   }
 
@@ -163,7 +174,7 @@ export class PortalDataService {
   }
 
   createFaq(payload: FaqPayload): Observable<unknown> {
-    return this.http.post('/api/Faq', payload);
+    return this.http.post("/api/Faq", payload);
   }
 
   updateFaq(id: string, payload: FaqPayload): Observable<unknown> {
