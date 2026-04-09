@@ -5,8 +5,8 @@
       <h1>{{ pageTitle() }}</h1>
       <p class="hero-text">
         {{ isAdminView()
-          ? 'Admin quan ly toan bo noi dung, thong ke tra cuu va tai khoan noi bo cua he thong.'
-          : 'Staff quan ly noi dung van hanh gom tai lieu, FAQ, danh muc, phong ban va theo doi tra cuu.' }}
+        ? 'Admin quan ly toan bo noi dung, thong ke tra cuu va tai khoan noi bo cua he thong.'
+        : 'Staff quan ly noi dung van hanh gom tai lieu, FAQ, danh muc, phong ban va theo doi tra cuu.' }}
       </p>
 
       <div class="hero-tags">
@@ -28,55 +28,69 @@
   </section>
 
   <section class="admin-workspace">
-    <aside class="section-menu">
-      <p class="card-label">Danh sach muc quan tri</p>
+    <nav class="admin-top-nav">
       <div class="section-menu-list">
         @for (section of sections(); track section.key) {
-          <button
-            type="button"
-            class="section-button"
-            [class.active-section]="isActiveSection(section.key)"
-            (click)="setActiveSection(section.key)"
-          >
-            {{ section.label }}
-          </button>
+        <button type="button" class="section-button" [class.active-section]="isActiveSection(section.key)"
+          (click)="setActiveSection(section.key)">
+          {{ section.label }}
+        </button>
         }
       </div>
-    </aside>
+    </nav>
 
     <section class="section-panel">
       @if (isActiveSection('documents')) {
-        <section class="document-admin-grid">
-          <article class="module-card">
-            <div class="module-head">
-              <div>
-                <p class="card-label">Danh sach tai lieu</p>
-                <h3>{{ documents().length }} tai lieu</h3>
-              </div>
+      <section class="document-admin-grid">
+        <article class="module-card">
+          <div class="module-head">
+            <div>
+              <p class="card-label">Danh sach tai lieu</p>
+              <h3>{{ documents().length }} tai lieu</h3>
             </div>
+            <button type="button" class="secondary-action" (click)="clearDocumentSelection()">+ Thêm mới</button>
+          </div>
 
-            <ul class="preview-list selectable-list">
-              @for (item of documents(); track item.parentFileId) {
-                <li
-                  class="selectable-item"
-                  [class.active-item]="currentDocument()?.parentFileId === item.parentFileId"
-                  (click)="selectDocument(item)"
-                >
-                  <strong>{{ item.title }}</strong>
-                  <span>{{ item.fileName }}</span>
-                </li>
-              } @empty {
-                <li class="empty">Chua co du lieu tai lieu.</li>
-              }
-            </ul>
-          </article>
+          <div class="data-toolbar">
+            <div class="search-box">
+              <input type="text" placeholder="Tìm kiếm tài liệu..." [(ngModel)]="documentSearchQuery"
+                (keyup.enter)="searchDocuments()" />
+            </div>
+          </div>
 
-          <article class="module-card">
+          <div class="document-grid">
+            @for (item of documents(); track item.parentFileId) {
+            <div class="document-card" [class.active-item]="currentDocument()?.parentFileId === item.parentFileId"
+              (click)="selectDocument(item)">
+              <strong>{{ item.title }}</strong>
+              <span>{{ item.fileName }}</span>
+            </div>
+            } @empty {
+            <div class="empty">Chua co du lieu tai lieu.</div>
+            }
+          </div>
+
+          @if (documentTotalPages() > 1) {
+          <div class="pagination-controls">
+            <button (click)="changeDocumentPage(-1)" [disabled]="documentCurrentPage() === 1">&lt;</button>
+            <span>Trang {{ documentCurrentPage() }} / {{ documentTotalPages() }}</span>
+            <button (click)="changeDocumentPage(1)"
+              [disabled]="documentCurrentPage() === documentTotalPages()">&gt;</button>
+          </div>
+          }
+        </article>
+
+        @if (isDocumentModalOpen()) {
+        <div class="modal-overlay" (click)="closeDocumentModal()">
+          <article class="module-card modal-content" (click)="$event.stopPropagation()">
             <div class="module-head">
               <div>
-                <p class="card-label">Cap nhat va tai len tai lieu</p>
-                <h3>{{ currentDocument()?.title || 'Tao tai lieu moi' }}</h3>
+                <p class="card-label">{{ currentDocument()?.parentFileId ? 'Cập nhật tài liệu' : 'Thêm tài liệu mới' }}
+                </p>
+                <h3>{{ currentDocument()?.title || 'Đang tạo mới...' }}</h3>
               </div>
+              <button type="button" class="danger-action" style="padding: 0 12px; min-height: 32px;"
+                (click)="closeDocumentModal()">X</button>
             </div>
 
             <div class="form-grid">
@@ -90,18 +104,18 @@
                 <select [(ngModel)]="documentForm.departmentId">
                   <option value="">Chon phong ban</option>
                   @if (isCurrentDocumentDepartmentMissing()) {
-                    <option [value]="currentDocumentDepartmentId()">
-                      Gia tri cu khong ton tai trong danh muc phong ban
-                    </option>
+                  <option [value]="currentDocumentDepartmentId()">
+                    Gia tri cu khong ton tai trong danh muc phong ban
+                  </option>
                   }
                   @for (item of departments(); track item.id) {
-                    <option [value]="item.id">{{ item.name }}</option>
+                  <option [value]="item.id">{{ item.name }}</option>
                   }
                 </select>
                 @if (isCurrentDocumentDepartmentMissing()) {
-                  <small class="field-warning">
-                    Phong ban cua tai lieu nay dang khong khop voi du lieu hien tai. Ban hay chon lai de cap nhat.
-                  </small>
+                <small class="field-warning">
+                  Phong ban cua tai lieu nay dang khong khop voi du lieu hien tai. Ban hay chon lai de cap nhat.
+                </small>
                 }
               </label>
 
@@ -110,18 +124,18 @@
                 <select [(ngModel)]="documentForm.categoryId">
                   <option value="">Chon danh muc</option>
                   @if (isCurrentDocumentCategoryMissing()) {
-                    <option [value]="currentDocumentCategoryId()">
-                      Gia tri cu khong ton tai trong danh muc
-                    </option>
+                  <option [value]="currentDocumentCategoryId()">
+                    Gia tri cu khong ton tai trong danh muc
+                  </option>
                   }
                   @for (item of categories(); track item.id) {
-                    <option [value]="item.id">{{ item.name }}</option>
+                  <option [value]="item.id">{{ item.name }}</option>
                   }
                 </select>
                 @if (isCurrentDocumentCategoryMissing()) {
-                  <small class="field-warning">
-                    Danh muc dang luu trong tai lieu nay khong ton tai hoac bi sai ID. Ban hay chon lai danh muc dung.
-                  </small>
+                <small class="field-warning">
+                  Danh muc dang luu trong tai lieu nay khong ton tai hoac bi sai ID. Ban hay chon lai danh muc dung.
+                </small>
                 }
               </label>
 
@@ -131,56 +145,69 @@
                 <input #documentFileInput type="file" (change)="onDocumentFileSelected($event)" />
                 <small>File thay the moi: {{ uploadFileName() }}</small>
               </label>
+
+              <label class="field-block full-width">
+                <span>Hoặc thêm từ đường Link</span>
+                <input type="text" [(ngModel)]="documentForm.fileLink" placeholder="https://..." />
+                <small class="field-hint">Hệ thống chấp nhận file .pdf, .docx, .txt hoặc Link Google Drive/Docs</small>
+              </label>
             </div>
 
             @if (documentMessage()) {
-              <p class="success-message">{{ documentMessage() }}</p>
+            <p class="success-message">{{ documentMessage() }}</p>
             }
 
             @if (documentError()) {
-              <p class="error-message">{{ documentError() }}</p>
+            <p class="error-message">{{ documentError() }}</p>
             }
 
             <div class="action-row">
-              <button type="button" class="primary-action" (click)="saveDocumentMetadata()">Luu cap nhat</button>
-              <button type="button" class="secondary-action" (click)="uploadDocument()">Tai len moi</button>
-              <button type="button" class="danger-action" (click)="deleteSelectedDocument()">Xoa tai lieu</button>
+              @if (currentDocument()?.parentFileId) {
+              <button type="button" class="primary-action" (click)="saveDocumentMetadata()">Lưu cập nhật tiêu
+                đề</button>
+              <button type="button" class="danger-action" (click)="deleteSelectedDocument()">Xoá tài liệu</button>
+              } @else {
+              <button type="button" class="primary-action" (click)="uploadDocument()">Tải lên mới</button>
+              }
             </div>
           </article>
-        </section>
+        </div>
+        }
+      </section>
       }
 
       @if (isActiveSection('faqs')) {
-        <section class="document-admin-grid">
-          <article class="module-card">
-            <div class="module-head">
-              <div>
-                <p class="card-label">Danh sach FAQ</p>
-                <h3>{{ faqs().length }} cau hoi</h3>
-              </div>
+      <section class="document-admin-grid">
+        <article class="module-card">
+          <div class="module-head">
+            <div>
+              <p class="card-label">Danh sach FAQ</p>
+              <h3>{{ faqs().length }} cau hoi</h3>
             </div>
-            <ul class="preview-list selectable-list">
-              @for (item of faqs(); track item.id ?? item.question) {
-                <li
-                  class="selectable-item"
-                  [class.active-item]="currentFaq()?.id === item.id"
-                  (click)="selectFaq(item)"
-                >
-                  <strong>{{ item.question }}</strong>
-                  <span>{{ item.answer }}</span>
-                </li>
-              } @empty {
-                <li class="empty">Chua co du lieu FAQ.</li>
-              }
-            </ul>
-          </article>
+            <button type="button" class="secondary-action" (click)="clearFaqSelection()">+ Thêm mới</button>
+          </div>
+          <div class="document-grid">
+            @for (item of faqs(); track item.id ?? item.question) {
+            <div class="document-card" [class.active-item]="currentFaq()?.id === item.id" (click)="selectFaq(item)">
+              <strong>{{ item.question }}</strong>
+              <span>{{ item.answer }}</span>
+            </div>
+            } @empty {
+            <div class="empty">Chua co du lieu FAQ.</div>
+            }
+          </div>
+        </article>
 
-          <article class="module-card">
+        @if (isFaqModalOpen()) {
+        <div class="modal-overlay" (click)="closeFaqModal()">
+          <article class="module-card modal-content" (click)="$event.stopPropagation()">
             <div class="module-head">
               <div>
-                <p class="card-label">Cap nhat va tao FAQ</p>
-                <h3>{{ currentFaq()?.question || 'Tao FAQ moi' }}</h3>
+                <p class="card-label">{{ currentFaq()?.id ? 'Cập nhật FAQ' : 'Thêm FAQ mới' }}</p>
+                <h3>{{ currentFaq()?.question || 'Đang tạo mới...' }}</h3>
               </div>
+              <button type="button" class="danger-action" style="padding: 0 12px; min-height: 32px;"
+                (click)="closeFaqModal()">X</button>
             </div>
 
             <div class="form-grid">
@@ -199,7 +226,7 @@
                 <select [(ngModel)]="faqForm.departmentId">
                   <option value="">Chon phong ban</option>
                   @for (item of departments(); track item.id) {
-                    <option [value]="item.id">{{ item.name }}</option>
+                  <option [value]="item.id">{{ item.name }}</option>
                   }
                 </select>
               </label>
@@ -209,126 +236,131 @@
                 <select [(ngModel)]="faqForm.categoryId">
                   <option value="">Chon danh muc</option>
                   @for (item of categories(); track item.id) {
-                    <option [value]="item.id">{{ item.name }}</option>
+                  <option [value]="item.id">{{ item.name }}</option>
                   }
                 </select>
               </label>
             </div>
 
             @if (faqMessage()) {
-              <p class="success-message">{{ faqMessage() }}</p>
+            <p class="success-message">{{ faqMessage() }}</p>
             }
 
             @if (faqError()) {
-              <p class="error-message">{{ faqError() }}</p>
+            <p class="error-message">{{ faqError() }}</p>
             }
 
             <div class="action-row">
-              <button type="button" class="primary-action" (click)="saveFaq()">Luu cap nhat</button>
-              <button type="button" class="secondary-action" (click)="createFaq()">Tao FAQ moi</button>
-              <button type="button" class="danger-action" (click)="deleteSelectedFaq()">Xoa FAQ</button>
+              @if (currentFaq()?.id) {
+              <button type="button" class="primary-action" (click)="saveFaq()">Lưu cập nhật</button>
+              <button type="button" class="danger-action" (click)="deleteSelectedFaq()">Xoá FAQ</button>
+              } @else {
+              <button type="button" class="primary-action" (click)="createFaq()">Tạo FAQ mới</button>
+              }
             </div>
           </article>
-        </section>
+        </div>
+        }
+      </section>
       }
 
       @if (isActiveSection('categories')) {
-        <article class="module-card">
-          <div class="module-head">
-            <div>
-              <p class="card-label">Quan tri danh muc</p>
-              <h3>{{ categories().length }} danh muc</h3>
-            </div>
+      <article class="module-card">
+        <div class="module-head">
+          <div>
+            <p class="card-label">Quan tri danh muc</p>
+            <h3>{{ categories().length }} danh muc</h3>
           </div>
-          <div class="chip-grid">
-            @for (item of categoryPreview(); track item.id) {
-              <span class="data-chip">{{ item.name }}</span>
-            } @empty {
-              <span class="empty-inline">Chua co danh muc.</span>
-            }
-          </div>
-        </article>
+        </div>
+        <div class="chip-grid">
+          @for (item of categoryPreview(); track item.id) {
+          <span class="data-chip">{{ item.name }}</span>
+          } @empty {
+          <span class="empty-inline">Chua co danh muc.</span>
+          }
+        </div>
+      </article>
       }
 
       @if (isActiveSection('departments')) {
-        <article class="module-card">
-          <div class="module-head">
-            <div>
-              <p class="card-label">Quan tri phong ban</p>
-              <h3>{{ departments().length }} phong ban</h3>
-            </div>
+      <article class="module-card">
+        <div class="module-head">
+          <div>
+            <p class="card-label">Quan tri phong ban</p>
+            <h3>{{ departments().length }} phong ban</h3>
           </div>
-          <div class="chip-grid">
-            @for (item of departmentPreview(); track item.id) {
-              <span class="data-chip">{{ item.name }}</span>
-            } @empty {
-              <span class="empty-inline">Chua co phong ban.</span>
-            }
-          </div>
-        </article>
+        </div>
+        <div class="chip-grid">
+          @for (item of departmentPreview(); track item.id) {
+          <span class="data-chip">{{ item.name }}</span>
+          } @empty {
+          <span class="empty-inline">Chua co phong ban.</span>
+          }
+        </div>
+      </article>
       }
 
       @if (isActiveSection('search-logs')) {
-        <article class="module-card">
-          <div class="module-head">
-            <div>
-              <p class="card-label">Xem thong ke tra cuu</p>
-              <h3>{{ searchSummary().total }} luot tra cuu</h3>
-            </div>
+      <article class="module-card">
+        <div class="module-head">
+          <div>
+            <p class="card-label">Xem thong ke tra cuu</p>
+            <h3>{{ searchSummary().total }} luot tra cuu</h3>
           </div>
+        </div>
 
-          <div class="stats-grid">
-            <div class="stat-box">
-              <strong>{{ searchSummary().ai }}</strong>
-              <span>AI</span>
-            </div>
-            <div class="stat-box">
-              <strong>{{ searchSummary().faq }}</strong>
-              <span>FAQ</span>
-            </div>
-            <div class="stat-box">
-              <strong>{{ searchSummary().fallback }}</strong>
-              <span>Fallback</span>
-            </div>
-            <div class="stat-box">
-              <strong>{{ searchSummary().error }}</strong>
-              <span>Error</span>
-            </div>
+        <div class="stats-grid">
+          <div class="stat-box">
+            <strong>{{ searchSummary().ai }}</strong>
+            <span>AI</span>
           </div>
+          <div class="stat-box">
+            <strong>{{ searchSummary().faq }}</strong>
+            <span>FAQ</span>
+          </div>
+          <div class="stat-box">
+            <strong>{{ searchSummary().fallback }}</strong>
+            <span>Fallback</span>
+          </div>
+          <div class="stat-box">
+            <strong>{{ searchSummary().error }}</strong>
+            <span>Error</span>
+          </div>
+        </div>
 
-          <ul class="preview-list compact-list">
-            @for (item of logPreview(); track item.createdAt + item.query) {
-              <li>
-                <strong>{{ item.query }}</strong>
-                <span>{{ item.answerSource }} - {{ item.answerPreview || 'Khong co trich doan' }}</span>
-              </li>
-            } @empty {
-              <li class="empty">Chua co lich su tra cuu.</li>
-            }
-          </ul>
-        </article>
+        <ul class="preview-list compact-list">
+          @for (item of logPreview(); track item.createdAt + item.query) {
+          <li>
+            <strong>{{ item.query }}</strong>
+            <span>{{ item.answerSource }} - {{ item.answerPreview || 'Khong co trich doan' }}</span>
+          </li>
+          } @empty {
+          <li class="empty">Chua co lich su tra cuu.</li>
+          }
+        </ul>
+      </article>
       }
 
       @if (isAdminView() && isActiveSection('actors')) {
-        <article class="module-card accent-card">
-          <div class="module-head">
-            <div>
-              <p class="card-label">Quan ly tai khoan noi bo admin</p>
-              <h3>{{ actors().length }} tai khoan noi bo</h3>
-            </div>
+      <article class="module-card accent-card">
+        <div class="module-head">
+          <div>
+            <p class="card-label">Quan ly tai khoan noi bo admin</p>
+            <h3>{{ actors().length }} tai khoan noi bo</h3>
           </div>
+        </div>
 
-          <ul class="preview-list">
-            @for (item of actorPreview(); track item.id) {
-              <li>
-                <strong>{{ item.fullName }}</strong>
-                <span>{{ item.username }} - {{ item.role }}</span>
-              </li>
-            } @empty {
-              <li class="empty">Chua co tai khoan noi bo.</li>
-            }
-          </ul>
-        </article>
+        <ul class="preview-list">
+          @for (item of actorPreview(); track item.id) {
+          <li>
+            <strong>{{ item.fullName }}</strong>
+            <span>{{ item.username }} - {{ item.role }}</span>
+          </li>
+          } @empty {
+          <li class="empty">Chua co tai khoan noi bo.</li>
+          }
+        </ul>
+      </article>
       }
     </section>
   </section>

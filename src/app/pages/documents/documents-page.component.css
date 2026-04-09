@@ -78,8 +78,26 @@
 }
 
 @media (max-width: 980px) {
+
   .search-bar,
   .document-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.download-btn {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: linear-gradient(180deg, #1d63c6, #10336f);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+
+.download-btn:hover {
+  opacity: 0.9;
 }

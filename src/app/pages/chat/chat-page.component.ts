@@ -12,12 +12,14 @@ import { ChatService } from '../../services/chat.service';
 export class ChatPageComponent {
   private readonly chatService = inject(ChatService);
 
-  readonly question = signal('Chuan dau ra ngoai ngu la gi?');
+  readonly question = signal('');
   readonly loading = signal(false);
   readonly errorMessage = signal('');
   readonly answer = signal('');
   readonly answerSource = signal('');
+  readonly answerType = signal('');
   readonly botName = signal('');
+  readonly matchedDocuments = signal<any[]>([]);
 
   readonly canSubmit = computed(() => this.question().trim().length > 0 && !this.loading());
 
@@ -29,19 +31,34 @@ export class ChatPageComponent {
 
     this.loading.set(true);
     this.errorMessage.set('');
+    this.answerType.set('');
 
     this.chatService.ask(value).subscribe({
       next: (response) => {
         this.loading.set(false);
         this.answer.set(response.answer);
         this.answerSource.set(response.answerSource);
+        this.answerType.set(response.answerType);
         this.botName.set(response.botName);
+        this.matchedDocuments.set(response.matchedDocuments || []);
       },
       error: () => {
         this.loading.set(false);
         this.errorMessage.set('Khong the lay cau tra loi tu he thong.');
       }
     });
+  }
+
+  openDocument(doc: any): void {
+    if (!doc) return;
+
+    if (doc.fileType === 'link' && doc.filePath) {
+      window.open(doc.filePath, '_blank');
+    } else {
+      // Gọi API download đã thêm ở backend
+      const downloadUrl = `/api/Document/download/${doc.parentFileId || doc.id}`;
+      window.open(downloadUrl, '_blank');
+    }
   }
 }
 

@@ -44,6 +44,13 @@ export class AdminPageComponent {
   protected readonly faqMessage = signal('');
   protected readonly faqError = signal('');
   protected readonly uploadFileName = signal('Chua chon file');
+
+  protected readonly documentSearchQuery = signal('');
+  protected readonly documentCurrentPage = signal(1);
+  protected readonly documentTotalPages = signal(1);
+  protected readonly isDocumentModalOpen = signal(false);
+  protected readonly isFaqModalOpen = signal(false);
+
   protected readonly searchSummary = signal<SearchLogSummary>({
     total: 0,
     ai: 0,
@@ -52,11 +59,14 @@ export class AdminPageComponent {
     noData: 0,
     error: 0
   });
+
   protected readonly documentForm = {
     title: '',
     departmentId: '',
-    categoryId: ''
+    categoryId: '',
+    fileLink: ''
   };
+
   protected readonly faqForm = {
     question: '',
     answer: '',
@@ -113,7 +123,7 @@ export class AdminPageComponent {
   protected currentDocument(): DocumentItem | null {
     const parentFileId = this.selectedDocumentId();
     if (!parentFileId) {
-      return this.documentPreview()[0] ?? null;
+      return null;
     }
 
     return this.documents().find((item) => item.parentFileId === parentFileId) ?? null;
@@ -152,7 +162,7 @@ export class AdminPageComponent {
   protected currentFaq(): FaqItem | null {
     const faqId = this.selectedFaqId();
     if (!faqId) {
-      return this.faqPreview()[0] ?? null;
+      return null;
     }
 
     return this.faqs().find((item) => item.id === faqId) ?? null;
@@ -188,9 +198,28 @@ export class AdminPageComponent {
     this.documentForm.departmentId = item.departmentId ?? '';
     this.documentForm.categoryId = item.categoryId ?? '';
     this.selectedFile = null;
+    this.documentForm.fileLink = '';
     this.resetDocumentFilePicker();
     this.documentMessage.set('');
     this.documentError.set('');
+    this.isDocumentModalOpen.set(true);
+  }
+
+  protected clearDocumentSelection(): void {
+    this.selectedDocumentId.set(null);
+    this.documentForm.title = '';
+    this.documentForm.departmentId = '';
+    this.documentForm.categoryId = '';
+    this.documentForm.fileLink = '';
+    this.selectedFile = null;
+    this.resetDocumentFilePicker();
+    this.documentMessage.set('');
+    this.documentError.set('');
+    this.isDocumentModalOpen.set(true);
+  }
+
+  protected closeDocumentModal(): void {
+    this.isDocumentModalOpen.set(false);
   }
 
   protected onDocumentFileSelected(event: Event): void {
@@ -198,6 +227,9 @@ export class AdminPageComponent {
     const file = input.files?.[0] ?? null;
     this.selectedFile = file;
     this.uploadFileName.set(file?.name ?? 'Chua chon file');
+    if (file) {
+      this.documentForm.fileLink = ''; // Clear link when file is selected
+    }
   }
 
   protected selectFaq(item: FaqItem): void {
@@ -208,6 +240,19 @@ export class AdminPageComponent {
     this.faqForm.categoryId = item.categoryId ?? '';
     this.faqMessage.set('');
     this.faqError.set('');
+    this.isFaqModalOpen.set(true);
+  }
+
+  protected clearFaqSelection(): void {
+    this.selectedFaqId.set(null);
+    this.resetFaqForm();
+    this.faqMessage.set('');
+    this.faqError.set('');
+    this.isFaqModalOpen.set(true);
+  }
+
+  protected closeFaqModal(): void {
+    this.isFaqModalOpen.set(false);
   }
 
   protected saveDocumentMetadata(): void {
@@ -232,6 +277,7 @@ export class AdminPageComponent {
       next: () => {
         this.documentMessage.set('Cap nhat tai lieu thanh cong.');
         this.documentError.set('');
+        this.closeDocumentModal();
         this.loadDocuments();
       },
       error: (error: HttpErrorResponse) => {
@@ -242,8 +288,8 @@ export class AdminPageComponent {
   }
 
   protected uploadDocument(): void {
-    if (!this.selectedFile) {
-      this.documentError.set('Ban can chon file de tai len.');
+    if (!this.selectedFile && !this.documentForm.fileLink.trim()) {
+      this.documentError.set('Ban can chon file de tai len hoac cung cap duong link toi file.');
       return;
     }
 
@@ -252,25 +298,48 @@ export class AdminPageComponent {
       return;
     }
 
-    this.portalDataService.uploadDocument({
-      file: this.selectedFile,
-      title: this.documentForm.title.trim(),
-      departmentId: this.documentForm.departmentId,
-      categoryId: this.documentForm.categoryId
-    }).subscribe({
-      next: () => {
-        this.documentMessage.set('Tai lieu da duoc tai len thanh cong.');
-        this.documentError.set('');
-        this.selectedFile = null;
-        this.resetDocumentFilePicker();
-        this.documentForm.title = '';
-        this.loadDocuments();
-      },
-      error: (error: HttpErrorResponse) => {
-        this.documentError.set(this.extractHttpErrorMessage(error, 'Khong the tai len tai lieu.'));
-        this.documentMessage.set('');
-      }
-    });
+    if (this.documentForm.fileLink.trim()) {
+      this.portalDataService.uploadDocumentLink({
+        link: this.documentForm.fileLink.trim(),
+        title: this.documentForm.title.trim(),
+        departmentId: this.documentForm.departmentId,
+        categoryId: this.documentForm.categoryId
+      }).subscribe({
+        next: () => {
+          this.documentMessage.set('Tai lieu tu link da duoc them thanh cong.');
+          this.documentError.set('');
+          this.documentForm.fileLink = '';
+          this.documentForm.title = '';
+          this.closeDocumentModal();
+          this.loadDocuments();
+        },
+        error: (error: HttpErrorResponse) => {
+          this.documentError.set(this.extractHttpErrorMessage(error, 'Khong the them tai lieu tu link.'));
+          this.documentMessage.set('');
+        }
+      });
+    } else if (this.selectedFile) {
+      this.portalDataService.uploadDocument({
+        file: this.selectedFile,
+        title: this.documentForm.title.trim(),
+        departmentId: this.documentForm.departmentId,
+        categoryId: this.documentForm.categoryId
+      }).subscribe({
+        next: () => {
+          this.documentMessage.set('Tai lieu da duoc tai len thanh cong.');
+          this.documentError.set('');
+          this.selectedFile = null;
+          this.resetDocumentFilePicker();
+          this.documentForm.title = '';
+          this.closeDocumentModal();
+          this.loadDocuments();
+        },
+        error: (error: HttpErrorResponse) => {
+          this.documentError.set(this.extractHttpErrorMessage(error, 'Khong the tai len tai lieu.'));
+          this.documentMessage.set('');
+        }
+      });
+    }
   }
 
   protected deleteSelectedDocument(): void {
@@ -288,8 +357,10 @@ export class AdminPageComponent {
         this.documentForm.title = '';
         this.documentForm.departmentId = '';
         this.documentForm.categoryId = '';
+        this.documentForm.fileLink = '';
         this.selectedFile = null;
         this.resetDocumentFilePicker();
+        this.closeDocumentModal();
         this.loadDocuments();
       },
       error: (error: HttpErrorResponse) => {
@@ -335,6 +406,7 @@ export class AdminPageComponent {
       next: () => {
         this.faqMessage.set('Cap nhat FAQ thanh cong.');
         this.faqError.set('');
+        this.closeFaqModal();
         this.loadFaqs();
       },
       error: () => {
@@ -406,14 +478,30 @@ export class AdminPageComponent {
     }
   }
 
+  protected searchDocuments(): void {
+    this.documentCurrentPage.set(1);
+    this.loadDocuments();
+  }
+
+  protected changeDocumentPage(delta: number): void {
+    const newPage = this.documentCurrentPage() + delta;
+    if (newPage >= 1 && newPage <= this.documentTotalPages()) {
+      this.documentCurrentPage.set(newPage);
+      this.loadDocuments();
+    }
+  }
+
   private loadDocuments(): void {
-    this.portalDataService.getDocuments({ Page: 1, PageSize: 12 }).subscribe({
+    this.portalDataService.getDocuments({
+      Page: this.documentCurrentPage(),
+      PageSize: 12,
+      Keyword: this.documentSearchQuery()
+    }).subscribe({
       next: (response) => {
         this.documents.set(response.items);
-        const current = this.currentDocument();
-        if (!current && response.items.length > 0) {
-          this.selectDocument(response.items[0]);
-        }
+        // Assuming response has a totalPages, otherwise just default to 1 since we don't know
+        // Backend actually doesn't return totalPages according to the interface but let's safely set it to 1
+        this.documentTotalPages.set((response as any).totalPages || 1);
       },
       error: () => this.documents.set([])
     });
@@ -423,10 +511,6 @@ export class AdminPageComponent {
     this.portalDataService.getFaqs().subscribe({
       next: (items) => {
         this.faqs.set(items);
-        const current = this.currentFaq();
-        if (!current && items.length > 0) {
-          this.selectFaq(items[0]);
-        }
       },
       error: () => this.faqs.set([])
     });

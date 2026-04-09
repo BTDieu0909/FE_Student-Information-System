@@ -4,7 +4,7 @@
     <h2>Tra cứu thông tin sinh viên</h2>
     <p class="desc">Bạn hãy nhập câu hỏi.</p>
 
-    <textarea [(ngModel)]="question" rows="8"></textarea>
+    <textarea [(ngModel)]="question" rows="8" placeholder="Bạn có vấn đề gì cần hỏi?"></textarea>
 
     <button type="button" (click)="submit()" [disabled]="!canSubmit()">
       {{ loading() ? 'Đang tra cứu...' : 'Gửi câu hỏi' }}
@@ -25,12 +25,44 @@
     <p class="tag">Kết quả</p>
     <!-- <h3>{{ botName() || 'Z-Bot Sinh vien' }}</h3> -->
 
-    <div class="meta" *ngIf="answerSource()">
-      <span>Nguồn: {{ answerSource() }}</span>
+    <div class="meta" *ngIf="answerSource() && answerType() !== 'no_data'">
+      <span [ngClass]="{'source-badge': answerType() === 'single', 'multi-badge': answerType() === 'multi'}">
+        Nguồn: {{ answerSource() }} {{ answerType() === 'multi' ? '(Kết hợp nhiều tài liệu)' : '' }}
+      </span>
     </div>
 
-    <p class="placeholder" *ngIf="!answer() && !errorMessage()">Câu tra lời sẽ hiển thị ở đây sau khi gửi câu hỏi.</p>
+    <p class="placeholder" *ngIf="!answer() && !errorMessage() && answerType() !== 'no_data'">Câu tra lời sẽ hiển thị ở
+      đây sau khi gửi câu hỏi.</p>
     <p class="error" *ngIf="errorMessage()">{{ errorMessage() }}</p>
-    <div class="answer" *ngIf="answer()">{{ answer() }}</div>
+
+    <!-- UI for NO DATA -->
+    <div class="no-data-box" *ngIf="answerType() === 'no_data'">
+      <span class="icon">⚠️</span>
+      <p>Câu hỏi của bạn hiện không có thông tin lưu trữ trong hệ thống nhà trường. Vui lòng hỏi lại hoặc thử từ khóa
+        khác.</p>
+    </div>
+
+    <div class="answer" *ngIf="answer() && answerType() !== 'no_data'">
+      {{ answer() }}
+
+      @if (matchedDocuments().length > 0) {
+      <div class="document-refs">
+        <h4>Tài liệu / Biểu mẫu liên quan:</h4>
+        <div class="doc-link-list vertical">
+          @for (doc of matchedDocuments(); track doc.id) {
+          <div (click)="openDocument(doc)" class="doc-card-item">
+            <div class="doc-icon-box">
+              <span class="icon">📄</span>
+            </div>
+            <div class="doc-info">
+              <span class="action-text">Tải:</span>
+              <span class="doc-title">{{ doc.title }}</span>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
   </section>
 </section>

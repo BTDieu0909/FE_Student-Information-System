@@ -6,25 +6,29 @@
   </div>
 
   <div class="search-bar">
-    <input type="text" [ngModel]="keyword()" (ngModelChange)="keyword.set($event)" placeholder="Nhap tu khoa tim tai lieu..." />
+    <input type="text" [ngModel]="keyword()" (ngModelChange)="keyword.set($event)"
+      placeholder="Nhap tu khoa tim tai lieu..." />
     <button type="button" (click)="search()">Tim kiem</button>
   </div>
 
   @if (loading()) {
-    <p class="status-text">Dang tai du lieu...</p>
+  <p class="status-text">Dang tai du lieu...</p>
   }
 
   @if (errorMessage()) {
-    <p class="status-text error">{{ errorMessage() }}</p>
+  <p class="status-text error">{{ errorMessage() }}</p>
   }
 
   <div class="document-grid">
     @for (item of items(); track item.parentFileId ?? item.fileName) {
-      <article class="document-card">
-        <p class="meta">{{ item.fileType | uppercase }} • {{ item.uploadDate | date:'dd/MM/yyyy' }}</p>
-        <h3>{{ item.title }}</h3>
-        <p>{{ item.preview }}</p>
-      </article>
+    <article class="document-card">
+      <p class="meta">{{ item.fileType | uppercase }} • {{ item.uploadDate | date:'dd/MM/yyyy' }}</p>
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.preview }}</p>
+      @if (item.fileType === 'link') {
+      <a [href]="item.filePath" target="_blank" class="download-btn">Tải mẫu đơn / Xem chi tiết</a>
+      }
+    </article>
     }
   </div>
 </section>

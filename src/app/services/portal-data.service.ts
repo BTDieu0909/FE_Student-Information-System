@@ -13,6 +13,7 @@ export interface DocumentItem {
   chunksCount: number;
   preview: string;
   matchedChunks: number;
+  filePath?: string;
 }
 
 export interface DocumentResponse {
@@ -78,6 +79,13 @@ export interface UploadDocumentPayload {
   file: File;
 }
 
+export interface UploadDocumentLinkPayload {
+  title: string;
+  departmentId: string;
+  categoryId: string;
+  link: string;
+}
+
 export interface UpdateDocumentPayload {
   title: string;
   departmentId?: string;
@@ -93,7 +101,7 @@ export interface FaqPayload {
 
 @Injectable({ providedIn: 'root' })
 export class PortalDataService {
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   getDocuments(params?: Record<string, string | number>): Observable<DocumentResponse> {
     const searchParams = new URLSearchParams();
@@ -140,6 +148,10 @@ export class PortalDataService {
     formData.append('DepartmentId', payload.departmentId);
     formData.append('CategoryId', payload.categoryId);
     return this.http.post('/api/Document/upload', formData);
+  }
+
+  uploadDocumentLink(payload: UploadDocumentLinkPayload): Observable<unknown> {
+    return this.http.post('/api/Document/upload-link', payload);
   }
 
   updateDocument(parentFileId: string, payload: UpdateDocumentPayload): Observable<unknown> {
