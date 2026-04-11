@@ -1,9 +1,50 @@
-<div class="shell">
-  <aside class="sidebar-shell">
-    <app-sidebar-navigation></app-sidebar-navigation>
-  </aside>
+<!-- SideNavBar -->
+@if (!isLoginPage()) {
+<aside
+  class="fixed left-0 top-0 h-full flex flex-col px-4 bg-surface-container-low dark:bg-slate-900 w-64 border-r-0 z-50 pt-4 pb-8 transition-all">
+  <app-sidebar-navigation></app-sidebar-navigation>
+</aside>
 
-  <main class="content-shell">
+<!-- TopNavBar -->
+<header
+  class="ml-64 flex justify-center items-center h-16 bg-surface/80 dark:bg-slate-950/80 backdrop-blur-md fixed top-0 right-0 left-0 z-40 px-8 transition-all">
+  <div class="max-w-7xl w-full flex justify-between items-center">
+    <div class="flex items-center gap-2">
+      <span class="text-primary font-bold text-sm uppercase tracking-widest font-headline">Student Information
+        System</span>
+    </div>
+    <div class="flex items-center gap-6">
+      <div class="relative group">
+        <span
+          class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors cursor-pointer">notifications</span>
+        <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+      </div>
+      <div (click)="goToProfileOrAdmin()"
+        class="flex items-center gap-3 cursor-pointer group p-1 rounded-xl transition-all active:scale-95 select-none text-primary">
+        @if (authService.currentUser(); as user) {
+        <div class="text-right hidden sm:block">
+          <p class="text-xs font-bold">{{ user.fullName }}</p>
+          <p class="text-[10px] text-on-surface-variant uppercase">{{ user.username }} • {{ user.role }}</p>
+        </div>
+        <span
+          class="material-symbols-outlined text-3xl text-on-surface-variant group-hover:text-primary transition-colors">account_circle</span>
+        } @else {
+        <div
+          class="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-black text-[10px] tracking-widest shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 transition-all">
+          <span class="material-symbols-outlined text-lg">login</span>
+          <span>ĐĂNG NHẬP</span>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</header>
+}
+
+<!-- Main Content -->
+<main [class.ml-64]="!isLoginPage()" [class.pt-20]="!isLoginPage()" [class.pb-20]="!isLoginPage()"
+  class="min-h-screen flex flex-col items-center bg-background transition-all">
+  <div class="w-full h-full" [class.max-w-7xl]="!isLoginPage()" [class.px-8]="!isLoginPage()">
     <router-outlet></router-outlet>
-  </main>
-</div>
+  </div>
+</main>

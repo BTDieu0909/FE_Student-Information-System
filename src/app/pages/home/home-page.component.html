@@ -1,106 +1,112 @@
-<section class="dashboard-page">
-  <section class="hero-card">
-    <div class="hero-copy">
-      <p class="eyebrow">Trang chu he thong</p>
-      <h1>Student Information System</h1>
-      <p class="hero-text">
-        Nen tang tap trung ho tro sinh vien tra cuu thong tin hoc vu, quy che, FAQ va tai lieu
-        bang giao dien dashboard hien dai.
-      </p>
+<div class="space-y-10 py-8">
+  <!-- Welcome Header -->
+  <section class="space-y-2">
+    <p class="text-on-surface-variant font-headline text-[10px] uppercase tracking-[0.2em] font-bold">CHÀO MỪNG TRỞ LẠI
+    </p>
+    <h1 class="text-[#002555] font-headline text-4xl font-extrabold tracking-tight">Hệ thống Thông tin Sinh viên</h1>
+  </section>
 
-      <div class="hero-search">
-        <input type="text" [ngModel]="question()" (ngModelChange)="question.set($event)" placeholder="Nhap tu khoa hoac cau hoi thong minh..." />
+  <!-- Stats Row -->
+  <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div
+      class="bg-white p-10 rounded-3xl flex flex-col items-start gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 group hover:shadow-md transition-all">
+      <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-primary">
+        <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">list_alt</span>
       </div>
+      <div>
+        <p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold mb-1">DANH MỤC TRA CỨU</p>
+        <h4 class="text-3xl font-black text-[#002555] font-headline">{{ categories().length || '0' }}</h4>
+      </div>
+    </div>
 
-      <div class="suggestion-row">
+    <div
+      class="bg-white p-10 rounded-3xl flex flex-col items-start gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 group hover:shadow-md transition-all">
+      <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-primary">
+        <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">description</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold mb-1">TÀI LIỆU HIỆN CÓ</p>
+        <h4 class="text-3xl font-black text-[#002555] font-headline">{{ documents().length || '0' }}</h4>
+      </div>
+    </div>
+
+    <div
+      class="bg-white p-10 rounded-3xl flex flex-col items-start gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 group hover:shadow-md transition-all">
+      <div class="w-12 h-12 rounded-xl bg-orange-50/50 flex items-center justify-center text-orange-600">
+        <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">forum</span>
+      </div>
+      <div>
+        <p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold mb-1">FAQ SẴN SÀNG</p>
+        <h4 class="text-3xl font-black text-[#002555] font-headline">{{ faqs().length || '0' }}</h4>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Search Section -->
+  <section
+    class="bg-white/40 backdrop-blur-sm py-20 px-12 rounded-[40px] flex flex-col items-center text-center space-y-10 border border-white/50 shadow-sm">
+    <div class="max-w-2xl w-full">
+      <h2 class="text-[#002555] font-headline text-2xl font-bold mb-10">Bạn đang tìm kiếm thông tin gì?</h2>
+      <div class="relative w-full group">
+        <span
+          class="absolute left-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors">search</span>
+        <input
+          class="w-full pl-16 pr-48 py-5 bg-white border-none rounded-2xl shadow-sm focus:ring-4 focus:ring-primary/5 text-on-surface placeholder:text-gray-300 font-medium text-lg"
+          placeholder="Tìm kiếm văn bản, thủ tục, lịch học..." type="text" [ngModel]="question()"
+          (ngModelChange)="question.set($event)" (keyup.enter)="submit()" />
+        <button (click)="submit()"
+          class="absolute right-3 top-1/2 -translate-y-1/2 bg-[#002555] text-white px-10 py-3.5 rounded-xl font-bold text-sm shadow-md transition-all hover:bg-[#00347a] active:scale-95">
+          {{ loading() ? 'Đang tìm...' : 'Tìm nhanh' }}
+        </button>
+      </div>
+      <div class="flex flex-wrap justify-center gap-3 mt-12">
+        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest self-center mr-3">GỢI Ý:</span>
         @for (item of heroSuggestions; track item) {
-          <button type="button" (click)="useSuggestion(item)">{{ item }}</button>
+        <button type="button" (click)="useSuggestion(item)"
+          class="bg-white border border-gray-100 text-gray-600 px-6 py-2.5 rounded-full text-xs font-semibold hover:bg-gray-50 hover:text-primary transition-all active:scale-95">
+          {{ item }}
+        </button>
         }
       </div>
     </div>
-
-    <div class="hero-side">
-      <div class="stat-card">
-        <strong>{{ categories().length }}</strong>
-        <span>Danh muc tra cuu</span>
-      </div>
-      <div class="stat-card">
-        <strong>{{ documents().length }}</strong>
-        <span>Tai lieu hien co</span>
-      </div>
-      <div class="stat-card">
-        <strong>{{ faqs().length }}</strong>
-        <span>FAQ san sang</span>
-      </div>
-    </div>
   </section>
 
-  <section class="section-block">
-    <div class="section-heading">
-      <p class="eyebrow">Danh muc tra cuu</p>
-      <h2>The danh muc lay tu Collection Categories</h2>
-    </div>
-
-    <div class="category-grid">
-      @for (category of categories(); track category.id) {
-        <article class="category-card">
-          <div class="icon-box">{{ category.name.slice(0, 1) }}</div>
-          <h3>{{ category.name }}</h3>
-          <p>{{ getCategoryDocumentCount(category.id) }} tai lieu • {{ getCategoryFaqCount(category.id) }} FAQ</p>
-          <span class="link-chip">Xem ngay</span>
-        </article>
-      }
-    </div>
-  </section>
-
-  <section class="chat-grid">
-    <aside class="panel prompt-panel">
-      <p class="eyebrow">Tra cuu AI (Z-Bot)</p>
-      <h2>Hoi dap nhanh thong tin sinh vien</h2>
-      <p class="desc">Sinh vien nhap cau hoi tu nhien, he thong se tra loi dua tren tai lieu va FAQ.</p>
-
-      <textarea [ngModel]="question()" (ngModelChange)="question.set($event)" rows="8"></textarea>
-
-      <button type="button" class="submit-button" (click)="submit()" [disabled]="!canSubmit()">
-        {{ loading() ? 'Dang tra cuu...' : 'Gui cau hoi' }}
-      </button>
-
-      <div class="examples">
-        <p>Goi y nhanh</p>
-        @for (item of quickSuggestions; track item) {
-          <button type="button" (click)="useSuggestion(item)">{{ item }}</button>
-        }
+  <!-- FAQs Section -->
+  <section class="space-y-8">
+    <div class="flex justify-between items-center border-b border-gray-100 pb-6">
+      <div>
+        <h2 class="text-[#002555] font-headline text-2xl font-extrabold tracking-tight">Câu hỏi thường gặp (FAQs)</h2>
+        <p class="text-on-surface-variant text-sm mt-1 font-medium">Giải đáp nhanh các thắc mắc phổ biến của sinh viên
+        </p>
       </div>
-    </aside>
-
-    <section class="panel answer-panel">
-      <p class="eyebrow">Ket qua chatbot</p>
-      <h3>{{ botName() || 'Z-Bot Sinh vien' }}</h3>
-      @if (!answer() && !errorMessage()) {
-        <p class="placeholder">Cau tra loi cua chatbot se hien thi o day sau khi gui cau hoi.</p>
-      }
-      @if (errorMessage()) {
-        <p class="error">{{ errorMessage() }}</p>
-      }
-      @if (answer()) {
-        <div class="answer">{{ answer() }}</div>
-      }
-    </section>
-  </section>
-
-  <section class="section-block">
-    <div class="section-heading">
-      <p class="eyebrow">Phong ban</p>
-      <h2>Thong tin lien he cac don vi ho tro</h2>
+      <a class="text-xs font-bold text-primary flex items-center gap-1 hover:underline transition-all group"
+        [routerLink]="['/faq']">
+        Xem tất cả FAQ
+        <span
+          class="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
+      </a>
     </div>
 
-    <div class="department-grid">
-      @for (department of departments(); track department.id) {
-        <article class="department-card">
-          <h3>{{ department.name }}</h3>
-          <p>Thong tin don vi ho tro sinh vien trong qua trinh hoc tap va giai quyet thu tuc.</p>
-        </article>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      @for (faq of faqs().slice(0, 6); track faq.id) {
+      <div
+        class="bg-white p-10 rounded-3xl border border-gray-50 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-xl hover:translate-y-[-4px] transition-all group flex flex-col h-full">
+        <div class="flex-1 space-y-6">
+          <div
+            class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-primary group-hover:text-white transition-colors">
+            <span class="material-symbols-outlined text-xl">description</span>
+          </div>
+          <h3 class="text-[#002555] font-bold font-headline leading-tight text-xl line-clamp-2">{{ faq.question }}</h3>
+          <p class="text-on-surface-variant text-sm leading-relaxed line-clamp-3">
+            {{ faq.answer }}
+          </p>
+        </div>
+        <div
+          class="mt-10 pt-6 border-t border-gray-50 flex items-center text-primary text-[10px] font-bold gap-1 uppercase tracking-wider group-hover:gap-2 transition-all cursor-pointer">
+          XEM CHI TIẾT <span class="material-symbols-outlined text-xs">arrow_forward</span>
+        </div>
+      </div>
       }
     </div>
   </section>
-</section>
+</div>

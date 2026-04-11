@@ -1,51 +1,43 @@
-<div class="sidebar">
-  <div class="sidebar-top">
-    <div class="logo-box">
-      <img src="/images/logoQNU.jpg" alt="Logo Quy Nhon University" />
+<div class="mb-14 px-2">
+  <div class="flex items-center gap-3">
+    <div class="w-16 h-16 flex-shrink-0">
+      <img alt="QNU Logo" class="object-contain w-full h-full" src="/images/logoQNU.jpg" />
     </div>
-
-    <div class="brand-copy">
-      <p class="eyebrow">QNU Student Information</p>
-      <h2>Cong thong tin sinh vien</h2>
-      <p>Tap trung cac chuc nang tra cuu hoc vu, tai lieu, FAQ va quan tri noi dung.</p>
+    <div class="leading-tight">
+      <h1 class="font-bold text-[#002555] font-headline text-lg">Quy Nhơn</h1>
+      <p class="uppercase tracking-widest text-gray-500 font-bold text-[10px]">University</p>
     </div>
   </div>
+</div>
 
-  <nav class="sidebar-nav">
-    @for (item of navItems; track item.route) {
-      <a
-        class="nav-item"
-        [routerLink]="item.route"
-        routerLinkActive="active-item"
-        [routerLinkActiveOptions]="{ exact: true }"
-      >
-        <strong>{{ item.label }}</strong>
-        <span>{{ item.description }}</span>
-      </a>
-    }
-  </nav>
+<nav class="flex-1 space-y-3">
+  @for (item of navItems; track item.route) {
+  <a class="flex items-center gap-4 px-5 py-3 rounded-xl text-gray-600 font-medium hover:bg-gray-100 transition-all group relative overflow-hidden"
+    [routerLink]="item.route" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+    <span class="material-symbols-outlined text-lg transition-colors group-hover:text-primary">{{ item.icon || 'folder'
+      }}</span>
+    <span class="font-headline text-sm">{{ item.label }}</span>
+  </a>
+  }
+</nav>
 
-  <div class="sidebar-footer">
-    @if (!authService.isLoggedIn()) {
-      <a class="footer-button primary" routerLink="/login">Dang nhap</a>
-    } @else {
-      <div class="session-card">
-        <div class="session-copy">
-          <strong>{{ currentUserLabel() }}</strong>
-          <span>{{ roleLabel() }}</span>
-        </div>
-      </div>
+<div class="mt-auto pt-8 border-t border-gray-100 space-y-2">
+  <button
+    class="w-full flex items-center gap-4 px-5 py-2.5 rounded-xl text-gray-500 font-medium hover:bg-gray-100 transition-colors">
+    <span class="material-symbols-outlined text-lg">language</span>
+    <span class="text-xs font-headline">Ngôn ngữ</span>
+  </button>
+  <button
+    class="w-full flex items-center gap-4 px-5 py-2.5 rounded-xl text-gray-500 font-medium hover:bg-gray-100 transition-colors">
+    <span class="material-symbols-outlined text-lg">dark_mode</span>
+    <span class="text-xs font-headline">Chế độ</span>
+  </button>
 
-      @if (!isManagementPage()) {
-        <a class="footer-button primary" [routerLink]="managementRoute()">Khu vuc quan tri</a>
-      }
-
-      <button type="button" class="footer-button secondary" (click)="logout()">Dang xuat</button>
-    }
-
-    <div class="toggle-panel">
-      <button type="button" class="toggle-chip">VI / EN</button>
-      <button type="button" class="toggle-chip">Light / Dark</button>
-    </div>
-  </div>
+  @if (authService.isLoggedIn()) {
+  <button (click)="logout()"
+    class="w-full flex items-center gap-4 px-5 py-2.5 rounded-xl text-error font-bold hover:bg-error/5 transition-colors mt-4">
+    <span class="material-symbols-outlined text-lg">logout</span>
+    <span class="text-xs font-headline">ĐĂNG XUẤT</span>
+  </button>
+  }
 </div>

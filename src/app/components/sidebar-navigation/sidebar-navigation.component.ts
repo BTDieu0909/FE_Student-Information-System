@@ -14,11 +14,11 @@ export class SidebarNavigationComponent {
   protected readonly router = inject(Router);
 
   protected readonly navItems = [
-    { label: 'Trang chu', route: '/home', description: 'Tong quan he thong' },
-    { label: 'Tra cuu AI', route: '/chat', description: 'Hoi dap bang ngon ngu tu nhien' },
-    { label: 'Kho tai lieu', route: '/documents', description: 'Tim kiem tai lieu' },
-    { label: 'Cau hoi thuong gap', route: '/faq', description: 'Collection FAQs' },
-    { label: 'Phong ban', route: '/departments', description: 'Collection Departments' }
+    { label: 'Trang chủ', route: '/home', description: 'Tổng quan hệ thống', icon: 'home' },
+    { label: 'Tra cứu AI', route: '/chat', description: 'Hỏi đáp thông minh', icon: 'smart_toy' },
+    { label: 'Kho tài liệu', route: '/documents', description: 'Thư viện tài liệu', icon: 'folder_open' },
+    { label: 'FAQ', route: '/faq', description: 'Câu hỏi thường gặp', icon: 'quiz' },
+    { label: 'Phòng ban', route: '/departments', description: 'Thông tin liên hệ', icon: 'contact_support' }
   ];
 
   protected managementRoute(): string {
@@ -39,6 +39,6 @@ export class SidebarNavigationComponent {
 
   protected logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/home']);
   }
 }

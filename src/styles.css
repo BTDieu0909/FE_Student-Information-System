@@ -1,23 +1,61 @@
-﻿html,
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
 body {
   margin: 0;
   min-height: 100%;
-  font-family: "Segoe UI", sans-serif;
-  color: #0f172a;
-  
+  font-family: "Inter", "Manrope", system-ui, -apple-system, sans-serif;
+  color: #191c1e;
+  background-color: #f7f9fb;
+  background-image: radial-gradient(#d1d5db 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 body {
   min-height: 100vh;
- 
 }
 
 * {
   box-sizing: border-box;
 }
 
-button,
-input,
-textarea {
-  font: inherit;
+.bg-glass {
+  background: rgba(247, 249, 251, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+.primary-gradient {
+  background: linear-gradient(135deg, #002555 0%, #1a3b70 100%);
+}
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Sidebar navigation item active state */
+.active-link {
+  @apply bg-surface-container text-primary border-r-4 border-primary font-bold;
+}
+
+.active-link span {
+  font-variation-settings: 'FILL' 1;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c7d0;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a7b0;
 }

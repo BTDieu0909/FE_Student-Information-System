@@ -3,6 +3,16 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../services/chat.service';
 
+export interface ChatMessage {
+  role: 'user' | 'bot';
+  text?: string;
+  type?: 'text' | 'rich' | 'error' | 'no_data';
+  timestamp: Date;
+  botName?: string;
+  source?: string;
+  matchedDocuments?: any[];
+}
+
 @Component({
   selector: 'app-chat-page',
   imports: [CommonModule, FormsModule],
@@ -14,48 +24,77 @@ export class ChatPageComponent {
 
   readonly question = signal('');
   readonly loading = signal(false);
-  readonly errorMessage = signal('');
-  readonly answer = signal('');
-  readonly answerSource = signal('');
-  readonly answerType = signal('');
-  readonly botName = signal('');
-  readonly matchedDocuments = signal<any[]>([]);
+  readonly messages = signal<ChatMessage[]>([
+    {
+      role: 'bot',
+      text: 'Chào bạn! Tôi là trợ lý ảo Z-Bot của Đại học Quy Nhơn. Tôi có thể giúp bạn tra cứu điểm số, lịch học, các quy định đào tạo hoặc hỗ trợ giải đáp thắc mắc về đời sống sinh viên. Bạn cần giúp gì hôm nay?',
+      timestamp: new Date(),
+      botName: 'Z-BOT ASSISTANT'
+    }
+  ]);
+
+  readonly suggestions = [
+    { title: 'Cách tính điểm rèn luyện?', category: 'Quy định đào tạo', icon: 'description' },
+    { title: 'Lịch thi học kỳ này?', category: 'Thông tin khảo thí', icon: 'calendar_month' },
+    { title: 'Quy trình đăng ký tạm trú?', category: 'Hành chính sinh viên', icon: 'home' },
+    { title: 'Mất thẻ sinh viên cần làm gì?', category: 'Hỗ trợ kỹ thuật', icon: 'badge' }
+  ];
+
 
   readonly canSubmit = computed(() => this.question().trim().length > 0 && !this.loading());
 
   submit(): void {
     const value = this.question().trim();
-    if (!value || this.loading()) {
-      return;
-    }
+    if (!value || this.loading()) return;
+
+    // Add user message
+    const userMsg: ChatMessage = {
+      role: 'user',
+      text: value,
+      timestamp: new Date()
+    };
+    this.messages.update(prev => [...prev, userMsg]);
+    this.question.set('');
 
     this.loading.set(true);
-    this.errorMessage.set('');
-    this.answerType.set('');
 
     this.chatService.ask(value).subscribe({
       next: (response) => {
         this.loading.set(false);
-        this.answer.set(response.answer);
-        this.answerSource.set(response.answerSource);
-        this.answerType.set(response.answerType);
-        this.botName.set(response.botName);
-        this.matchedDocuments.set(response.matchedDocuments || []);
+        const botMsg: ChatMessage = {
+          role: 'bot',
+          text: response.answer,
+          type: response.answerType as any || 'text',
+          timestamp: new Date(),
+          botName: response.botName || 'Z-Bot',
+          source: response.answerSource,
+          matchedDocuments: response.matchedDocuments
+        };
+        this.messages.update(prev => [...prev, botMsg]);
       },
       error: () => {
         this.loading.set(false);
-        this.errorMessage.set('Khong the lay cau tra loi tu he thong.');
+        const errorMsg: ChatMessage = {
+          role: 'bot',
+          type: 'error',
+          text: 'Xin lỗi, tôi gặp sự cố kỹ thuật khi xử lý yêu cầu của bạn.',
+          timestamp: new Date()
+        };
+        this.messages.update(prev => [...prev, errorMsg]);
       }
     });
   }
 
+  useSuggestion(title: string): void {
+    this.question.set(title);
+    this.submit();
+  }
+
   openDocument(doc: any): void {
     if (!doc) return;
-
     if (doc.fileType === 'link' && doc.filePath) {
       window.open(doc.filePath, '_blank');
     } else {
-      // Gọi API download đã thêm ở backend
       const downloadUrl = `/api/Document/download/${doc.parentFileId || doc.id}`;
       window.open(downloadUrl, '_blank');
     }

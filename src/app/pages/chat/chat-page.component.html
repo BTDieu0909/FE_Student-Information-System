@@ -1,68 +1,255 @@
-﻿<section class="chat-layout">
-  <aside class="panel prompt-panel">
-    <p class="tag">Chat bot</p>
-    <h2>Tra cứu thông tin sinh viên</h2>
-    <p class="desc">Bạn hãy nhập câu hỏi.</p>
+﻿<div class="h-[calc(100vh-64px)] flex flex-col md:flex-row bg-[#f8f9fa] overflow-hidden font-body select-none">
 
-    <textarea [(ngModel)]="question" rows="8" placeholder="Bạn có vấn đề gì cần hỏi?"></textarea>
+  <!-- Main Chat Area: Centered & Focused -->
+  <main class="flex-1 flex flex-col min-w-0 bg-[#f8f9fa] relative">
 
-    <button type="button" (click)="submit()" [disabled]="!canSubmit()">
-      {{ loading() ? 'Đang tra cứu...' : 'Gửi câu hỏi' }}
-    </button>
+    <!-- Chat Messages Scroll Area -->
+    <div class="flex-1 overflow-y-auto p-4 md:p-12 space-y-10 scroll-smooth" #scrollContainer>
+      @for (msg of messages(); track $index) {
+      <div class="w-full flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
 
-    <div class="examples">
-      <p>Gợi ý thuần:</p>
-      <button type="button" (click)="question.set('Chuẩn đầu ra ngoại ngữ?')">Chuẩn đầu ra ngoại ngữ</button>
-      <button type="button" (click)="question.set('Điểm rèn luyện được tính như thế nào?')">Điếm rèn luyện</button>
-      <button type="button" (click)="question.set('Sinh viên xin giấy xác nhận vốn như thế nào?')">Giấy xác nhận vay
-        vốn
+        <!-- Bot Message Section -->
+        @if (msg.role === 'bot') {
+        <div class="flex items-start gap-4 max-w-3xl">
+          <!-- Bot Icon: Square as in reference -->
+          <div class="w-12 h-12 rounded-xl bg-[#002555] flex items-center justify-center shadow-xl shrink-0 mt-1">
+            <span class="material-symbols-outlined text-white text-2xl">smart_toy</span>
+          </div>
 
-      </button>
-    </div>
-  </aside>
+          <div class="flex flex-col gap-3 flex-1">
+            <!-- Bot Bubble: White, high-end card -->
+            <div
+              class="bg-white p-7 rounded-[28px] rounded-tl-none shadow-sm border border-gray-100/80 text-[#1e293b] leading-relaxed font-semibold text-[15px] md:text-base">
 
-  <section class="panel answer-panel">
-    <p class="tag">Kết quả</p>
-    <!-- <h3>{{ botName() || 'Z-Bot Sinh vien' }}</h3> -->
+              <!-- Normal Text Answer -->
+              @if (msg.type !== 'no_data' && msg.type !== 'error') {
+              <div class="whitespace-pre-wrap">{{ msg.text }}</div>
+              }
 
-    <div class="meta" *ngIf="answerSource() && answerType() !== 'no_data'">
-      <span [ngClass]="{'source-badge': answerType() === 'single', 'multi-badge': answerType() === 'multi'}">
-        Nguồn: {{ answerSource() }} {{ answerType() === 'multi' ? '(Kết hợp nhiều tài liệu)' : '' }}
-      </span>
-    </div>
+              <!-- NO DATA UI -->
+              @if (msg.type === 'no_data') {
+              <div class="flex flex-col gap-4 py-2">
+                <div class="flex items-center gap-3 text-amber-500">
+                  <span class="material-symbols-outlined text-3xl">sentiment_dissatisfied</span>
+                  <span class="font-black text-xs uppercase tracking-widest">Không tìm thấy thông tin</span>
+                </div>
+                <p class="text-sm text-gray-500 font-medium leading-relaxed">
+                  Rất tiếc, tôi không tìm thấy thông tin liên quan đến câu hỏi của bạn trong cơ sở dữ liệu của nhà
+                  trường.
+                  Bạn có thể thử lại với từ khóa khác hoặc liên hệ bộ phận hỗ trợ.
+                </p>
+                <div class="flex flex-wrap gap-2 pt-2">
+                  <button (click)="useSuggestion('Lịch học bù tuần sau')"
+                    class="px-4 py-2 bg-gray-50 hover:bg-white hover:shadow-md border border-gray-100 rounded-xl text-[10px] font-black text-primary transition-all uppercase tracking-widest">Hỏi
+                    câu khác</button>
+                  <button (click)="useSuggestion('Hướng dẫn đăng ký học phần')"
+                    class="px-4 py-2 bg-gray-50 hover:bg-white hover:shadow-md border border-gray-100 rounded-xl text-[10px] font-black text-gray-400 transition-all uppercase tracking-widest">Góp
+                    ý</button>
+                </div>
+              </div>
+              }
 
-    <p class="placeholder" *ngIf="!answer() && !errorMessage() && answerType() !== 'no_data'">Câu tra lời sẽ hiển thị ở
-      đây sau khi gửi câu hỏi.</p>
-    <p class="error" *ngIf="errorMessage()">{{ errorMessage() }}</p>
+              <!-- ERROR UI -->
+              @if (msg.type === 'error') {
+              <div class="flex flex-col gap-4 py-2 text-rose-500">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-3xl">error</span>
+                  <span class="font-black text-xs uppercase tracking-widest">Lỗi hệ thống</span>
+                </div>
+                <p class="text-sm font-medium leading-relaxed italic">
+                  Đã có lỗi xảy ra trong quá trình xử lý câu hỏi của bạn. Vui lòng thử lại sau vài phút hoặc báo cáo sự
+                  cố cho quản trị viên.
+                </p>
+              </div>
+              }
 
-    <!-- UI for NO DATA -->
-    <div class="no-data-box" *ngIf="answerType() === 'no_data'">
-      <span class="icon">⚠️</span>
-      <p>Câu hỏi của bạn hiện không có thông tin lưu trữ trong hệ thống nhà trường. Vui lòng hỏi lại hoặc thử từ khóa
-        khác.</p>
-    </div>
+              <!-- Rich Result Content: Detailed cards -->
+              @if (msg.type === 'rich' || (msg.matchedDocuments && msg.matchedDocuments.length > 0)) {
+              <div class="mt-8 space-y-6 pt-6 border-t border-gray-50">
+                <div
+                  class="flex items-center gap-3 text-[#002555] font-black text-[11px] uppercase tracking-widest italic">
+                  <span class="material-symbols-outlined text-lg">description</span>
+                  <span>Quy định đánh giá kết quả rèn luyện</span>
+                </div>
 
-    <div class="answer" *ngIf="answer() && answerType() !== 'no_data'">
-      {{ answer() }}
+                <p class="text-sm text-gray-600 font-medium leading-relaxed">Theo quyết định hiện hành của Trường Đại
+                  học Quy Nhơn, điểm rèn luyện được đánh giá theo các tiêu chí chính trên thang điểm 100:</p>
 
-      @if (matchedDocuments().length > 0) {
-      <div class="document-refs">
-        <h4>Tài liệu / Biểu mẫu liên quan:</h4>
-        <div class="doc-link-list vertical">
-          @for (doc of matchedDocuments(); track doc.id) {
-          <div (click)="openDocument(doc)" class="doc-card-item">
-            <div class="doc-icon-box">
-              <span class="icon">📄</span>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div
+                    class="p-5 bg-[#fdfaf5] rounded-[24px] border border-[#f5efde] transition-all hover:shadow-md cursor-help group">
+                    <p class="text-[9px] font-black text-[#856404]/50 mb-1 uppercase tracking-tighter">Tiêu chí 1 (Tối
+                      đa 20đ)</p>
+                    <p class="text-sm font-black text-[#856404] group-hover:text-primary transition-colors">Ý thức tham
+                      gia học tập</p>
+                  </div>
+                  <div
+                    class="p-5 bg-[#fdfaf5] rounded-[24px] border border-[#f5efde] transition-all hover:shadow-md cursor-help group">
+                    <p class="text-[9px] font-black text-[#856404]/50 mb-1 uppercase tracking-tighter">Tiêu chí 2 (Tối
+                      đa 25đ)</p>
+                    <p class="text-sm font-black text-[#856404] group-hover:text-primary transition-colors">Ý thức chấp
+                      hành nội quy</p>
+                  </div>
+                </div>
+
+                <div
+                  class="p-5 bg-blue-50/50 rounded-2xl border-l-[6px] border-[#002555] italic text-[13px] text-gray-700 font-bold leading-relaxed shadow-sm">
+                  "Sinh viên có điểm trung bình học tập từ 3.6/4.0 trở lên được cộng tối đa 10 điểm thưởng vào tiêu chí
+                  1."
+                </div>
+
+                <div class="flex items-center gap-2 pt-2">
+                  <span class="text-xs font-bold text-gray-500">Bạn có thể xem chi tiết bảng điểm cá nhân tại mục</span>
+                  <a href="#"
+                    class="text-[#002555] font-black underline hover:text-primary transition-colors text-xs">Hồ sơ sinh
+                    viên</a>
+                </div>
+
+                <!-- Actual dynamic documents if any -->
+                @if (msg.matchedDocuments && msg.matchedDocuments.length > 0) {
+                <div class="flex flex-wrap gap-3 mt-4">
+                  @for (doc of msg.matchedDocuments; track doc.id) {
+                  <button (click)="openDocument(doc)"
+                    class="flex items-center gap-3 px-5 py-3 bg-gray-50 rounded-2xl border border-gray-100 hover:bg-white hover:shadow-lg transition-all text-xs font-black text-gray-600">
+                    <span class="material-symbols-outlined text-lg">attachment</span>
+                    <span>{{ doc.title }}</span>
+                  </button>
+                  }
+                </div>
+                }
+              </div>
+              }
             </div>
-            <div class="doc-info">
-              <span class="action-text">Tải:</span>
-              <span class="doc-title">{{ doc.title }}</span>
+
+            <!-- Bot Label Below Bubble -->
+            <div
+              class="flex items-center gap-2 ml-2 text-gray-400 font-bold text-[10px] uppercase tracking-[0.2em] opacity-60">
+              <span>{{ msg.botName }}</span>
+              <span class="text-xs">•</span>
+              <span>Vừa xong</span>
             </div>
           </div>
-          }
+        </div>
+        }
+
+        <!-- User Message Section -->
+        @if (msg.role === 'user') {
+        <div class="flex flex-col items-end gap-3 w-full animate-in slide-in-from-right-4 duration-500">
+          <div class="flex items-start gap-4 justify-end max-w-2xl">
+            <!-- User Bubble: Dark Blue, Premium -->
+            <div
+              class="bg-[#002555] p-7 rounded-[28px] rounded-tr-none shadow-2xl text-white font-bold leading-relaxed text-[15px] md:text-base">
+              {{ msg.text }}
+            </div>
+
+            <!-- User Avatar: Square container -->
+            <div
+              class="w-12 h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center shadow-lg shrink-0 mt-1">
+              <span class="material-symbols-outlined text-[#002555] text-3xl">account_circle</span>
+            </div>
+          </div>
+
+          <!-- User metadata below bubble -->
+          <div
+            class="flex items-center gap-2 mr-16 text-[#002555]/60 font-black text-[10px] uppercase tracking-[0.2em]">
+            <span>{{ msg.timestamp | date:'shortTime' }}</span>
+            <span class="text-xs">•</span>
+            <span class="text-primary">ĐÃ XEM</span>
+          </div>
+        </div>
+        }
+      </div>
+      }
+
+      @if (loading()) {
+      <div class="flex items-start gap-4 animate-pulse pt-4">
+        <div class="w-12 h-12 rounded-xl bg-gray-200"></div>
+        <div class="flex-1 space-y-3">
+          <div class="h-16 w-3/4 bg-gray-200 rounded-2xl"></div>
+          <div class="h-4 w-24 bg-gray-100 rounded-full"></div>
         </div>
       </div>
       }
     </div>
-  </section>
-</section>
+
+    <!-- Input Area: Refined & Compact -->
+    <div class="p-6 md:p-10 bg-gradient-to-t from-white via-white/80 to-transparent pt-16 flex-shrink-0">
+      <div class="max-w-4xl mx-auto relative group">
+        <div
+          class="absolute inset-0 bg-primary/5 rounded-[28px] blur-2xl opacity-0 group-focus-within:opacity-100 transition-all duration-500">
+        </div>
+        <div
+          class="relative bg-white border border-gray-100 shadow-2xl rounded-[28px] flex items-center pr-3 pl-7 py-2 transition-all group-focus-within:border-primary/20 group-focus-within:shadow-primary/5">
+          <button class="p-3 text-gray-400 hover:text-primary transition-colors group/btn">
+            <span
+              class="material-symbols-outlined text-2xl group-hover/btn:rotate-45 transition-transform duration-300">attach_file</span>
+          </button>
+          <input type="text" [(ngModel)]="question" (keyup.enter)="submit()"
+            placeholder="Nhập câu hỏi của bạn tại đây..."
+            class="flex-1 bg-transparent border-none outline-none px-4 py-5 font-black text-[#1e293b] placeholder:text-gray-300 text-base" />
+          <button (click)="submit()" [disabled]="!canSubmit()"
+            class="w-14 h-14 rounded-2xl bg-[#002555] text-white flex items-center justify-center shadow-xl transition-all hover:bg-[#001a41] active:scale-95 disabled:opacity-20 flex-shrink-0">
+            <span class="material-symbols-outlined text-2xl">send</span>
+          </button>
+        </div>
+        <div class="mt-4 text-center">
+          <p
+            class="text-[10px] font-black text-gray-300 uppercase tracking-widest flex items-center justify-center gap-2">
+            <span class="w-1 h-1 bg-gray-200 rounded-full"></span>
+            Z-Bot Assistant Version 2.0 • 2024
+            <span class="w-1 h-1 bg-gray-200 rounded-full"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Right Sidebar: Shortcuts & Info -->
+  <aside
+    class="w-full md:w-80 lg:w-96 bg-white border-l border-gray-100 flex flex-col p-8 space-y-12 overflow-y-auto hidden lg:flex">
+
+    <!-- Suggestions -->
+    <section class="space-y-8">
+      <div class="flex items-center gap-3 text-[#002555] group cursor-default">
+        <div
+          class="w-10 h-10 rounded-xl bg-primary/5 flex items-center justify-center group-hover:bg-primary transition-colors">
+          <span class="material-symbols-outlined text-primary group-hover:text-white transition-colors">lightbulb</span>
+        </div>
+        <h3 class="font-black text-xs uppercase tracking-widest">Gợi ý câu hỏi</h3>
+      </div>
+      <div class="space-y-4">
+        @for (item of suggestions; track item.title) {
+        <div (click)="useSuggestion(item.title)"
+          class="p-5 rounded-2xl bg-[#f8fafc] border border-transparent hover:border-primary/20 hover:bg-white hover:shadow-2xl transition-all cursor-pointer group">
+          <h4 class="text-[13px] font-black text-[#1e293b] mb-1 group-hover:text-primary transition-colors">{{
+            item.title }}</h4>
+          <p class="text-[10px] font-bold text-gray-400 uppercase tracking-tight">{{ item.category }}</p>
+        </div>
+        }
+      </div>
+    </section>
+
+    <!-- Promo Card -->
+    <section class="pt-4">
+      <div
+        class="p-8 rounded-[32px] bg-gradient-to-br from-[#002555] to-[#001433] text-white shadow-2xl relative overflow-hidden group">
+        <div
+          class="absolute -right-6 -top-6 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-1000">
+        </div>
+        <div class="relative z-10 space-y-6">
+          <div class="space-y-2">
+            <div
+              class="inline-flex px-3 py-1 bg-white/10 rounded-full text-[10px] font-black tracking-widest uppercase">
+              Premium</div>
+            <h3 class="font-black text-xl tracking-tight">Z-Bot Pro</h3>
+            <p class="text-[11px] text-white/60 leading-relaxed font-bold">Hỗ trợ trả lời văn bản, tóm tắt tài liệu học
+              tập và gợi ý lộ trình học tập cá nhân hóa.</p>
+          </div>
+          <button
+            class="w-full py-4 bg-white text-[#002555] rounded-2xl font-black text-xs uppercase tracking-widest hover:shadow-2xl hover:bg-gray-100 active:scale-95 transition-all">Khám
+            phá ngay</button>
+        </div>
+      </div>
+    </section>
+  </aside>
+</div>
