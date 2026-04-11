@@ -66,6 +66,9 @@
               <!-- Rich Result Content: Detailed cards -->
               @if (msg.type === 'rich' || (msg.matchedDocuments && msg.matchedDocuments.length > 0)) {
               <div class="mt-8 space-y-6 pt-6 border-t border-gray-50">
+
+                <!-- Mockup for "Training Points" - Only show if specifically relevant -->
+                @if (msg.text?.includes('điểm rèn luyện')) {
                 <div
                   class="flex items-center gap-3 text-[#002555] font-black text-[11px] uppercase tracking-widest italic">
                   <span class="material-symbols-outlined text-lg">description</span>
@@ -104,8 +107,9 @@
                     class="text-[#002555] font-black underline hover:text-primary transition-colors text-xs">Hồ sơ sinh
                     viên</a>
                 </div>
+                }
 
-                <!-- Actual dynamic documents if any -->
+                <!-- Actual dynamic documents if any (Always show if present) -->
                 @if (msg.matchedDocuments && msg.matchedDocuments.length > 0) {
                 <div class="flex flex-wrap gap-3 mt-4">
                   @for (doc of msg.matchedDocuments; track doc.id) {
