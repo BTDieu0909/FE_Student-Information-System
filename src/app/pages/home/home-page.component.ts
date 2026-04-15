@@ -31,6 +31,9 @@ export class HomePageComponent {
   readonly faqs = signal<FaqItem[]>([]);
   readonly documents = signal<DocumentItem[]>([]);
   readonly departments = signal<DepartmentItem[]>([]);
+  readonly categoryTotalCount = signal(0);
+  readonly documentTotalCount = signal(0);
+  readonly faqTotalCount = signal(0);
 
   readonly quickSuggestions = [
     "Cach dang ky tam tru?",
@@ -48,6 +51,8 @@ export class HomePageComponent {
   readonly canSubmit = computed(
     () => this.question().trim().length > 0 && !this.loading(),
   );
+
+
 
   constructor() {
     this.loadDashboardData();
@@ -81,15 +86,29 @@ export class HomePageComponent {
 
   private loadDashboardData(): void {
     this.portalDataService.getCategories().subscribe({
-      next: (response) => this.categories.set(response),
+      next: (response) => {
+        const deduped = Array.from(new Map((response || []).map((c: CategoryItem) => [c.id, c])).values());
+        this.categories.set(deduped);
+        this.categoryTotalCount.set(deduped.length);
+      },
     });
 
     this.portalDataService.getFaqs().subscribe({
-      next: (response) => this.faqs.set(response),
+      next: (response) => {
+        const deduped = Array.from(new Map((response || []).map((f: FaqItem) => [f.id, f])).values());
+        this.faqs.set(deduped);
+        this.faqTotalCount.set(deduped.length);
+      },
     });
 
     this.portalDataService.getDocuments({ Page: 1, PageSize: 20 }).subscribe({
-      next: (response) => this.documents.set(response.items ?? []),
+      next: (response) => {
+        const items: DocumentItem[] = (response as any).items || [];
+        const deduped = Array.from(new Map(items.map((d) => [d.parentFileId, d])).values());
+        this.documents.set(deduped);
+        const serverTotal = (response as any).totalCount || (response as any).totalItems || (response as any).total || 0;
+        this.documentTotalCount.set(serverTotal || deduped.length);
+      },
     });
 
     this.portalDataService.getDepartments().subscribe({
@@ -105,4 +124,27 @@ export class HomePageComponent {
   getCategoryFaqCount(categoryId: string): number {
     return this.faqs().filter((item) => item.categoryId === categoryId).length;
   }
+ 
+ 
+
+expandedFaqIds = signal<Set<string>>(new Set());
+
+toggleDetail(faq: FaqItem): void {
+  if (!faq.id) return;
+
+  const next = new Set(this.expandedFaqIds());
+
+  if (next.has(faq.id)) {
+    next.delete(faq.id);
+  } else {
+    next.add(faq.id);
+  }
+
+  this.expandedFaqIds.set(next);
+}
+
+isExpanded(faq: FaqItem): boolean {
+  return !!faq.id && this.expandedFaqIds().has(faq.id);
+}
+
 }

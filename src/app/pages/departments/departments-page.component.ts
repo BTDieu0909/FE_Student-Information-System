@@ -18,4 +18,15 @@ export class DepartmentsPageComponent {
       next: (response) => this.items.set(response)
     });
   }
+
+  getDescriptionLines(description?: string): string[] {
+  if (!description) {
+    return ['Thông tin đang cập nhật.'];
+  }
+
+  return description
+    .split('|')
+    .map(item => item.trim())
+    .filter(item => item.length > 0);
+}
 }

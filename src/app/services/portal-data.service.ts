@@ -40,9 +40,20 @@ export interface CategoryItem {
   slug: string;
 }
 
+export interface CategoryPayload {
+  name: string;
+  slug: string;
+}
+
 export interface DepartmentItem {
   id: string;
   name: string;
+  description? : string
+}
+
+export interface DepartmentPayload {
+  name: string;
+  description?: string;
 }
 
 export interface SearchLogItem {
@@ -70,6 +81,13 @@ export interface ActorItem {
   fullName: string;
   role: string;
   departmentId: string;
+}
+
+export interface ActorPayload {
+  username: string;
+  fullName: string;
+  role: string;
+  departmentId?: string;
 }
 
 export interface UploadDocumentPayload {
@@ -121,16 +139,49 @@ export class PortalDataService {
     return this.http.get<DocumentResponse>(url);
   }
 
-  getFaqs(): Observable<FaqItem[]> {
-    return this.http.get<FaqItem[]>("/api/Faq");
+  getFaqs(params?: Record<string, string | number>): Observable<FaqItem[]> {
+    const searchParams = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([key, value]) => {
+      if (`${value}`.trim().length > 0) {
+        searchParams.set(key, `${value}`);
+      }
+    });
+
+    const query = searchParams.toString();
+    const url = query ? `/api/Faq?${query}` : "/api/Faq";
+    return this.http.get<FaqItem[]>(url);
   }
 
   getCategories(): Observable<CategoryItem[]> {
     return this.http.get<CategoryItem[]>("/api/Category");
   }
 
+  createCategory(payload: CategoryPayload): Observable<unknown> {
+    return this.http.post("/api/Category", payload);
+  }
+
+  updateCategory(id: string, payload: CategoryPayload): Observable<unknown> {
+    return this.http.put(`/api/Category/${id}`, payload);
+  }
+
+  deleteCategory(id: string): Observable<unknown> {
+    return this.http.delete(`/api/Category/${id}`);
+  }
+
   getDepartments(): Observable<DepartmentItem[]> {
     return this.http.get<DepartmentItem[]>("/api/Department");
+  }
+
+  createDepartment(payload: DepartmentPayload): Observable<unknown> {
+    return this.http.post("/api/Department", payload);
+  }
+
+  updateDepartment(id: string, payload: DepartmentPayload): Observable<unknown> {
+    return this.http.put(`/api/Department/${id}`, payload);
+  }
+
+  deleteDepartment(id: string): Observable<unknown> {
+    return this.http.delete(`/api/Department/${id}`);
   }
 
   getSearchLogs(limit = 6): Observable<SearchLogItem[]> {
@@ -143,6 +194,18 @@ export class PortalDataService {
 
   getActors(): Observable<ActorItem[]> {
     return this.http.get<ActorItem[]>("/api/Actor");
+  }
+
+  createActor(payload: ActorPayload): Observable<unknown> {
+    return this.http.post("/api/Actor", payload);
+  }
+
+  updateActor(id: string, payload: ActorPayload): Observable<unknown> {
+    return this.http.put(`/api/Actor/${id}`, payload);
+  }
+
+  deleteActor(id: string): Observable<unknown> {
+    return this.http.delete(`/api/Actor/${id}`);
   }
 
   uploadDocument(payload: UploadDocumentPayload): Observable<unknown> {

@@ -1,16 +1,20 @@
 <section class="page-shell">
   <div class="page-header">
-    <p class="eyebrow">Collection Departments</p>
-    <h1>Thong tin phong ban</h1>
-    <p>Danh sach cac don vi ho tro sinh vien trong nha truong.</p>
+    <h1>Thông tin phòng ban</h1>
+    <p>Danh sách các phòng ban trong trường.</p>
   </div>
 
   <div class="department-grid">
     @for (item of items(); track item.id) {
-      <article class="department-card">
-        <h3>{{ item.name }}</h3>
-        <p>Don vi ho tro nghiep vu va huong dan sinh vien trong he thong tra cuu thong tin.</p>
-      </article>
+    <article class="department-card">
+      <h3>{{ item.name }}</h3>
+
+      <div class="department-description">
+        @for (line of getDescriptionLines(item.description); track $index) {
+        <p>{{ line }}</p>
+        }
+      </div>
+    </article>
     }
   </div>
 </section>

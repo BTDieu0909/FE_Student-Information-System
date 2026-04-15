@@ -1,4 +1,4 @@
-<section class="page-shell">
+<!-- <section class="page-shell">
   <section class="admin-hero">
     <div class="hero-copy">
       <p class="eyebrow">Quan tri noi dung</p>
@@ -27,7 +27,58 @@
         <span>{{ username() }}</span>
       </div>
     </article>
+  </section> -->
+
+
+<section class="page-shell">
+  <section class="admin-hero">
+
+    <!-- LEFT -->
+    <div class="hero-copy">
+      <p class="eyebrow">Trung tâm quản trị</p>
+
+      <h1>Bảng điều khiển quản trị</h1>
+
+      <p class="hero-text">
+        {{
+        isAdminView()
+        ? "Quản lý tập trung tài liệu, FAQ, danh mục, phòng ban và tài khoản nội bộ."
+        : "Theo dõi và cập nhật tài liệu, FAQ, danh mục và hoạt động hệ thống."
+        }}
+      </p>
+
+      <div class="hero-tags">
+        <span class="hero-tag">
+          Vai trò: {{ authService.getRole() }}
+        </span>
+
+        <span class="hero-tag">
+          Tài khoản: {{ username() }}
+        </span>
+      </div>
+    </div>
+
+    <!-- RIGHT -->
+    <article class="account-card">
+
+      <div class="account-logo">
+        <img src="/images/logoQNU.jpg" alt="Logo QNU" />
+      </div>
+
+      <div class="account-copy">
+        <p class="card-label">Tài khoản hiện tại</p>
+
+        <h2>{{ userDisplayName() }}</h2>
+
+        <span>{{ username() }}</span>
+      </div>
+
+    </article>
+
   </section>
+
+
+
 
   <section class="admin-workspace">
     <nav class="admin-top-nav">
@@ -48,7 +99,7 @@
           <div class="module-head">
             <div>
               <p class="card-label">Danh sach tai lieu</p>
-              <h3>{{ documents().length }} tai lieu</h3>
+              <h3>{{ documentTotalCount() }} tai lieu</h3>
             </div>
             <button type="button" class="secondary-action" (click)="clearDocumentSelection()">
               + Thêm mới
@@ -219,12 +270,18 @@
         <article class="module-card">
           <div class="module-head">
             <div>
-              <p class="card-label">Danh sach FAQ</p>
-              <h3>{{ faqs().length }} cau hoi</h3>
+              <p class="card-label">Danh sách FAQ</p>
+              <h3>{{ faqTotalCount() }} Câu hỏi</h3>
             </div>
             <button type="button" class="secondary-action" (click)="clearFaqSelection()">
               + Thêm mới
             </button>
+          </div>
+          <div class="data-toolbar">
+            <div class="search-box">
+              <input type="text" placeholder="Tìm kiếm FAQ..." [(ngModel)]="faqSearchQuery"
+                (keyup.enter)="searchFaqs()" />
+            </div>
           </div>
           <div class="document-grid">
             @for (item of faqs(); track item.id ?? item.question) {
@@ -315,39 +372,147 @@
       }
 
       @if (isActiveSection("categories")) {
-      <article class="module-card">
-        <div class="module-head">
-          <div>
-            <p class="card-label">Quan tri danh muc</p>
-            <h3>{{ categories().length }} danh muc</h3>
+      <section class="document-admin-grid">
+        <article class="module-card">
+          <div class="module-head">
+            <div>
+              <p class="card-label">Quan tri danh muc</p>
+              <h3>{{ categoryTotalCount() }} danh muc</h3>
+            </div>
+            <button type="button" class="secondary-action" (click)="clearCategorySelection()">
+              + Thêm mới
+            </button>
           </div>
+
+          <div class="document-grid">
+            @for (item of categories(); track item.id) {
+            <div class="document-card" [class.active-item]="currentFaq()?.id === item.id"
+              (click)="selectCategory(item)">
+              <strong>{{ item.name }}</strong>
+              <span>{{ item.slug }}</span>
+            </div>
+            } @empty {
+            <div class="empty">Chua co danh muc.</div>
+            }
+          </div>
+        </article>
+
+        @if (isCategoryModalOpen()) {
+        <div class="modal-overlay" (click)="closeCategoryModal()">
+          <article class="module-card modal-content" (click)="$event.stopPropagation()">
+            <div class="module-head">
+              <div>
+                <p class="card-label">{{ selectedCategoryId() ? "Cập nhật danh mục" : "Thêm danh mục mới" }}</p>
+                <h3>{{ categoryForm.name || "Đang tạo mới..." }}</h3>
+              </div>
+              <button type="button" class="danger-action" style="padding: 0 12px; min-height: 32px"
+                (click)="closeCategoryModal()">X</button>
+            </div>
+
+            <div class="form-grid">
+              <label class="field-block full-width">
+                <span>Tên danh mục</span>
+                <input type="text" [(ngModel)]="categoryForm.name" />
+              </label>
+
+              <label class="field-block full-width">
+                <span>Slug</span>
+                <input type="text" [(ngModel)]="categoryForm.slug" />
+              </label>
+            </div>
+
+            @if (categoryMessage()) {
+            <p class="success-message">{{ categoryMessage() }}</p>
+            }
+
+            @if (categoryError()) {
+            <p class="error-message">{{ categoryError() }}</p>
+            }
+
+            <div class="action-row">
+              @if (selectedCategoryId()) {
+              <button type="button" class="primary-action" (click)="saveCategory()">Lưu cập nhật</button>
+              <button type="button" class="danger-action" (click)="deleteSelectedCategory()">Xoá danh mục</button>
+              } @else {
+              <button type="button" class="primary-action" (click)="createCategory()">Tạo danh mục mới</button>
+              }
+            </div>
+          </article>
         </div>
-        <div class="chip-grid">
-          @for (item of categoryPreview(); track item.id) {
-          <span class="data-chip">{{ item.name }}</span>
-          } @empty {
-          <span class="empty-inline">Chua co danh muc.</span>
-          }
-        </div>
-      </article>
+        }
+      </section>
       }
 
       @if (isActiveSection("departments")) {
-      <article class="module-card">
-        <div class="module-head">
-          <div>
-            <p class="card-label">Quan tri phong ban</p>
-            <h3>{{ departments().length }} phong ban</h3>
+      <section class="document-admin-grid">
+        <article class="module-card">
+          <div class="module-head">
+            <div>
+              <p class="card-label">Quan tri phong ban</p>
+              <h3>{{ departmentTotalCount() }} phong ban</h3>
+            </div>
+            <button type="button" class="secondary-action" (click)="clearDepartmentSelection()">
+              + Thêm mới
+            </button>
           </div>
+
+          <div class="document-grid">
+            @for (item of departments(); track item.id) {
+            <div class="document-card" [class.active-item]="currentFaq()?.id === item.id"
+              (click)="selectDepartment(item)">
+              <strong>{{ item.name }}</strong>
+              <span>{{ item.description || 'Không có mô tả' }}</span>
+            </div>
+            } @empty {
+            <div class="empty">Chua co phong ban.</div>
+            }
+          </div>
+        </article>
+
+        @if (isDepartmentModalOpen()) {
+        <div class="modal-overlay" (click)="closeDepartmentModal()">
+          <article class="module-card modal-content" (click)="$event.stopPropagation()">
+            <div class="module-head">
+              <div>
+                <p class="card-label">{{ selectedDepartmentId() ? "Cập nhật phòng ban" : "Thêm phòng ban mới" }}</p>
+                <h3>{{ departmentForm.name || "Đang tạo mới..." }}</h3>
+              </div>
+              <button type="button" class="danger-action" style="padding: 0 12px; min-height: 32px"
+                (click)="closeDepartmentModal()">X</button>
+            </div>
+
+            <div class="form-grid">
+              <label class="field-block full-width">
+                <span>Tên phòng ban</span>
+                <input type="text" [(ngModel)]="departmentForm.name" />
+              </label>
+
+              <label class="field-block full-width">
+                <span>Mô tả</span>
+                <textarea rows="4" [(ngModel)]="departmentForm.description"></textarea>
+              </label>
+            </div>
+
+            @if (departmentMessage()) {
+            <p class="success-message">{{ departmentMessage() }}</p>
+            }
+
+            @if (departmentError()) {
+            <p class="error-message">{{ departmentError() }}</p>
+            }
+
+            <div class="action-row">
+              @if (selectedDepartmentId()) {
+              <button type="button" class="primary-action" (click)="saveDepartment()">Lưu cập nhật</button>
+              <button type="button" class="danger-action" (click)="deleteSelectedDepartment()">Xoá phòng ban</button>
+              } @else {
+              <button type="button" class="primary-action" (click)="createDepartment()">Tạo phòng ban mới</button>
+              }
+            </div>
+          </article>
         </div>
-        <div class="chip-grid">
-          @for (item of departmentPreview(); track item.id) {
-          <span class="data-chip">{{ item.name }}</span>
-          } @empty {
-          <span class="empty-inline">Chua co phong ban.</span>
-          }
-        </div>
-      </article>
+        }
+      </section>
       }
 
       @if (isActiveSection("search-logs")) {
@@ -393,25 +558,91 @@
       }
 
       @if (isAdminView() && isActiveSection("actors")) {
-      <article class="module-card accent-card">
-        <div class="module-head">
-          <div>
-            <p class="card-label">Quan ly tai khoan noi bo admin</p>
-            <h3>{{ actors().length }} tai khoan noi bo</h3>
+      <section class="document-admin-grid">
+        <article class="module-card accent-card">
+          <div class="module-head">
+            <div>
+              <p class="card-label">Quan ly tai khoan noi bo admin</p>
+              <h3>{{ actorTotalCount() }} tai khoan noi bo</h3>
+            </div>
+            <button type="button" class="secondary-action" (click)="clearActorSelection()">+ Thêm mới</button>
           </div>
-        </div>
 
-        <ul class="preview-list">
-          @for (item of actorPreview(); track item.id) {
-          <li>
-            <strong>{{ item.fullName }}</strong>
-            <span>{{ item.username }} - {{ item.role }}</span>
-          </li>
-          } @empty {
-          <li class="empty">Chua co tai khoan noi bo.</li>
-          }
-        </ul>
-      </article>
+          <div class="document-grid">
+            @for (item of actors(); track item.id) {
+            <div class="document-card" (click)="selectActor(item)">
+              <strong>{{ item.fullName }}</strong>
+              <span>{{ item.username }} - {{ item.role }}</span>
+            </div>
+            } @empty {
+            <div class="empty">Chua co tai khoan noi bo.</div>
+            }
+          </div>
+        </article>
+
+        @if (isActorModalOpen()) {
+        <div class="modal-overlay" (click)="closeActorModal()">
+          <article class="module-card modal-content" (click)="$event.stopPropagation()">
+            <div class="module-head">
+              <div>
+                <p class="card-label">{{ selectedActorId() ? "Cập nhật tài khoản" : "Thêm tài khoản mới" }}</p>
+                <h3>{{ actorForm.fullName || "Đang tạo mới..." }}</h3>
+              </div>
+              <button type="button" class="danger-action" style="padding: 0 12px; min-height: 32px"
+                (click)="closeActorModal()">X</button>
+            </div>
+
+            <div class="form-grid">
+              <label class="field-block full-width">
+                <span>Username</span>
+                <input type="text" [(ngModel)]="actorForm.username" />
+              </label>
+
+              <label class="field-block full-width">
+                <span>Full name</span>
+                <input type="text" [(ngModel)]="actorForm.fullName" />
+              </label>
+
+              <label class="field-block">
+                <span>Vai tro</span>
+                <select [(ngModel)]="actorForm.role">
+                  <option value="">Chon vai tro</option>
+                  <option value="admin">admin</option>
+                  <option value="staff">staff</option>
+                </select>
+              </label>
+
+              <label class="field-block">
+                <span>Phong ban</span>
+                <select [(ngModel)]="actorForm.departmentId">
+                  <option value="">Khong thuoc phong ban</option>
+                  @for (item of departments(); track item.id) {
+                  <option [value]="item.id">{{ item.name }}</option>
+                  }
+                </select>
+              </label>
+            </div>
+
+            @if (actorMessage()) {
+            <p class="success-message">{{ actorMessage() }}</p>
+            }
+
+            @if (actorError()) {
+            <p class="error-message">{{ actorError() }}</p>
+            }
+
+            <div class="action-row">
+              @if (selectedActorId()) {
+              <button type="button" class="primary-action" (click)="saveActor()">Lưu cập nhật</button>
+              <button type="button" class="danger-action" (click)="deleteSelectedActor()">Xoá tài khoản</button>
+              } @else {
+              <button type="button" class="primary-action" (click)="createActor()">Tạo tài khoản mới</button>
+              }
+            </div>
+          </article>
+        </div>
+        }
+      </section>
       }
     </section>
   </section>
