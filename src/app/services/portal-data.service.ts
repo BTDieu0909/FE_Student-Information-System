@@ -48,7 +48,7 @@ export interface CategoryPayload {
 export interface DepartmentItem {
   id: string;
   name: string;
-  description? : string
+  description?: string;
 }
 
 export interface DepartmentPayload {
@@ -73,6 +73,14 @@ export interface SearchLogSummary {
   fallback: number;
   noData: number;
   error: number;
+}
+
+export interface SearchLogPageResponse {
+  items: SearchLogItem[];
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
 }
 
 export interface ActorItem {
@@ -176,7 +184,10 @@ export class PortalDataService {
     return this.http.post("/api/Department", payload);
   }
 
-  updateDepartment(id: string, payload: DepartmentPayload): Observable<unknown> {
+  updateDepartment(
+    id: string,
+    payload: DepartmentPayload,
+  ): Observable<unknown> {
     return this.http.put(`/api/Department/${id}`, payload);
   }
 
@@ -186,6 +197,41 @@ export class PortalDataService {
 
   getSearchLogs(limit = 6): Observable<SearchLogItem[]> {
     return this.http.get<SearchLogItem[]>(`/api/SearchLog?limit=${limit}`);
+  }
+
+  getSearchLogsPage(
+    page = 1,
+    pageSize = 10,
+    params?: {
+      query?: string;
+      source?: string;
+      startDate?: string;
+      endDate?: string;
+    },
+  ): Observable<SearchLogPageResponse> {
+    const searchParams = new URLSearchParams({
+      page: `${page}`,
+      pageSize: `${pageSize}`,
+    });
+
+    if (params) {
+      if (params.query?.trim()) {
+        searchParams.set("query", params.query.trim());
+      }
+      if (params.source?.trim()) {
+        searchParams.set("source", params.source.trim());
+      }
+      if (params.startDate) {
+        searchParams.set("startDate", params.startDate);
+      }
+      if (params.endDate) {
+        searchParams.set("endDate", params.endDate);
+      }
+    }
+
+    return this.http.get<SearchLogPageResponse>(
+      `/api/SearchLog?${searchParams.toString()}`,
+    );
   }
 
   getSearchLogSummary(): Observable<SearchLogSummary> {
