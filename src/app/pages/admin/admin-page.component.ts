@@ -63,6 +63,13 @@ export class AdminPageComponent {
     description: "",
   };
   protected readonly searchLogs = signal<SearchLogItem[]>([]);
+  protected readonly searchLogQuery = signal("");
+  protected readonly searchLogSource = signal<string | null>(null);
+  protected readonly searchLogStart = signal("");
+  protected readonly searchLogEnd = signal("");
+  protected readonly searchLogCurrentPage = signal(1);
+  protected readonly searchLogTotalPages = signal(1);
+  protected readonly searchLogTotalCount = signal(0);
   protected readonly actors = signal<ActorItem[]>([]);
   protected readonly selectedActorId = signal<string | null>(null);
   protected readonly actorMessage = signal("");
@@ -370,7 +377,9 @@ export class AdminPageComponent {
         });
       },
       error: (error: HttpErrorResponse) => {
-        this.actorError.set(this.extractHttpErrorMessage(error, "Khong the tao tai khoan."));
+        this.actorError.set(
+          this.extractHttpErrorMessage(error, "Khong the tao tai khoan."),
+        );
         this.actorMessage.set("");
       },
     });
@@ -415,7 +424,10 @@ export class AdminPageComponent {
       },
       error: (error: HttpErrorResponse) => {
         // Reload and check
-        this.portalDataService.getActors().subscribe({ next: (items) => this.actors.set(items), error: () => this.actors.set([]) });
+        this.portalDataService.getActors().subscribe({
+          next: (items) => this.actors.set(items),
+          error: () => this.actors.set([]),
+        });
 
         setTimeout(() => {
           const updated = this.actors().find((a) => a.id === id);
@@ -430,7 +442,12 @@ export class AdminPageComponent {
             this.actorError.set("");
             this.closeActorModal();
           } else {
-            this.actorError.set(this.extractHttpErrorMessage(error, "Khong the cap nhat tai khoan."));
+            this.actorError.set(
+              this.extractHttpErrorMessage(
+                error,
+                "Khong the cap nhat tai khoan.",
+              ),
+            );
             this.actorMessage.set("");
           }
         }, 700);
@@ -466,7 +483,10 @@ export class AdminPageComponent {
         });
       },
       error: (error: HttpErrorResponse) => {
-        this.portalDataService.getActors().subscribe({ next: (items) => this.actors.set(items), error: () => this.actors.set([]) });
+        this.portalDataService.getActors().subscribe({
+          next: (items) => this.actors.set(items),
+          error: () => this.actors.set([]),
+        });
 
         setTimeout(() => {
           const stillExists = this.actors().some((a) => a.id === id);
@@ -477,7 +497,9 @@ export class AdminPageComponent {
             this.resetActorForm();
             this.closeActorModal();
           } else {
-            this.actorError.set(this.extractHttpErrorMessage(error, "Khong the xoa tai khoan."));
+            this.actorError.set(
+              this.extractHttpErrorMessage(error, "Khong the xoa tai khoan."),
+            );
             this.actorMessage.set("");
           }
         }, 700);
@@ -505,7 +527,10 @@ export class AdminPageComponent {
   }
 
   protected createDepartment(): void {
-    const payload = { name: this.departmentForm.name.trim(), description: this.departmentForm.description.trim() };
+    const payload = {
+      name: this.departmentForm.name.trim(),
+      description: this.departmentForm.description.trim(),
+    };
     if (!payload.name) {
       this.departmentError.set("Name la bat buoc.");
       return;
@@ -531,7 +556,9 @@ export class AdminPageComponent {
         });
       },
       error: (error: HttpErrorResponse) => {
-        this.departmentError.set(this.extractHttpErrorMessage(error, "Khong the tao phong ban."));
+        this.departmentError.set(
+          this.extractHttpErrorMessage(error, "Khong the tao phong ban."),
+        );
         this.departmentMessage.set("");
       },
     });
@@ -544,7 +571,10 @@ export class AdminPageComponent {
       return;
     }
 
-    const payload = { name: this.departmentForm.name.trim(), description: this.departmentForm.description.trim() };
+    const payload = {
+      name: this.departmentForm.name.trim(),
+      description: this.departmentForm.description.trim(),
+    };
     if (!payload.name) {
       this.departmentError.set("Name la bat buoc.");
       return;
@@ -569,16 +599,28 @@ export class AdminPageComponent {
         });
       },
       error: (error: HttpErrorResponse) => {
-        this.portalDataService.getDepartments().subscribe({ next: (items) => this.departments.set(items), error: () => this.departments.set([]) });
+        this.portalDataService.getDepartments().subscribe({
+          next: (items) => this.departments.set(items),
+          error: () => this.departments.set([]),
+        });
 
         setTimeout(() => {
           const updated = this.departments().find((d) => d.id === id);
-          if (updated && updated.name === payload.name && (updated.description ?? "") === (payload.description ?? "")) {
+          if (
+            updated &&
+            updated.name === payload.name &&
+            (updated.description ?? "") === (payload.description ?? "")
+          ) {
             this.departmentMessage.set("Cap nhat phong ban thanh cong.");
             this.departmentError.set("");
             this.closeDepartmentModal();
           } else {
-            this.departmentError.set(this.extractHttpErrorMessage(error, "Khong the cap nhat phong ban."));
+            this.departmentError.set(
+              this.extractHttpErrorMessage(
+                error,
+                "Khong the cap nhat phong ban.",
+              ),
+            );
             this.departmentMessage.set("");
           }
         }, 700);
@@ -614,7 +656,10 @@ export class AdminPageComponent {
         });
       },
       error: (error: HttpErrorResponse) => {
-        this.portalDataService.getDepartments().subscribe({ next: (items) => this.departments.set(items), error: () => this.departments.set([]) });
+        this.portalDataService.getDepartments().subscribe({
+          next: (items) => this.departments.set(items),
+          error: () => this.departments.set([]),
+        });
 
         setTimeout(() => {
           const stillExists = this.departments().some((d) => d.id === id);
@@ -625,7 +670,9 @@ export class AdminPageComponent {
             this.resetDepartmentForm();
             this.closeDepartmentModal();
           } else {
-            this.departmentError.set(this.extractHttpErrorMessage(error, "Khong the xoa phong ban."));
+            this.departmentError.set(
+              this.extractHttpErrorMessage(error, "Khong the xoa phong ban."),
+            );
             this.departmentMessage.set("");
           }
         }, 700);
@@ -651,7 +698,10 @@ export class AdminPageComponent {
   }
 
   protected createCategory(): void {
-    const payload = { name: this.categoryForm.name.trim(), slug: this.categoryForm.slug.trim() };
+    const payload = {
+      name: this.categoryForm.name.trim(),
+      slug: this.categoryForm.slug.trim(),
+    };
     if (!payload.name || !payload.slug) {
       this.categoryError.set("Name va slug la bat buoc.");
       return;
@@ -677,7 +727,9 @@ export class AdminPageComponent {
         });
       },
       error: (error: HttpErrorResponse) => {
-        this.categoryError.set(this.extractHttpErrorMessage(error, "Khong the tao danh muc."));
+        this.categoryError.set(
+          this.extractHttpErrorMessage(error, "Khong the tao danh muc."),
+        );
         this.categoryMessage.set("");
       },
     });
@@ -690,7 +742,10 @@ export class AdminPageComponent {
       return;
     }
 
-    const payload = { name: this.categoryForm.name.trim(), slug: this.categoryForm.slug.trim() };
+    const payload = {
+      name: this.categoryForm.name.trim(),
+      slug: this.categoryForm.slug.trim(),
+    };
     if (!payload.name || !payload.slug) {
       this.categoryError.set("Name va slug la bat buoc.");
       return;
@@ -716,16 +771,28 @@ export class AdminPageComponent {
       },
       error: (error: HttpErrorResponse) => {
         // Reload and check if updated
-        this.portalDataService.getCategories().subscribe({ next: (items) => this.categories.set(items), error: () => this.categories.set([]) });
+        this.portalDataService.getCategories().subscribe({
+          next: (items) => this.categories.set(items),
+          error: () => this.categories.set([]),
+        });
 
         setTimeout(() => {
           const updated = this.categories().find((c) => c.id === id);
-          if (updated && updated.name === payload.name && updated.slug === payload.slug) {
+          if (
+            updated &&
+            updated.name === payload.name &&
+            updated.slug === payload.slug
+          ) {
             this.categoryMessage.set("Cap nhat danh muc thanh cong.");
             this.categoryError.set("");
             this.closeCategoryModal();
           } else {
-            this.categoryError.set(this.extractHttpErrorMessage(error, "Khong the cap nhat danh muc."));
+            this.categoryError.set(
+              this.extractHttpErrorMessage(
+                error,
+                "Khong the cap nhat danh muc.",
+              ),
+            );
             this.categoryMessage.set("");
           }
         }, 700);
@@ -761,7 +828,10 @@ export class AdminPageComponent {
         });
       },
       error: (error: HttpErrorResponse) => {
-        this.portalDataService.getCategories().subscribe({ next: (items) => this.categories.set(items), error: () => this.categories.set([]) });
+        this.portalDataService.getCategories().subscribe({
+          next: (items) => this.categories.set(items),
+          error: () => this.categories.set([]),
+        });
 
         setTimeout(() => {
           const stillExists = this.categories().some((c) => c.id === id);
@@ -772,7 +842,9 @@ export class AdminPageComponent {
             this.resetCategoryForm();
             this.closeCategoryModal();
           } else {
-            this.categoryError.set(this.extractHttpErrorMessage(error, "Khong the xoa danh muc."));
+            this.categoryError.set(
+              this.extractHttpErrorMessage(error, "Khong the xoa danh muc."),
+            );
             this.categoryMessage.set("");
           }
         }, 700);
@@ -1101,7 +1173,10 @@ export class AdminPageComponent {
             this.closeFaqModal();
           } else {
             this.faqError.set(
-              this.extractHttpErrorMessage(error as HttpErrorResponse, "Khong the xoa FAQ."),
+              this.extractHttpErrorMessage(
+                error as HttpErrorResponse,
+                "Khong the xoa FAQ.",
+              ),
             );
             this.faqMessage.set("");
           }
@@ -1140,10 +1215,7 @@ export class AdminPageComponent {
       error: () => this.departments.set([]),
     });
 
-    this.portalDataService.getSearchLogs(8).subscribe({
-      next: (items) => this.searchLogs.set(items),
-      error: () => this.searchLogs.set([]),
-    });
+    this.loadSearchLogs();
 
     this.portalDataService.getSearchLogSummary().subscribe({
       next: (summary) => this.searchSummary.set(summary),
@@ -1191,6 +1263,28 @@ export class AdminPageComponent {
     }
   }
 
+  protected searchLogsByFilter(): void {
+    this.searchLogCurrentPage.set(1);
+    this.loadSearchLogs(1);
+  }
+
+  protected clearSearchLogFilters(): void {
+    this.searchLogQuery.set("");
+    this.searchLogSource.set(null);
+    this.searchLogStart.set("");
+    this.searchLogEnd.set("");
+    this.searchLogCurrentPage.set(1);
+    this.loadSearchLogs(1);
+  }
+
+  protected changeSearchLogPage(delta: number): void {
+    const newPage = this.searchLogCurrentPage() + delta;
+    if (newPage >= 1 && newPage <= this.searchLogTotalPages()) {
+      this.searchLogCurrentPage.set(newPage);
+      this.loadSearchLogs(newPage);
+    }
+  }
+
   private loadDocuments(): void {
     this.portalDataService
       .getDocuments({
@@ -1208,11 +1302,39 @@ export class AdminPageComponent {
           const deduped = Array.from(map.values());
           this.documents.set(deduped);
 
-          const serverTotal = (response as any).totalCount || (response as any).totalItems || (response as any).total || 0;
+          const serverTotal =
+            (response as any).totalCount ||
+            (response as any).totalItems ||
+            (response as any).total ||
+            0;
           this.documentTotalCount.set(serverTotal || deduped.length);
           this.documentTotalPages.set((response as any).totalPages || 1);
         },
         error: () => this.documents.set([]),
+      });
+  }
+
+  private loadSearchLogs(page = 1): void {
+    this.portalDataService
+      .getSearchLogsPage(page, 10, {
+        query: this.searchLogQuery(),
+        source: this.searchLogSource() ?? undefined,
+        startDate: this.searchLogStart() || undefined,
+        endDate: this.searchLogEnd() || undefined,
+      })
+      .subscribe({
+        next: (response) => {
+          this.searchLogs.set(response.items || []);
+          this.searchLogCurrentPage.set(response.page || 1);
+          this.searchLogTotalPages.set(response.totalPages || 1);
+          this.searchLogTotalCount.set(response.totalItems || 0);
+        },
+        error: () => {
+          this.searchLogs.set([]);
+          this.searchLogCurrentPage.set(1);
+          this.searchLogTotalPages.set(1);
+          this.searchLogTotalCount.set(0);
+        },
       });
   }
 
