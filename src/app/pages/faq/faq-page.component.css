@@ -182,3 +182,40 @@
     grid-template-columns: 1fr;
   }
 }
+
+:host-context(.dark) .page-header h1,
+:host-context(.dark) .faq-card h3 {
+  color: #e2e8f0;
+}
+
+:host-context(.dark) .eyebrow,
+:host-context(.dark) .page-header p,
+:host-context(.dark) .faq-card p,
+:host-context(.dark) .status-text {
+  color: #94a3b8;
+}
+
+:host-context(.dark) .search-bar input {
+  background: rgba(30, 41, 59, 0.94);
+  border-color: rgba(148, 163, 184, 0.16);
+  color: #f8fafc;
+}
+
+:host-context(.dark) .search-bar input:focus {
+  background: rgba(30, 41, 59, 0.98);
+  border-color: rgba(148, 163, 184, 0.28);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
+
+:host-context(.dark) .faq-card,
+:host-context(.dark) article.faq-card {
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.98), rgba(30, 41, 59, 0.94)) !important;
+  background-color: rgba(30, 41, 59, 0.98) !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
+  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.22) !important;
+}
+
+:host-context(.dark) .faq-card:hover {
+  box-shadow: 0 24px 60px rgba(2, 6, 23, 0.28) !important;
+  border-color: rgba(148, 163, 184, 0.24) !important;
+}

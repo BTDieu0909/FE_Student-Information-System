@@ -1,18 +1,18 @@
 <section class="page-shell">
   <div class="page-header">
-    <p class="eyebrow">Kho tai lieu</p>
-    <h1>Tim kiem va loc thong tin</h1>
-    <p>Danh sach tai lieu duoc lay tu Collection Documents de sinh vien tim kiem nhanh.</p>
+    <p class="eyebrow">Kho tài liệu</p>
+    <h1>Tìm kiếm và lọc thông tin </h1>
+
   </div>
 
   <div class="search-bar">
     <input type="text" [ngModel]="keyword()" (ngModelChange)="keyword.set($event)"
-      placeholder="Nhap tu khoa tim tai lieu..." />
-    <button type="button" (click)="search()">Tim kiem</button>
+      placeholder="Nhập từ khóa tìm tài liệu..." />
+    <button type="button" (click)="search()">Tìm kiếm</button>
   </div>
 
   @if (loading()) {
-  <p class="status-text">Dang tai du lieu...</p>
+  <p class="status-text">Đang tải dữ liệu...</p>
   }
 
   @if (errorMessage()) {

@@ -1,1 +1,90 @@
 /* Styles migrated to Tailwind utility classes in the template */
+
+:host {
+  display: block;
+}
+
+.chat-suggestion-title {
+  color: #002555;
+}
+
+:host-context(.dark) .chat-page,
+:host-context(.dark) .chat-main {
+  background: #0f172a !important;
+}
+
+:host-context(.dark) .chat-bot-card,
+:host-context(.dark) .chat-input-shell,
+:host-context(.dark) .chat-sidebar,
+:host-context(.dark) .chat-suggestion-card {
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.98), rgba(30, 41, 59, 0.94)) !important;
+  background-color: rgba(30, 41, 59, 0.98) !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
+  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.22) !important;
+}
+
+:host-context(.dark) .chat-input-area {
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.78), transparent) !important;
+}
+
+:host-context(.dark) .chat-bot-card,
+:host-context(.dark) .chat-suggestion-card h4 {
+  color: #e2e8f0 !important;
+}
+
+:host-context(.dark) .chat-suggestion-title {
+  color: #94a3b8 !important;
+}
+
+:host-context(.dark) .bg-\[\#f8f9fa\] {
+  background: #0f172a !important;
+}
+
+:host-context(.dark) .bg-white,
+:host-context(.dark) .bg-\[\#f8fafc\] {
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.98), rgba(30, 41, 59, 0.94)) !important;
+}
+
+:host-context(.dark) .bg-gray-50 {
+  background: rgba(51, 65, 85, 0.72) !important;
+}
+
+:host-context(.dark) .border-gray-100,
+:host-context(.dark) .border-gray-100\/80,
+:host-context(.dark) .border-gray-200 {
+  border-color: rgba(148, 163, 184, 0.16) !important;
+}
+
+:host-context(.dark) .shadow-sm,
+:host-context(.dark) .shadow-lg,
+:host-context(.dark) .shadow-2xl {
+  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.22) !important;
+}
+
+:host-context(.dark) .rounded-\[28px\].bg-white,
+:host-context(.dark) .rounded-2xl.bg-\[\#f8fafc\],
+:host-context(.dark) .w-full.md\:w-80.lg\:w-96.bg-white {
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.98), rgba(30, 41, 59, 0.94)) !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
+  box-shadow: 0 20px 50px rgba(2, 6, 23, 0.22) !important;
+}
+
+:host-context(.dark) .text-\[\#1e293b\],
+:host-context(.dark) .bg-white h4,
+:host-context(.dark) .bg-\[\#f8fafc\] h4 {
+  color: #e2e8f0 !important;
+}
+
+:host-context(.dark) .text-gray-400,
+:host-context(.dark) .text-gray-500,
+:host-context(.dark) .text-gray-600 {
+  color: #94a3b8 !important;
+}
+
+:host-context(.dark) input::placeholder {
+  color: #94a3b8 !important;
+}
+
+:host-context(.dark) input {
+  color: #f8fafc !important;
+}

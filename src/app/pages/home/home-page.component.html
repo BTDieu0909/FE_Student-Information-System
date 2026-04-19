@@ -1,112 +1,107 @@
-<div class="space-y-10 py-8">
-  <!-- Welcome Header -->
+<div class="home-page space-y-10 py-8">
   <section class="space-y-2">
-    <p class="text-on-surface-variant font-headline text-[10px] uppercase tracking-[0.2em] font-bold">CHÀO MỪNG TRỞ LẠI
+    <p class="text-on-surface-variant font-headline text-[10px] uppercase tracking-[0.2em] font-bold">
     </p>
-    <h1 class="text-[#002555] font-headline text-4xl font-extrabold tracking-tight">Hệ thống Thông tin Sinh viên</h1>
+    <h1 class="home-page-title font-headline text-4xl font-extrabold tracking-tight">Hệ thống Tra cứu thông tin sinh
+      viên</h1>
   </section>
 
-  <!-- Stats Row -->
-  <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+  <section class="grid grid-cols-1 gap-6 md:grid-cols-3">
     <div
-      class="bg-white p-10 rounded-3xl flex flex-col items-start gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 group hover:shadow-md transition-all">
-      <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-primary">
+      class="home-stat-card bg-white p-10 rounded-3xl flex flex-col items-start gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 group hover:shadow-md transition-all">
+      <div class="home-stat-icon w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-primary">
         <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">list_alt</span>
       </div>
       <div>
-        <p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold mb-1">DANH MỤC TRA CỨU</p>
-        <h4 class="text-3xl font-black text-[#002555] font-headline">{{ categoryTotalCount() || '0' }}</h4>
+        <p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold mb-1">DANH MỤC</p>
+        <h4 class="home-stat-value text-3xl font-black font-headline">{{ categoryTotalCount() || '0' }}</h4>
       </div>
     </div>
 
     <div
-      class="bg-white p-10 rounded-3xl flex flex-col items-start gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 group hover:shadow-md transition-all">
-      <div class="w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-primary">
+      class="home-stat-card bg-white p-10 rounded-3xl flex flex-col items-start gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 group hover:shadow-md transition-all">
+      <div class="home-stat-icon w-12 h-12 rounded-xl bg-gray-100 flex items-center justify-center text-primary">
         <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">description</span>
       </div>
       <div>
-        <p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold mb-1">TÀI LIỆU HIỆN CÓ</p>
-        <h4 class="text-3xl font-black text-[#002555] font-headline">{{ documentTotalCount() || '0' }}</h4>
+        <p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold mb-1  ">TÀI LIỆU
+          HIỆN CÓ</p>
+        <h4 class="home-stat-value text-3xl font-black font-headline">{{ documentTotalCount() || '0' }}</h4>
       </div>
     </div>
 
     <div
-      class="bg-white p-10 rounded-3xl flex flex-col items-start gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 group hover:shadow-md transition-all">
-      <div class="w-12 h-12 rounded-xl bg-orange-50/50 flex items-center justify-center text-orange-600">
+      class="home-stat-card bg-white p-10 rounded-3xl flex flex-col items-start gap-4 shadow-[0_4px_20px_rgba(0,0,0,0.03)] border border-gray-50 group hover:shadow-md transition-all">
+      <div
+        class="home-stat-icon home-stat-icon--faq w-12 h-12 rounded-xl bg-orange-50/50 flex items-center justify-center text-orange-600">
         <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">forum</span>
       </div>
       <div>
-        <p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold mb-1">FAQ SẴN SÀNG</p>
-        <h4 class="text-3xl font-black text-[#002555] font-headline">{{ faqTotalCount() || '0' }}</h4>
+        <p class="text-on-surface-variant text-[10px] uppercase tracking-wider font-bold mb-1">FAQ SAN SANG</p>
+        <h4 class="home-stat-value text-3xl font-black font-headline">{{ faqTotalCount() || '0' }}</h4>
       </div>
     </div>
   </section>
 
-  <!-- Quick Search Section -->
-  <section
-    class="bg-white/40 backdrop-blur-sm py-20 px-12 rounded-[40px] flex flex-col items-center text-center space-y-10 border border-white/50 shadow-sm">
-    <div class="max-w-2xl w-full">
-      <h2 class="text-[#002555] font-headline text-2xl font-bold mb-10">Bạn đang tìm kiếm thông tin gì?</h2>
-      <div class="relative w-full group">
-        <span
-          class="absolute left-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors">search</span>
-        <input
-          class="w-full pl-16 pr-48 py-5 bg-white border-none rounded-2xl shadow-sm focus:ring-4 focus:ring-primary/5 text-on-surface placeholder:text-gray-300 font-medium text-lg"
-          placeholder="Tìm kiếm văn bản, thủ tục, lịch học..." type="text" [ngModel]="question()"
-          (ngModelChange)="question.set($event)" (keyup.enter)="submit()" />
-        <button (click)="submit()"
-          class="absolute right-3 top-1/2 -translate-y-1/2 bg-[#002555] text-white px-10 py-3.5 rounded-xl font-bold text-sm shadow-md transition-all hover:bg-[#00347a] active:scale-95">
-          {{ loading() ? 'Đang tìm...' : 'Tìm nhanh' }}
-        </button>
-      </div>
-      <div class="flex flex-wrap justify-center gap-3 mt-12">
-        <span class="text-xs font-bold text-gray-400 uppercase tracking-widest self-center mr-3">GỢI Ý:</span>
-        @for (item of heroSuggestions; track item) {
-        <button type="button" (click)="useSuggestion(item)"
-          class="bg-white border border-gray-100 text-gray-600 px-6 py-2.5 rounded-full text-xs font-semibold hover:bg-gray-50 hover:text-primary transition-all active:scale-95">
-          {{ item }}
-        </button>
-        }
-      </div>
-    </div>
-  </section>
 
-  <!-- FAQs Section -->
+
   <section class="space-y-8">
     <div class="flex justify-between items-center border-b border-gray-100 pb-6">
       <div>
-        <h2 class="text-[#002555] font-headline text-2xl font-extrabold tracking-tight">Câu hỏi thường gặp (FAQs)</h2>
+        <h2 class="home-section-title font-headline text-2xl font-extrabold tracking-tight">Câu hỏi thường gặp (FAQs)
+        </h2>
         <p class="text-on-surface-variant text-sm mt-1 font-medium">Giải đáp nhanh các thắc mắc phổ biến của sinh viên
         </p>
       </div>
       <a class="text-xs font-bold text-primary flex items-center gap-1 hover:underline transition-all group"
         [routerLink]="['/faq']">
-        Xem tất cả FAQ
+        Xem tất cả các câu FAQ
         <span
           class="material-symbols-outlined text-sm transition-transform group-hover:translate-x-1">arrow_forward</span>
       </a>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+      @if (selectedFaq(); as faq) {
+      <div class="faq-modal-backdrop" (click)="closeFaqDetail()">
+        <div class="faq-modal" (click)="$event.stopPropagation()">
+          <button type="button" class="faq-modal-close" (click)="closeFaqDetail()">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+
+          <div class="faq-modal-icon">
+            <span class="material-symbols-outlined">description</span>
+          </div>
+
+          <p class="faq-modal-eyebrow">FAQ chi tiết</p>
+          <h2 class="faq-modal-title">{{ faq.question }}</h2>
+
+          <div class="faq-modal-content">
+            <p>{{ faq.answer }}</p>
+          </div>
+        </div>
+      </div>
+      }
+
       @for (faq of faqs().slice(0, 6); track faq.id) {
       <div
-        class="bg-white p-10 rounded-3xl border border-gray-50 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-xl hover:translate-y-[-4px] transition-all group flex flex-col h-full">
+        class="home-faq-card bg-white p-10 rounded-3xl border border-gray-50 shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-xl hover:translate-y-[-4px] transition-all group flex flex-col h-full">
         <div class="flex-1 space-y-6">
           <div
-            class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-primary group-hover:text-white transition-colors">
+            class="home-faq-icon w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-primary group-hover:text-white transition-colors">
             <span class="material-symbols-outlined text-xl">description</span>
           </div>
-          <h3 class="text-[#002555] font-bold font-headline leading-tight text-xl line-clamp-2">{{ faq.question }}</h3>
+          <h3 class="home-faq-title font-bold font-headline leading-tight text-xl line-clamp-2">{{ faq.question }}</h3>
           <p class="text-on-surface-variant text-sm leading-relaxed line-clamp-3">
             {{ faq.answer }}
           </p>
         </div>
 
         <div
-          class="mt-10 pt-6 border-t border-gray-50 flex items-center text-primary text-[10px] font-bold gap-1 uppercase tracking-wider group-hover:gap-2 transition-all cursor-pointer">
+          class="mt-10 pt-6 border-t border-gray-50 flex items-center text-primary text-[10px] font-bold gap-1 uppercase tracking-wider group-hover:gap-2 transition-all cursor-pointer"
+          (click)="openFaqDetail(faq)">
           XEM CHI TIẾT <span class="material-symbols-outlined text-xs">arrow_forward</span>
         </div>
-
       </div>
       }
     </div>

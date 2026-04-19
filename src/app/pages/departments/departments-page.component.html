@@ -1,9 +1,39 @@
 <section class="page-shell">
   <div class="page-header">
-    <h1>Thông tin phòng ban</h1>
-    <p>Danh sách các phòng ban trong trường.</p>
+    <div class="page-header-copy">
+      <h1>{{ pageHeaderTitle() }}</h1>
+      <p>{{ pageHeaderDescription() }}</p>
+    </div>
+
+    <div class="page-header-actions" aria-label="Loai don vi">
+      <button type="button" class="header-action-button" [class.is-active]="activeView() === 'departments'"
+        (click)="showDepartments($event)">
+        Phong ban
+      </button>
+
+      <div class="faculty-dropdown-shell" (click)="$event.stopPropagation()" (mouseenter)="openFacultyMenu()"
+        (mouseleave)="scheduleFacultyMenuClose()">
+        <button type="button" class="header-action-button" [class.is-active]="activeView() === 'faculties'"
+          (click)="toggleFaculties($event)">
+          Khoa
+        </button>
+
+        @if (isFacultyMenuOpen()) {
+        <div class="faculty-dropdown-card" (mouseenter)="openFacultyMenu()" (mouseleave)="scheduleFacultyMenuClose()">
+          @for (page of facultyPages(); track page.key) {
+          <button type="button" class="faculty-dropdown-item" [class.is-active]="selectedFacultyPageKey() === page.key"
+            (click)="selectFacultyPage(page.key, $event)">
+            <span class="material-symbols-outlined">chevron_right</span>
+            {{ page.label }}
+          </button>
+          }
+        </div>
+        }
+      </div>
+    </div>
   </div>
 
+  @if (activeView() === "departments") {
   <div class="department-grid">
     @for (item of items(); track item.id) {
     <article class="department-card">
@@ -17,4 +47,251 @@
     </article>
     }
   </div>
+  }
+
+  @if (activeView() === "faculties") {
+  <section class="faculty-layout">
+    <article class="faculty-page-card" [class.faculty-page-card-document]="isDocumentStylePage()"
+      [class.faculty-page-card-history]="selectedFacultyPageKey() === 'history'"
+      [class.faculty-page-card-vision]="selectedFacultyPageKey() === 'vision'"
+      [class.faculty-page-card-strategy]="selectedFacultyPageKey() === 'strategy'"
+      [class.faculty-page-card-staff]="selectedFacultyPageKey() === 'staff'"
+      [class.faculty-page-card-structure]="selectedFacultyPageKey() === 'structure'"
+      [class.faculty-page-card-facilities]="selectedFacultyPageKey() === 'facilities'">
+      <div class="faculty-page-head" [class.faculty-page-head-history]="selectedFacultyPageKey() === 'history'"
+        [class.faculty-page-head-vision]="selectedFacultyPageKey() === 'vision'"
+        [class.faculty-page-head-strategy]="selectedFacultyPageKey() === 'strategy'"
+        [class.faculty-page-head-staff]="selectedFacultyPageKey() === 'staff'"
+        [class.faculty-page-head-structure]="selectedFacultyPageKey() === 'structure'"
+        [class.faculty-page-head-facilities]="selectedFacultyPageKey() === 'facilities'">
+        @if (currentFacultyPage().logoSrc && !isStructurePage() && !isFacilitiesPage()) {
+        <div class="faculty-logo-wrap">
+          <img class="faculty-logo" [src]="currentFacultyPage().logoSrc!"
+            [alt]="currentFacultyPage().mediaAlt ?? 'Logo Khoa Cong nghe thong tin'" />
+        </div>
+        }
+        <p class="faculty-kicker">Nội dung khoa</p>
+        <h2>{{ currentFacultyPage().title }}</h2>
+        @if (currentFacultyPage().metaLine) {
+        <p class="faculty-meta-line">{{ currentFacultyPage().metaLine }}</p>
+        }
+        @if (currentFacultyPage().summary) {
+        <p class="faculty-summary">{{ currentFacultyPage().summary }}</p>
+        }
+        @if (currentFacultyPage().centerHeading) {
+        <h3 class="faculty-center-heading">{{ currentFacultyPage().centerHeading }}</h3>
+        }
+      </div>
+
+      @if (isFacilitiesPage()) {
+      <section class="faculty-facilities-content">
+        <div class="faculty-page-body faculty-page-body-facilities">
+          @for (paragraph of facilityIntroParagraphs; track paragraph) {
+          <p>{{ paragraph }}</p>
+          }
+        </div>
+
+        @if (currentFacultyPage().logoSrc) {
+        <figure class="faculty-facilities-hero">
+          <img class="faculty-facilities-hero-image" [src]="currentFacultyPage().logoSrc!"
+            [alt]="currentFacultyPage().mediaAlt ?? 'Co so vat chat Khoa Cong nghe thong tin'" />
+          <figcaption>Tòa nhà 4 tầng Trường Đại học Quy Nhơn</figcaption>
+        </figure>
+        }
+
+        <div class="faculty-page-body faculty-page-body-facilities">
+          @for (line of facilityHighlights; track line) {
+          <p>{{ line }}</p>
+          }
+          <p><strong>* Một số hình ảnh liên quan </strong></p>
+        </div>
+
+        <div class="faculty-facilities-gallery">
+          @for (item of facilityGallery; track item.src) {
+          <figure class="facility-gallery-card">
+            <img [src]="item.src" [alt]="item.alt" />
+            <figcaption>{{ item.caption }}</figcaption>
+          </figure>
+          }
+        </div>
+      </section>
+      } @else if (isStructurePage()) {
+      <section class="faculty-structure-content">
+        @if (currentFacultyPage().logoSrc) {
+        <div class="faculty-structure-chart">
+          <img class="faculty-structure-chart-image" [src]="currentFacultyPage().logoSrc!"
+            [alt]="currentFacultyPage().mediaAlt ?? 'Co cau to chuc Khoa Cong nghe thong tin'" />
+        </div>
+        }
+
+        <section class="faculty-structure-section">
+          <h3>A. Địa chỉ liên hệ</h3>
+          <ul class="faculty-structure-list">
+            @for (line of structureContactLines; track line) {
+            <li>{{ line }}</li>
+            }
+          </ul>
+        </section>
+
+        <section class="faculty-structure-section">
+          <h3>B. Đội ngũ cán bộ, giảng viên</h3>
+
+          <div class="faculty-structure-block">
+            <h4>1. Ban chủ nhiệm Khoa</h4>
+            <div class="faculty-table-wrap">
+              <table class="faculty-structure-table">
+                <thead>
+                  <tr>
+                    <th>Số TT</th>
+                    <th>Hình ảnh</th>
+                    <th>Họ và tên</th>
+                    <th>Chức vụ</th>
+                    <th>Công việc</th>
+                    <th>Điện thọai</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (member of structureLeadershipMembers; track member.email; let index = $index) {
+                  <tr>
+                    <td>{{ index + 1 }}</td>
+                    <td></td>
+                    <td>{{ member.name }}</td>
+                    <td>{{ member.position }}</td>
+                    <td>{{ member.duty }}</td>
+                    <td>{{ member.phone }}</td>
+                    <td><a [href]="'mailto:' + member.email">{{ member.email }}</a></td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="faculty-structure-block">
+            <h4>2. Chuyen vien, Tro ly</h4>
+            <div class="faculty-table-wrap faculty-table-wrap-compact">
+              <table class="faculty-structure-table">
+                <thead>
+                  <tr>
+                    <th>Số TT</th>
+                    <th>Hình ảnh</th>
+                    <th>Họ và tên</th>
+                    <th>Chức vụ</th>
+                    <th>Điện thọai</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (member of structureAssistantMembers; track member.email; let index = $index) {
+                  <tr>
+                    <td>{{ index + 1 }}</td>
+                    <td></td>
+                    <td>{{ member.name }}</td>
+                    <td>{{ member.position }}</td>
+                    <td>{{ member.phone }}</td>
+                    <td><a [href]="'mailto:' + member.email">{{ member.email }}</a></td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="faculty-structure-block">
+            <h4>3. Danh sách giảng viên Khoa Công nghệ thông tin</h4>
+
+            @for (group of structureLecturerGroups; track group.title) {
+            <div class="faculty-lecturer-group">
+              <p class="faculty-lecturer-group-title">{{ group.title }}</p>
+              <div class="faculty-table-wrap">
+                <table class="faculty-structure-table">
+                  <thead>
+                    <tr>
+                      <th>Số TT</th>
+                      <th>Hình ảnh</th>
+                      <th>Họ và tên</th>
+                      <th>Chức vụ</th>
+                      <th>Điện thọai</th>
+                      <th>Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (member of group.members; track member.email; let index = $index) {
+                    <tr>
+                      <td>{{ index + 1 }}</td>
+                      <td></td>
+                      <td>{{ member.name }}</td>
+                      <td>{{ member.position }}</td>
+                      <td>{{ member.phone || '-' }}</td>
+                      <td><a [href]="'mailto:' + member.email">{{ member.email }}</a></td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            }
+          </div>
+        </section>
+      </section>
+      } @else if (currentFacultyPage().pdfSrc) {
+      <div class="faculty-pdf-viewer">
+        <iframe class="faculty-pdf-frame" [src]="currentFacultyPdfResourceUrl()!"
+          [title]="currentFacultyPage().title"></iframe>
+      </div>
+
+      <a class="faculty-pdf-download" [href]="currentFacultyPage().pdfSrc!" target="_blank" rel="noopener">
+        Tai file PDF
+      </a>
+      } @else if (currentFacultyPage().sections?.length) {
+      @if (currentFacultyPage().paragraphs.length) {
+      <div class="faculty-page-body">
+        @for (paragraph of currentFacultyPage().paragraphs; track $index) {
+        <p>{{ paragraph }}</p>
+        }
+      </div>
+      }
+
+      <div class="faculty-section-list">
+        @for (section of currentFacultyPage().sections!; track section.title) {
+        <section class="faculty-section-card">
+          <h3>{{ section.title }}</h3>
+
+          @if (section.body) {
+          <p>{{ section.body }}</p>
+          }
+
+          @if (section.items?.length) {
+          <div class="faculty-section-items">
+            @for (item of section.items!; track item) {
+            <div class="faculty-section-item">
+              <span class="material-symbols-outlined">chevron_right</span>
+              <p>{{ item }}</p>
+            </div>
+            }
+          </div>
+          }
+        </section>
+        }
+      </div>
+      } @else {
+      <div class="faculty-page-body">
+        @for (paragraph of currentFacultyPage().paragraphs; track $index) {
+        <p>{{ paragraph }}</p>
+        }
+      </div>
+
+      <div class="faculty-highlight-grid">
+        @for (item of currentFacultyPage().highlights; track $index) {
+        <div class="faculty-highlight-item">
+          <span class="material-symbols-outlined">done</span>
+          <p>{{ item }}</p>
+        </div>
+        }
+      </div>
+      }
+    </article>
+  </section>
+  }
 </section>

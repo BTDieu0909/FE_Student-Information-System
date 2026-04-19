@@ -68,6 +68,31 @@
     </article>
   </section>
 
+  <section class="admin-toolbar">
+    <div class="admin-toolbar-title">
+      <h1>Admin</h1>
+    </div>
+
+    <div class="admin-toolbar-search">
+      <input
+        type="text"
+        [ngModel]="adminSearchValue()"
+        (ngModelChange)="setAdminSearchValue($event)"
+        [ngModelOptions]="{ standalone: true }"
+        placeholder="Search"
+        (keyup.enter)="runAdminSearch()"
+      />
+      <button
+        type="button"
+        class="admin-search-trigger"
+        (click)="runAdminSearch()"
+        aria-label="Search"
+      >
+        <span class="material-symbols-outlined">search</span>
+      </button>
+    </div>
+  </section>
+
   <section class="admin-workspace">
     <nav class="admin-top-nav">
       <div class="section-menu-list">

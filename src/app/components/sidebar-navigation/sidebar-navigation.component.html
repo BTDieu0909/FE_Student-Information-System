@@ -4,15 +4,15 @@
       <img alt="QNU Logo" class="object-contain w-full h-full" src="/images/logoQNU.jpg" />
     </div>
     <div class="leading-tight">
-      <h1 class="font-bold text-[#002555] font-headline text-lg">Quy Nhơn</h1>
-      <p class="uppercase tracking-widest text-gray-500 font-bold text-[10px]">University</p>
+      <h1 class="app-sidebar-title font-bold font-headline text-lg">Quy Nhon</h1>
+      <p class="app-muted-text uppercase tracking-widest font-bold text-[10px]">University</p>
     </div>
   </div>
 </div>
 
 <nav class="flex-1 space-y-3">
   @for (item of navItems; track item.route) {
-  <a class="flex items-center gap-4 px-5 py-3 rounded-xl text-gray-600 font-medium hover:bg-gray-100 transition-all group relative overflow-hidden"
+  <a class="app-nav-link flex items-center gap-4 px-5 py-3 rounded-xl font-medium transition-all group relative overflow-hidden"
     [routerLink]="item.route" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
     <span class="material-symbols-outlined text-lg transition-colors group-hover:text-primary">{{ item.icon || 'folder'
       }}</span>
@@ -21,16 +21,14 @@
   }
 </nav>
 
-<div class="mt-auto pt-8 border-t border-gray-100 space-y-2">
-  <button
-    class="w-full flex items-center gap-4 px-5 py-2.5 rounded-xl text-gray-500 font-medium hover:bg-gray-100 transition-colors">
-    <span class="material-symbols-outlined text-lg">language</span>
-    <span class="text-xs font-headline">Ngôn ngữ</span>
-  </button>
-  <button
-    class="w-full flex items-center gap-4 px-5 py-2.5 rounded-xl text-gray-500 font-medium hover:bg-gray-100 transition-colors">
-    <span class="material-symbols-outlined text-lg">dark_mode</span>
-    <span class="text-xs font-headline">Chế độ</span>
+<div class="app-sidebar-divider mt-auto pt-8 space-y-2">
+
+  <button type="button" (click)="toggleTheme()"
+    class="app-sidebar-action w-full flex items-center gap-4 px-5 py-2.5 rounded-xl font-medium transition-colors">
+    <span class="material-symbols-outlined text-lg">
+      {{ isDarkMode() ? 'light_mode' : 'dark_mode' }}
+    </span>
+    <span class="text-sm font-headline font-medium   ">Chế độ</span>
   </button>
 
   @if (authService.isLoggedIn()) {

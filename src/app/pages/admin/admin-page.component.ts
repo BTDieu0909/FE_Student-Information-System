@@ -1255,6 +1255,52 @@ export class AdminPageComponent {
     this.loadFaqs();
   }
 
+  protected adminSearchPlaceholder(): string {
+    if (this.activeSection() === "faqs") {
+      return "Tim kiem FAQ...";
+    }
+
+    if (this.activeSection() === "documents") {
+      return "Tim kiem tai lieu...";
+    }
+
+    return "Tim kiem...";
+  }
+
+  protected adminSearchValue(): string {
+    if (this.activeSection() === "faqs") {
+      return this.faqSearchQuery();
+    }
+
+    if (this.activeSection() === "documents") {
+      return this.documentSearchQuery();
+    }
+
+    return "";
+  }
+
+  protected setAdminSearchValue(value: string): void {
+    if (this.activeSection() === "faqs") {
+      this.faqSearchQuery.set(value);
+      return;
+    }
+
+    if (this.activeSection() === "documents") {
+      this.documentSearchQuery.set(value);
+    }
+  }
+
+  protected runAdminSearch(): void {
+    if (this.activeSection() === "faqs") {
+      this.searchFaqs();
+      return;
+    }
+
+    if (this.activeSection() === "documents") {
+      this.searchDocuments();
+    }
+  }
+
   protected changeDocumentPage(delta: number): void {
     const newPage = this.documentCurrentPage() + delta;
     if (newPage >= 1 && newPage <= this.documentTotalPages()) {

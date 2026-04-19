@@ -1,8 +1,8 @@
 <section class="page-shell">
   <div class="page-header">
     <p class="eyebrow">Collection FAQs</p>
-    <h1>Cau hoi thuong gap</h1>
-    <p>Danh sach cau tra loi chuan hoa giup sinh vien tra cuu nhanh thay vi phai hoi lap lai.</p>
+    <h1>Câu hỏi thường gặp</h1>
+    <p>Danh sách câu trả lời chuẩn hóa giúp sinh viên tra cứu nhanh thay vì phải hỏi lặp lại.</p>
   </div>
 
   <!-- <div class="search-bar">
@@ -12,12 +12,12 @@
   </div> -->
   <div class="search-bar">
     <input type="text" [ngModel]="keyword()" (ngModelChange)="onKeywordChange($any($event))"
-      placeholder="Nhap tu khoa tim tai lieu..." />
-    <button type="button" (click)="search()">Tim kiem</button>
+      placeholder="Nhập từ khóa tìm câu hỏi..." />
+    <button type="button" (click)="search()">Tìm kiếm</button>
   </div>
 
   @if (loading()) {
-  <p class="status-text">Dang tai FAQ...</p>
+  <p class="status-text">Đang tải FAQ...</p>
   }
 
   @if (errorMessage()) {

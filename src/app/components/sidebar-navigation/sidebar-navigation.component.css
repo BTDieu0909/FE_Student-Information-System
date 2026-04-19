@@ -2,12 +2,3 @@
 :host {
   display: contents;
 }
-
-.active-link {
-  @apply bg-surface-container text-primary border-r-4 border-primary;
-}
-
-.active-link span {
-  @apply text-primary;
-  font-variation-settings: 'FILL' 1;
-}

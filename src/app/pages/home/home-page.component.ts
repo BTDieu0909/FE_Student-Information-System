@@ -147,4 +147,14 @@ isExpanded(faq: FaqItem): boolean {
   return !!faq.id && this.expandedFaqIds().has(faq.id);
 }
 
+readonly selectedFaq = signal<FaqItem | null>(null);
+
+openFaqDetail(faq: FaqItem): void {
+  this.selectedFaq.set(faq);
+}
+
+closeFaqDetail(): void {
+  this.selectedFaq.set(null);
+}
+
 }
