@@ -118,6 +118,19 @@ export interface UpdateDocumentPayload {
   categoryId?: string;
 }
 
+export interface PdfExtractionResponse {
+  message: string;
+  fileName: string;
+  extractionBranch: "text" | "ocr_or_mixed" | "scan_no_text" | "error";
+  extractionEngine: string;
+  isScannedPdf: boolean;
+  textLength: number;
+  lineCount: number;
+  nextStep: string;
+  preview: string;
+  extractedText: string;
+}
+
 export interface FaqPayload {
   question: string;
   answer: string;
@@ -269,6 +282,22 @@ export class PortalDataService {
 
   processDocumentChunks(parentFileId: string): Observable<unknown> {
     return this.http.post(`/api/Document/${parentFileId}/process-chunks`, {});
+  }
+
+  processDocumentChunksForce(parentFileId: string): Observable<unknown> {
+    return this.http.post(
+      `/api/Document/${parentFileId}/process-chunks-force`,
+      {},
+    );
+  }
+
+  extractPdf(file: File): Observable<PdfExtractionResponse> {
+    const formData = new FormData();
+    formData.append("file", file);
+    return this.http.post<PdfExtractionResponse>(
+      "/api/Document/extract-pdf",
+      formData,
+    );
   }
 
   updateDocument(

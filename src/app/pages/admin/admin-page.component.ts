@@ -911,33 +911,108 @@ export class AdminPageComponent {
       this.documentError.set("Ban can chon mot tai lieu de tach chunk.");
       return;
     }
+    const parentFileId = current.parentFileId;
 
     this.documentMessage.set("Đang tách file... Vui lòng chờ đợi.");
     this.documentError.set("");
     this.isChunkingDocument.set(true);
 
-    this.portalDataService
-      .processDocumentChunks(current.parentFileId)
-      .subscribe({
-        next: () => {
-          this.documentMessage.set(
-            "Đã tách file thành công và lưu chunk vào database.",
-          );
-          this.documentError.set("");
-          this.isChunkingDocument.set(false);
-          this.loadDocuments();
-        },
-        error: (error: HttpErrorResponse) => {
+    this.portalDataService.processDocumentChunks(parentFileId).subscribe({
+      next: () => {
+        this.documentMessage.set(
+          "Đã tách file thành công và lưu chunk vào database.",
+        );
+        this.documentError.set("");
+        this.isChunkingDocument.set(false);
+        this.loadDocuments();
+      },
+      error: (error: HttpErrorResponse) => {
+        const isLinkFile = Boolean(error.error?.isLinkFile);
+        const isScannedPdf = Boolean(error.error?.isScannedPdf);
+        const ocrRuntimeAvailable = error.error?.ocrRuntimeAvailable;
+        const ocrRuntimeMessage =
+          typeof error.error?.ocrRuntimeMessage === "string"
+            ? error.error.ocrRuntimeMessage.trim()
+            : "";
+
+        if (isLinkFile) {
           this.documentError.set(
             this.extractHttpErrorMessage(
               error,
-              "Khong the tach file thanh chunk.",
+              "Link tài liệu chưa truy cập được file PDF. Hãy kiểm tra quyền chia sẻ và link tải trực tiếp.",
             ),
           );
           this.documentMessage.set("");
           this.isChunkingDocument.set(false);
-        },
-      });
+          return;
+        }
+
+        if (isScannedPdf) {
+          if (ocrRuntimeAvailable === false) {
+            this.documentError.set(
+              ocrRuntimeMessage
+                ? `OCR trên server chưa sẵn sàng: ${ocrRuntimeMessage}`
+                : "OCR trên server chưa sẵn sàng. Vui lòng liên hệ quản trị viên cấu hình Tesseract runtime.",
+            );
+            this.documentMessage.set("");
+            this.isChunkingDocument.set(false);
+            return;
+          }
+
+          this.documentMessage.set(
+            "Đã nhận diện PDF scan. Hệ thống đang tự động thử chế độ force...",
+          );
+
+          this.portalDataService
+            .processDocumentChunksForce(parentFileId)
+            .subscribe({
+              next: () => {
+                this.documentMessage.set(
+                  "Đã tách file thành công bằng chế độ force và lưu chunk vào database.",
+                );
+                this.documentError.set("");
+                this.isChunkingDocument.set(false);
+                this.loadDocuments();
+              },
+              error: (forceError: HttpErrorResponse) => {
+                if (Boolean(forceError.error?.isLinkFile)) {
+                  this.documentError.set(
+                    this.extractHttpErrorMessage(
+                      forceError,
+                      "Link tài liệu chưa truy cập được file PDF. Hãy kiểm tra quyền chia sẻ và link tải trực tiếp.",
+                    ),
+                  );
+                  this.documentMessage.set("");
+                  this.isChunkingDocument.set(false);
+                  return;
+                }
+
+                const forceLength = Number(
+                  forceError.error?.contentLength ??
+                    forceError.error?.extractedTextLength ??
+                    0,
+                );
+
+                this.documentError.set(
+                  forceLength > 0
+                    ? "Không thể tách chunk tự động cho PDF scan này. Vui lòng thử lại với file khác hoặc liên hệ quản trị viên để kiểm tra cấu trúc tài liệu."
+                    : "PDF scan chưa đọc được chữ. Vui lòng upload lại bản scan rõ hơn (khuyến nghị 300 DPI).",
+                );
+                this.documentMessage.set("");
+                this.isChunkingDocument.set(false);
+              },
+            });
+
+          return;
+        }
+
+        this.documentError.set(
+          "Không thể tách file thành chunk. Vui lòng thử lại.",
+        );
+        this.documentMessage.set("");
+        this.isChunkingDocument.set(false);
+      },
+    });
   }
 
   protected uploadDocument(): void {
