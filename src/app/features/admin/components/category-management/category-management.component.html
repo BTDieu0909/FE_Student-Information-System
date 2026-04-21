@@ -1,0 +1,109 @@
+<section class="document-admin-grid">
+  <article class="module-card">
+    <div class="module-head">
+      <div>
+        <p class="card-label">Quan tri danh muc</p>
+        <h3>{{ categoryTotalCount() }} danh muc</h3>
+      </div>
+      <button
+        type="button"
+        class="secondary-action"
+        (click)="clearCategorySelection()"
+      >
+        + Thêm mới
+      </button>
+    </div>
+
+    <div class="document-grid">
+      @for (item of categories(); track item.id) {
+        <div
+          class="document-card"
+          [class.active-item]="selectedCategoryId() === item.id"
+          (click)="selectCategory(item)"
+        >
+          <strong>{{ item.name }}</strong>
+          <span>{{ item.slug }}</span>
+        </div>
+      } @empty {
+        <div class="empty">Chua co danh muc.</div>
+      }
+    </div>
+  </article>
+
+  @if (isCategoryModalOpen()) {
+    <div class="modal-overlay" (click)="closeCategoryModal()">
+      <article
+        class="module-card modal-content"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="module-head">
+          <div>
+            <p class="card-label">
+              {{
+                selectedCategoryId()
+                  ? "Cập nhật danh mục"
+                  : "Thêm danh mục mới"
+              }}
+            </p>
+            <h3>{{ categoryForm.name || "Đang tạo mới..." }}</h3>
+          </div>
+          <button
+            type="button"
+            class="danger-action"
+            style="padding: 0 12px; min-height: 32px"
+            (click)="closeCategoryModal()"
+          >
+            X
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <label class="field-block full-width">
+            <span>Tên danh mục</span>
+            <input type="text" [(ngModel)]="categoryForm.name" />
+          </label>
+
+          <label class="field-block full-width">
+            <span>Slug</span>
+            <input type="text" [(ngModel)]="categoryForm.slug" />
+          </label>
+        </div>
+
+        @if (categoryMessage()) {
+          <p class="success-message">{{ categoryMessage() }}</p>
+        }
+
+        @if (categoryError()) {
+          <p class="error-message">{{ categoryError() }}</p>
+        }
+
+        <div class="action-row">
+          @if (selectedCategoryId()) {
+            <button
+              type="button"
+              class="primary-action"
+              (click)="saveCategory()"
+            >
+              Lưu cập nhật
+            </button>
+            <button
+              type="button"
+              class="danger-action"
+              (click)="deleteSelectedCategory()"
+            >
+              Xoá danh mục
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="primary-action"
+              (click)="createCategory()"
+            >
+              Tạo danh mục mới
+            </button>
+          }
+        </div>
+      </article>
+    </div>
+  }
+</section>

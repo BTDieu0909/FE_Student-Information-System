@@ -1,0 +1,128 @@
+<section class="document-admin-grid">
+  <article class="module-card">
+    <div class="module-head">
+      <div>
+        <p class="card-label">Tài khoản nội bộ admin</p>
+        <h3>{{ actorTotalCount() }} tài khoản</h3>
+      </div>
+      <button
+        type="button"
+        class="secondary-action"
+        (click)="clearActorSelection()"
+      >
+        + Thêm mới
+      </button>
+    </div>
+
+    <div class="document-grid">
+      @for (item of actors(); track item.id) {
+        <div
+          class="document-card"
+          [class.active-item]="selectedActorId() === item.id"
+          (click)="selectActor(item)"
+        >
+          <strong>{{ item.fullName }}</strong>
+          <span>{{ item.username }} - {{ item.role }}</span>
+        </div>
+      } @empty {
+        <div class="empty">Chua co tai khoan noi bo.</div>
+      }
+    </div>
+  </article>
+
+  @if (isActorModalOpen()) {
+    <div class="modal-overlay" (click)="closeActorModal()">
+      <article
+        class="module-card modal-content"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="module-head">
+          <div>
+            <p class="card-label">
+              {{
+                selectedActorId()
+                  ? "Cập nhật tài khoản"
+                  : "Thêm tài khoản mới"
+              }}
+            </p>
+            <h3>{{ actorForm.fullName || "Đang tạo mới..." }}</h3>
+          </div>
+          <button
+            type="button"
+            class="danger-action"
+            style="padding: 0 12px; min-height: 32px"
+            (click)="closeActorModal()"
+          >
+            X
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <label class="field-block full-width">
+            <span>Tên đăng nhập</span>
+            <input type="text" [(ngModel)]="actorForm.username" />
+          </label>
+
+          <label class="field-block full-width">
+            <span>Họ và tên</span>
+            <input type="text" [(ngModel)]="actorForm.fullName" />
+          </label>
+
+          <label class="field-block">
+            <span>Vai trò</span>
+            <select [(ngModel)]="actorForm.role">
+              <option value="">Chọn vai trò</option>
+              <option value="admin">Admin</option>
+              <option value="staff">Staff</option>
+            </select>
+          </label>
+
+          <label class="field-block">
+            <span>Phòng ban</span>
+            <select [(ngModel)]="actorForm.departmentId">
+              <option value="">Chọn phòng ban</option>
+              @for (item of departments; track item.id) {
+                <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        @if (actorMessage()) {
+          <p class="success-message">{{ actorMessage() }}</p>
+        }
+
+        @if (actorError()) {
+          <p class="error-message">{{ actorError() }}</p>
+        }
+
+        <div class="action-row">
+          @if (selectedActorId()) {
+            <button
+              type="button"
+              class="primary-action"
+              (click)="saveActor()"
+            >
+              Lưu cập nhật
+            </button>
+            <button
+              type="button"
+              class="danger-action"
+              (click)="deleteSelectedActor()"
+            >
+              Xoá tài khoản
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="primary-action"
+              (click)="createActor()"
+            >
+              Tạo tài khoản mới
+            </button>
+          }
+        </div>
+      </article>
+    </div>
+  }
+</section>

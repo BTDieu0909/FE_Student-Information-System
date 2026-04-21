@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router, RouterOutlet } from '@angular/router';
-import { SidebarNavigationComponent } from './components/sidebar-navigation/sidebar-navigation.component';
-import { AuthService } from './services/auth.service';
+import { SidebarNavigationComponent } from './layouts/main-layout/components/sidebar-navigation/sidebar-navigation.component';
+import { AuthService } from './core/services/auth.service';
 
 @Component({
   selector: 'app-root',

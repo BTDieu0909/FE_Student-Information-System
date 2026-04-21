@@ -1,0 +1,34 @@
+<section class="department-grid">
+  @for (item of departments; track item.id) {
+    <article class="dept-card">
+      <div class="dept-card-inner">
+        <header class="dept-card-header">
+          <div class="dept-icon-box">
+            <span class="material-symbols-outlined">corporate_fare</span>
+          </div>
+          <h3 class="dept-name">{{ item.name }}</h3>
+        </header>
+
+        <div class="dept-card-body">
+          <div class="dept-description">
+            @for (line of getDescriptionLines(item.description); track $index) {
+              <p>{{ line }}</p>
+            }
+          </div>
+        </div>
+
+        <footer class="dept-card-footer">
+          <button class="dept-action-btn">
+            <span>Chi tiết</span>
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </footer>
+      </div>
+    </article>
+  } @empty {
+    <div class="empty-state">
+      <span class="material-symbols-outlined">info</span>
+      <p>Không có dữ liệu phòng ban.</p>
+    </div>
+  }
+</section>

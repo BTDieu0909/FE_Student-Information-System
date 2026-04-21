@@ -1,0 +1,110 @@
+<article class="module-card">
+  <div class="search-log-list">
+    <div class="search-log-header">
+      <span>Tất cả lịch sử tra cứu</span>
+      <span>{{ searchLogTotalCount() }} kết quả</span>
+    </div>
+
+    <div class="search-log-filters">
+      <label class="filter-field">
+        <span>Tìm kiếm câu hỏi</span>
+        <input
+          type="text"
+          [value]="searchLogQuery()"
+          (input)="searchLogQuery.set($any($event.target).value)"
+          placeholder="Nhập từ khóa..."
+        />
+      </label>
+
+      <label class="filter-field">
+        <span>Lọc nguồn</span>
+        <select
+          [value]="searchLogSource() ?? ''"
+          (change)="
+            searchLogSource.set($any($event.target).value || null)
+          "
+        >
+          <option value="">Tất cả</option>
+          <option value="AI">AI</option>
+          <option value="FAQ">FAQ</option>
+        </select>
+      </label>
+
+      <label class="filter-field">
+        <span>Từ ngày giờ</span>
+        <input
+          type="datetime-local"
+          [value]="searchLogStart()"
+          (input)="searchLogStart.set($any($event.target).value)"
+        />
+      </label>
+
+      <label class="filter-field">
+        <span>Đến ngày giờ</span>
+        <input
+          type="datetime-local"
+          [value]="searchLogEnd()"
+          (input)="searchLogEnd.set($any($event.target).value)"
+        />
+      </label>
+
+      <div class="filter-actions">
+        <button
+          type="button"
+          class="primary-action"
+          (click)="searchLogsByFilter()"
+        >
+          Lọc
+        </button>
+        <button
+          type="button"
+          class="secondary-action"
+          (click)="clearSearchLogFilters()"
+        >
+          Xóa
+        </button>
+      </div>
+    </div>
+
+    <ul class="log-list">
+      @for (item of searchLogs(); track item.id) {
+        <li class="search-log-item">
+          <div class="log-row">
+            <div class="log-query">
+              <strong>{{ item.query }}</strong>
+              <div class="search-log-answer">{{ item.answerPreview }}</div>
+            </div>
+            <div class="log-meta">
+              <span class="tag">{{ item.answerSource }}</span>
+              <span class="log-time">{{ item.createdAt | date: 'HH:mm' }}</span>
+              <span class="log-date">{{ item.createdAt | date: 'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+        </li>
+      } @empty {
+        <div class="empty">Chua co lich su tra cuu.</div>
+      }
+    </ul>
+
+    @if (searchLogTotalPages() > 1) {
+      <div class="pagination-controls">
+        <button
+          (click)="changeSearchLogPage(-1)"
+          [disabled]="searchLogCurrentPage() === 1"
+        >
+          &lt;
+        </button>
+        <span
+          >Trang {{ searchLogCurrentPage() }} /
+          {{ searchLogTotalPages() }}</span
+        >
+        <button
+          (click)="changeSearchLogPage(1)"
+          [disabled]="searchLogCurrentPage() === searchLogTotalPages()"
+        >
+          &gt;
+        </button>
+      </div>
+    }
+  </div>
+</article>

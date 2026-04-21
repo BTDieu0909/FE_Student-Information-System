@@ -1,0 +1,80 @@
+<div class="login-page h-screen bg-white flex flex-col font-body overflow-hidden select-none">
+
+  <header class="h-14 px-10 flex justify-between items-center bg-white z-20 border-b border-gray-100/50 flex-shrink-0">
+  </header>
+
+  <div class="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+
+    <div class="hidden md:block w-[45%] lg:w-[48%] relative bg-gray-50 flex-shrink-0">
+      <img src="/images/login-bg-clean.png" alt="Quy Nhon University Entrance"
+        class="absolute inset-0 w-full h-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-r from-[#0077C0]/10 to-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0077C0]/40 to-transparent"></div>
+    </div>
+
+    <div
+      class="flex-1 flex flex-col items-center justify-center p-8 md:p-12 lg:p-16 bg-white relative z-10 overflow-y-auto">
+
+      <div class="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style="background-image: radial-gradient(#0077C0 1.5px, transparent 1.5px); background-size: 30px 30px;"></div>
+
+      <div class="w-full max-w-md space-y-8 relative">
+        <div class="flex flex-col items-center text-center space-y-4 animate-in slide-in-from-top-6 duration-700">
+          <div class="login-brand-logo w-32 h-32 p-2 bg-white rounded-full shadow-xl ring-6 ring-primary/5">
+            <img src="/images/logoQNU.jpg" alt="QNU Emblem" class="w-full h-full object-contain" />
+          </div>
+          <div class="space-y-1">
+            <h1 class="login-title text-3xl font-headline font-black tracking-tight">Trường Đại học Quy Nhơn</h1>
+            <p class="text-gray-500 font-bold text-base">Vui lòng nhập thông tin đăng nhập</p>
+          </div>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" class="space-y-6 animate-in fade-in duration-1000 delay-300">
+          <div class="space-y-4">
+            <div class="space-y-2">
+              <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Tên đăng
+                nhập</label>
+              <div class="relative group">
+                <span
+                  class="absolute left-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors text-xl">person</span>
+                <input type="text" formControlName="username" placeholder="nhập tên đăng nhập"
+                  class="w-full pl-14 pr-7 py-4 bg-gray-50 border-2 border-transparent focus:border-primary/10 rounded-2xl focus:bg-white focus:ring-8 focus:ring-primary/5 transition-all outline-none font-bold text-base placeholder:text-gray-300" />
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] ml-2">Mật khẩu</label>
+              <div class="relative group">
+                <span
+                  class="absolute left-6 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors text-xl">lock</span>
+                <input type="password" formControlName="password" placeholder="........"
+                  class="w-full pl-14 pr-7 py-4 bg-gray-50 border-2 border-transparent focus:border-primary/10 rounded-2xl focus:bg-white focus:ring-8 focus:ring-primary/5 transition-all outline-none font-bold text-base placeholder:text-gray-300" />
+              </div>
+            </div>
+          </div>
+
+          @if (errorMessage()) {
+          <div
+            class="flex items-center gap-3 p-4 bg-error/5 text-error rounded-xl border border-error/10 animate-in fade-in zoom-in-95">
+            <span class="material-symbols-outlined text-lg">error</span>
+            <p class="text-xs font-bold">{{ errorMessage() }}</p>
+          </div>
+          }
+
+          <button type="submit" [disabled]="loading()"
+            class="w-full bg-primary text-white py-4 rounded-2xl font-black text-base flex items-center justify-center gap-3 transition-all hover:bg-[#0066AA] hover:shadow-xl active:scale-[0.98] disabled:opacity-50">
+            <span>{{ loading() ? 'ĐANG ĐĂNG NHẬP...' : 'ĐĂNG NHẬP' }}</span>
+            <span class="material-symbols-outlined text-lg">arrow_forward</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer
+    class="h-16 px-12 flex justify-end items-center bg-white border-t border-gray-100 flex-shrink-0 relative z-20">
+    <button type="button" class="login-back-button" (click)="goBack()">
+      Quay lại
+    </button>
+  </footer>
+</div>

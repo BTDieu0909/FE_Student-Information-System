@@ -1,0 +1,68 @@
+<main class="page-container">
+  <header class="page-header">
+    <div class="header-content">
+      @if (activeView() !== 'faculties') {
+        <div class="header-title-box">
+          <p class="header-eyebrow">Directory</p>
+          <h1 class="header-title">{{ pageHeaderTitle() }}</h1>
+          <p class="header-description">{{ pageHeaderDescription() }}</p>
+        </div>
+      } @else {
+        <div class="header-title-box empty-box"></div>
+      }
+
+      <nav class="view-switcher">
+        <div class="switcher-options">
+          <button
+            class="switcher-btn"
+            [class.active]="activeView() === 'departments'"
+            (click)="showDepartments($event)"
+          >
+            Tất cả phòng ban
+          </button>
+
+          <div
+            class="faculty-menu-trigger"
+            (mouseenter)="openFacultyMenu()"
+            (mouseleave)="scheduleFacultyMenuClose()"
+          >
+            <button
+              class="switcher-btn faculty-trigger"
+              [class.active]="activeView() === 'faculties'"
+            >
+              <span>Khoa CNTT</span>
+              <span class="material-symbols-outlined">expand_more</span>
+            </button>
+
+            @if (isFacultyMenuOpen()) {
+              <div class="faculty-dropdown-menu">
+                @for (opt of facultyMenuOptions; track opt.key) {
+                  <button
+                    class="dropdown-item"
+                    [class.active]="
+                      activeView() === 'faculties' &&
+                      selectedFacultyPageKey() === opt.key
+                    "
+                    (click)="selectFacultyPage(opt.key, $event)"
+                  >
+                    {{ opt.label }}
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section class="view-content">
+    @if (activeView() === "departments") {
+      <app-department-list [departments]="departments()"></app-department-list>
+    }
+
+    @if (activeView() === "faculties") {
+      <app-faculty-detail [selectedPageKey]="selectedFacultyPageKey()"></app-faculty-detail>
+    }
+  </section>
+</main>

@@ -1,0 +1,127 @@
+.page-container {
+  padding: 32px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+
+.header-title-box {
+  flex: 1;
+}
+
+.header-title {
+  margin: 0 0 8px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.header-description {
+  margin: 0;
+  color: #64748b;
+  font-size: 0.95rem;
+}
+
+/* View Switcher */
+.view-switcher {
+  display: flex;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 16px;
+}
+
+.switcher-options {
+  display: flex;
+  gap: 8px;
+  position: relative;
+}
+
+.switcher-btn {
+  padding: 10px 24px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.switcher-btn.active {
+  background: #002555;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 37, 85, 0.2);
+}
+
+/* Faculty Dropdown */
+.faculty-menu-trigger {
+  position: relative;
+}
+
+.faculty-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 320px;
+  background: #3b60a0;
+  border-radius: 18px;
+  padding: 8px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: background 0.2s;
+}
+
+.dropdown-item:hover,
+.dropdown-item.active {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.dropdown-item::before {
+  content: 'chevron_right';
+  font-family: 'Material Symbols Outlined';
+  font-size: 18px;
+  opacity: 0.7;
+}
+
+.view-content {
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

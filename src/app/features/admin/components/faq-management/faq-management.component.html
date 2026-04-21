@@ -1,0 +1,134 @@
+<section class="document-admin-grid">
+  <article class="module-card">
+    <div class="module-head">
+      <div>
+        <p class="card-label">Danh sách FAQ</p>
+        <h3>{{ faqTotalCount() }} Câu hỏi</h3>
+      </div>
+      <button
+        type="button"
+        class="secondary-action"
+        (click)="clearFaqSelection()"
+      >
+        + Thêm mới
+      </button>
+    </div>
+    <div class="data-toolbar">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Tìm kiếm FAQ..."
+          [(ngModel)]="faqSearchQuery"
+          (keyup.enter)="searchFaqs()"
+        />
+      </div>
+    </div>
+    <div class="document-grid">
+      @for (item of faqs(); track item.id ?? item.question) {
+        <div
+          class="document-card"
+          [class.active-item]="currentFaq()?.id === item.id"
+          (click)="selectFaq(item)"
+        >
+          <strong>{{ item.question }}</strong>
+          <span>{{ item.answer }}</span>
+        </div>
+      } @empty {
+        <div class="empty">Chua co du lieu FAQ.</div>
+      }
+    </div>
+  </article>
+
+  @if (isFaqModalOpen()) {
+    <div class="modal-overlay" (click)="closeFaqModal()">
+      <article
+        class="module-card modal-content"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="module-head">
+          <div>
+            <p class="card-label">
+              {{ currentFaq()?.id ? "Cập nhật FAQ" : "Thêm FAQ mới" }}
+            </p>
+            <h3>{{ currentFaq()?.question || "Đang tạo mới..." }}</h3>
+          </div>
+          <button
+            type="button"
+            class="danger-action"
+            style="padding: 0 12px; min-height: 32px"
+            (click)="closeFaqModal()"
+          >
+            X
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <label class="field-block full-width">
+            <span>Cau hoi</span>
+            <input type="text" [(ngModel)]="faqForm.question" />
+          </label>
+
+          <label class="field-block full-width">
+            <span>Cau tra loi</span>
+            <textarea rows="6" [(ngModel)]="faqForm.answer"></textarea>
+          </label>
+
+          <label class="field-block">
+            <span>Phong ban</span>
+            <select [(ngModel)]="faqForm.departmentId">
+              <option value="">Chon phong ban</option>
+              @for (item of departments; track item.id) {
+                <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+          </label>
+
+          <label class="field-block">
+            <span>Danh muc</span>
+            <select [(ngModel)]="faqForm.categoryId">
+              <option value="">Chon danh muc</option>
+              @for (item of categories; track item.id) {
+                <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+          </label>
+        </div>
+
+        @if (faqMessage()) {
+          <p class="success-message">{{ faqMessage() }}</p>
+        }
+
+        @if (faqError()) {
+          <p class="error-message">{{ faqError() }}</p>
+        }
+
+        <div class="action-row">
+          @if (currentFaq()?.id) {
+            <button
+              type="button"
+              class="primary-action"
+              (click)="saveFaq()"
+            >
+              Lưu cập nhật
+            </button>
+            <button
+              type="button"
+              class="danger-action"
+              (click)="deleteSelectedFaq()"
+            >
+              Xoá FAQ
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="primary-action"
+              (click)="createFaq()"
+            >
+              Tạo FAQ mới
+            </button>
+          }
+        </div>
+      </article>
+    </div>
+  }
+</section>

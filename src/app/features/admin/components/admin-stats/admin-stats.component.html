@@ -1,0 +1,41 @@
+<div class="stats-overview">
+  <div class="stat-card">
+    <div class="stat-icon-box blue">
+      <span class="material-symbols-outlined">analytics</span>
+    </div>
+    <div class="stat-info">
+      <span class="stat-label">Tổng yêu cầu</span>
+      <strong class="stat-value">{{ summary?.total || 0 }}</strong>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon-box green">
+      <span class="material-symbols-outlined">smart_toy</span>
+    </div>
+    <div class="stat-info">
+      <span class="stat-label">AI phản hồi</span>
+      <strong class="stat-value">{{ summary?.ai || 0 }}</strong>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon-box purple">
+      <span class="material-symbols-outlined">quiz</span>
+    </div>
+    <div class="stat-info">
+      <span class="stat-label">FAQ/Dữ liệu</span>
+      <strong class="stat-value">{{ (summary?.faq || 0) + (summary?.fallback || 0) }}</strong>
+    </div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon-box red">
+      <span class="material-symbols-outlined">error</span>
+    </div>
+    <div class="stat-info">
+      <span class="stat-label">Lỗi hệ thống</span>
+      <strong class="stat-value">{{ summary?.error || 0 }}</strong>
+    </div>
+  </div>
+</div>

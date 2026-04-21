@@ -13,11 +13,7 @@
         System</span>
     </div>
     <div class="flex items-center gap-6">
-      <div class="relative group">
-        <span
-          class="material-symbols-outlined app-icon-muted group-hover:text-primary transition-colors cursor-pointer">notifications</span>
-        <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
-      </div>
+
       <div (click)="goToProfileOrAdmin()"
         class="flex items-center gap-3 cursor-pointer group p-1 rounded-xl transition-all active:scale-95 select-none text-primary">
         @if (authService.currentUser(); as user) {

@@ -1,0 +1,224 @@
+<section class="document-admin-grid">
+  <article class="module-card">
+    <div class="module-head">
+      <div>
+        <p class="card-label">Danh sach tai lieu</p>
+        <h3>{{ documentTotalCount() }} tai lieu</h3>
+      </div>
+      <button
+        type="button"
+        class="secondary-action"
+        (click)="clearDocumentSelection()"
+      >
+        + Thêm mới
+      </button>
+    </div>
+
+    <div class="data-toolbar">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Tìm kiếm tài liệu..."
+          [(ngModel)]="documentSearchQuery"
+          (keyup.enter)="searchDocuments()"
+        />
+      </div>
+    </div>
+
+    <div class="document-grid">
+      @for (item of documents(); track item.parentFileId) {
+        <div
+          class="document-card"
+          [class.active-item]="
+            currentDocument()?.parentFileId === item.parentFileId
+          "
+          (click)="selectDocument(item)"
+        >
+          <strong>{{ item.title }}</strong>
+          <span>{{ item.fileName }}</span>
+        </div>
+      } @empty {
+        <div class="empty">Chua co du lieu tai lieu.</div>
+      }
+    </div>
+
+    @if (documentTotalPages() > 1) {
+      <div class="pagination-controls">
+        <button
+          (click)="changeDocumentPage(-1)"
+          [disabled]="documentCurrentPage() === 1"
+        >
+          &lt;
+        </button>
+        <span
+          >Trang {{ documentCurrentPage() }} /
+          {{ documentTotalPages() }}</span
+        >
+        <button
+          (click)="changeDocumentPage(1)"
+          [disabled]="documentCurrentPage() === documentTotalPages()"
+        >
+          &gt;
+        </button>
+      </div>
+    }
+  </article>
+
+  @if (isDocumentModalOpen()) {
+    <div class="modal-overlay" (click)="closeDocumentModal()">
+      <article
+        class="module-card modal-content"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="module-head">
+          <div>
+            <p class="card-label">
+              {{
+                currentDocument()?.parentFileId
+                  ? "Cập nhật tài liệu"
+                  : "Thêm tài liệu mới"
+              }}
+            </p>
+            <h3>{{ currentDocument()?.title || "Đang tạo mới..." }}</h3>
+          </div>
+          <button
+            type="button"
+            class="danger-action"
+            style="padding: 0 12px; min-height: 32px"
+            (click)="closeDocumentModal()"
+          >
+            X
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <label class="field-block">
+            <span>Tieu de</span>
+            <input type="text" [(ngModel)]="documentForm.title" />
+          </label>
+
+          <label class="field-block">
+            <span>Phong ban</span>
+            <select [(ngModel)]="documentForm.departmentId">
+              <option value="">Chon phong ban</option>
+              @if (isCurrentDocumentDepartmentMissing()) {
+                <option [value]="currentDocumentDepartmentId()">
+                  Gia tri cu khong ton tai trong danh muc phong ban
+                </option>
+              }
+              @for (item of departments; track item.id) {
+                <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+            @if (isCurrentDocumentDepartmentMissing()) {
+              <small class="field-warning">
+                Phong ban cua tai lieu nay dang khong khop voi du lieu
+                hien tai. Ban hay chon lai de cap nhat.
+              </small>
+            }
+          </label>
+
+          <label class="field-block">
+            <span>Danh muc</span>
+            <select [(ngModel)]="documentForm.categoryId">
+              <option value="">Chon danh muc</option>
+              @if (isCurrentDocumentCategoryMissing()) {
+                <option [value]="currentDocumentCategoryId()">
+                  Gia tri cu khong ton tai trong danh muc
+                </option>
+              }
+              @for (item of categories; track item.id) {
+                <option [value]="item.id">{{ item.name }}</option>
+              }
+            </select>
+            @if (isCurrentDocumentCategoryMissing()) {
+              <small class="field-warning">
+                Danh muc dang luu trong tai lieu nay khong ton tai hoac
+                bi sai ID. Ban hay chon lai danh muc dung.
+              </small>
+            }
+          </label>
+
+          <label class="field-block">
+            <span>File tai len</span>
+            <small class="field-hint"
+              >File hien tai: {{ currentDocumentFileName() }}</small
+            >
+            <input
+              #documentFileInput
+              type="file"
+              (change)="onDocumentFileSelected($event)"
+            />
+            <small>File thay the moi: {{ uploadFileName() }}</small>
+          </label>
+
+          <label class="field-block full-width">
+            <span>Hoặc thêm từ đường Link</span>
+            <input
+              type="text"
+              [(ngModel)]="documentForm.fileLink"
+              placeholder="https://..."
+            />
+            <small class="field-hint"
+              >Hệ thống chấp nhận file .pdf, .docx, .txt hoặc Link
+              Google Drive/Docs</small
+            >
+          </label>
+        </div>
+
+        @if (documentMessage()) {
+          <p class="success-message">{{ documentMessage() }}</p>
+        }
+
+        @if (documentError()) {
+          <p class="error-message">{{ documentError() }}</p>
+        }
+
+        @if (isChunkingDocument()) {
+          <p class="info-message">
+            Đang tách file... Vui lòng chờ đợi.
+          </p>
+        }
+
+        <div class="action-row">
+          @if (currentDocument()?.parentFileId) {
+            <button
+              type="button"
+              class="secondary-action"
+              (click)="chunkDocument()"
+              [disabled]="isChunkingDocument()"
+            >
+              {{
+                isChunkingDocument()
+                  ? "Đang tách file... Vui lòng chờ đợi"
+                  : "Tách file thành chunks"
+              }}
+            </button>
+            <button
+              type="button"
+              class="primary-action"
+              (click)="saveDocumentMetadata()"
+            >
+              Lưu cập nhật tiêu đề
+            </button>
+            <button
+              type="button"
+              class="danger-action"
+              (click)="deleteSelectedDocument()"
+            >
+              Xoá tài liệu
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="primary-action"
+              (click)="uploadDocument()"
+            >
+              Tải lên mới
+            </button>
+          }
+        </div>
+      </article>
+    </div>
+  }
+</section>

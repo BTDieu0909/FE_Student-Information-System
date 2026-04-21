@@ -1,0 +1,136 @@
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+}
+
+.admin-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 12px;
+}
+
+.header-left h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.search-container {
+  position: relative;
+  width: 280px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.search-container input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(0, 119, 192, 0.1);
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #94a3b8;
+  font-size: 20px;
+}
+
+.admin-profile-pill {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 6px 6px 16px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 99px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.admin-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.admin-role {
+  font-size: 0.7rem;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.profile-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  display: grid;
+  place-items: center;
+  color: #64748b;
+}
+
+/* Tab Navigation */
+.admin-tab-nav {
+  margin-bottom: 8px;
+}
+
+.tab-list {
+  display: flex;
+  gap: 8px;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 14px;
+  width: fit-content;
+}
+
+.tab-item {
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-item:hover {
+  color: #0f172a;
+}
+
+.tab-item.active-tab {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 119, 192, 0.25);
+}
+
+.tab-panel {
+  min-height: 400px;
+}

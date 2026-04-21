@@ -1,0 +1,64 @@
+<section class="page-shell">
+  <div class="admin-header-row">
+    <div class="header-left">
+      <h2>Admin</h2>
+    </div>
+    
+    <div class="header-right">
+      <div class="search-container">
+        <input type="text" placeholder="Search" [(ngModel)]="documentSearchQuery" (keyup.enter)="searchDocuments()">
+        <span class="material-symbols-outlined search-icon">search</span>
+      </div>
+    </div>
+  </div>
+
+  <section class="admin-workspace">
+    <nav class="admin-tab-nav">
+      <div class="tab-list">
+        @for (section of sections(); track section.key) {
+          <button
+            type="button"
+            class="tab-item"
+            [class.active-tab]="isActiveSection(section.key)"
+            (click)="setActiveSection(section.key)"
+          >
+            {{ section.label }}
+          </button>
+        }
+      </div>
+    </nav>
+
+    <section class="tab-panel">
+      @if (isActiveSection("documents")) {
+        <app-document-management 
+          [departments]="departments()" 
+          [categories]="categories()">
+        </app-document-management>
+      }
+
+      @if (isActiveSection("faqs")) {
+        <app-faq-management 
+          [departments]="departments()" 
+          [categories]="categories()">
+        </app-faq-management>
+      }
+
+      @if (isActiveSection("categories")) {
+        <app-category-management></app-category-management>
+      }
+
+      @if (isActiveSection("departments")) {
+        <app-department-management></app-department-management>
+      }
+
+      @if (isActiveSection("search-logs")) {
+        <app-admin-stats [summary]="summary()"></app-admin-stats>
+        <app-search-log-viewer></app-search-log-viewer>
+      }
+
+      @if (isActiveSection("actors")) {
+        <app-actor-management [departments]="departments()"></app-actor-management>
+      }
+    </section>
+  </section>
+</section>

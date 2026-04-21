@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { adminGuard } from './services/admin.guard';
-import { AdminPageComponent } from './pages/admin/admin-page.component';
-import { ChatPageComponent } from './pages/chat/chat-page.component';
-import { DepartmentsPageComponent } from './pages/departments/departments-page.component';
-import { DocumentsPageComponent } from './pages/documents/documents-page.component';
-import { FaqPageComponent } from './pages/faq/faq-page.component';
-import { HomePageComponent } from './pages/home/home-page.component';
-import { LoginPageComponent } from './pages/login/login-page.component';
+import { adminGuard } from './core/guards/admin.guard';
+import { AdminPageComponent } from './features/admin/pages/admin/admin-page.component';
+import { ChatPageComponent } from './features/chat/pages/chat/chat-page.component';
+import { DepartmentsPageComponent } from './features/departments/pages/departments/departments-page.component';
+import { DocumentsPageComponent } from './features/documents/pages/documents/documents-page.component';
+import { FaqPageComponent } from './features/faq/pages/faq/faq-page.component';
+import { HomePageComponent } from './features/home/pages/home/home-page.component';
+import { LoginPageComponent } from './features/auth/pages/login/login-page.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'home' },

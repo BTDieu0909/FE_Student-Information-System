@@ -1,0 +1,112 @@
+<section class="document-admin-grid">
+  <article class="module-card">
+    <div class="module-head">
+      <div>
+        <p class="card-label">Quan tri phong ban</p>
+        <h3>{{ departmentTotalCount() }} phong ban</h3>
+      </div>
+      <button
+        type="button"
+        class="secondary-action"
+        (click)="clearDepartmentSelection()"
+      >
+        + Thêm mới
+      </button>
+    </div>
+
+    <div class="document-grid">
+      @for (item of departments(); track item.id) {
+        <div
+          class="document-card"
+          [class.active-item]="selectedDepartmentId() === item.id"
+          (click)="selectDepartment(item)"
+        >
+          <strong>{{ item.name }}</strong>
+          <span>{{ item.description || "Không có mô tả" }}</span>
+        </div>
+      } @empty {
+        <div class="empty">Chua co phong ban.</div>
+      }
+    </div>
+  </article>
+
+  @if (isDepartmentModalOpen()) {
+    <div class="modal-overlay" (click)="closeDepartmentModal()">
+      <article
+        class="module-card modal-content"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="module-head">
+          <div>
+            <p class="card-label">
+              {{
+                selectedDepartmentId()
+                  ? "Cập nhật phòng ban"
+                  : "Thêm phòng ban mới"
+              }}
+            </p>
+            <h3>{{ departmentForm.name || "Đang tạo mới..." }}</h3>
+          </div>
+          <button
+            type="button"
+            class="danger-action"
+            style="padding: 0 12px; min-height: 32px"
+            (click)="closeDepartmentModal()"
+          >
+            X
+          </button>
+        </div>
+
+        <div class="form-grid">
+          <label class="field-block full-width">
+            <span>Tên phòng ban</span>
+            <input type="text" [(ngModel)]="departmentForm.name" />
+          </label>
+
+          <label class="field-block full-width">
+            <span>Mô tả</span>
+            <textarea
+              rows="4"
+              [(ngModel)]="departmentForm.description"
+            ></textarea>
+          </label>
+        </div>
+
+        @if (departmentMessage()) {
+          <p class="success-message">{{ departmentMessage() }}</p>
+        }
+
+        @if (departmentError()) {
+          <p class="error-message">{{ departmentError() }}</p>
+        }
+
+        <div class="action-row">
+          @if (selectedDepartmentId()) {
+            <button
+              type="button"
+              class="primary-action"
+              (click)="saveDepartment()"
+            >
+              Lưu cập nhật
+            </button>
+            <button
+              type="button"
+              class="danger-action"
+              (click)="deleteSelectedDepartment()"
+            >
+              Xoá phòng ban
+            </button>
+          } @else {
+            <button
+              type="button"
+              class="primary-action"
+              (click)="createDepartment()"
+            >
+              Tạo phòng ban mới
+            </button>
+          }
+        </div>
+      </article>
+    </div>
+  }
+</section>
