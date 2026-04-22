@@ -1,0 +1,154 @@
+<div class="modal-overlay" (click)="onClose()">
+  <article
+    class="module-card modal-content"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="module-head">
+      <div>
+        <p class="card-label">
+          {{
+            selectedDocument
+              ? "Cập nhật tài liệu"
+              : "Thêm tài liệu mới"
+          }}
+        </p>
+        <h3>{{ selectedDocument?.title || "Đang tạo mới..." }}</h3>
+      </div>
+      <button
+        type="button"
+        class="danger-action-close"
+        (click)="onClose()"
+      >
+        X
+      </button>
+    </div>
+
+    <div class="form-grid">
+      <label class="field-block">
+        <span>Tieu de</span>
+        <input type="text" [(ngModel)]="form.title" />
+      </label>
+
+      <label class="field-block">
+        <span>Phong ban</span>
+        <select [(ngModel)]="form.departmentId">
+          <option value="">Chon phong ban</option>
+          @if (isDepartmentMissing()) {
+            <option [value]="selectedDocument?.departmentId">
+              Gia tri cu khong ton tai trong danh muc phong ban
+            </option>
+          }
+          @for (item of departments; track item.id) {
+            <option [value]="item.id">{{ item.name }}</option>
+          }
+        </select>
+        @if (isDepartmentMissing()) {
+          <small class="field-warning">
+            Phong ban cua tai lieu nay dang khong khop voi du lieu
+            hien tai. Ban hay chon lai de cap nhat.
+          </small>
+        }
+      </label>
+
+      <label class="field-block">
+        <span>Danh muc</span>
+        <select [(ngModel)]="form.categoryId">
+          <option value="">Chon danh muc</option>
+          @if (isCategoryMissing()) {
+            <option [value]="selectedDocument?.categoryId">
+              Gia tri cu khong ton tai trong danh muc
+            </option>
+          }
+          @for (item of categories; track item.id) {
+            <option [value]="item.id">{{ item.name }}</option>
+          }
+        </select>
+        @if (isCategoryMissing()) {
+          <small class="field-warning">
+            Danh muc dang luu trong tai lieu nay khong ton tai hoac
+            bi sai ID. Ban hay chon lai danh muc dung.
+          </small>
+        }
+      </label>
+
+      <label class="field-block">
+        <span>File tai len</span>
+        <small class="field-hint"
+          >File hien tai: {{ selectedDocument?.fileName || 'Khong co' }}</small
+        >
+        <input
+          #documentFileInput
+          type="file"
+          (change)="onFileSelected($event)"
+        />
+        <small>File thay the moi: {{ uploadFileName() }}</small>
+      </label>
+
+      <label class="field-block full-width">
+        <span>Hoặc thêm từ đường Link</span>
+        <input
+          type="text"
+          [(ngModel)]="form.fileLink"
+          placeholder="https://..."
+        />
+        <small class="field-hint"
+          >Hệ thống chấp nhận file .pdf, .docx, .txt hoặc Link
+          Google Drive/Docs</small
+        >
+      </label>
+    </div>
+
+    @if (message()) {
+      <p class="success-message">{{ message() }}</p>
+    }
+
+    @if (error()) {
+      <p class="error-message">{{ error() }}</p>
+    }
+
+    @if (isChunking()) {
+      <p class="info-message">
+        Đang tách file... Vui lòng chờ đợi.
+      </p>
+    }
+
+    <div class="action-row">
+      @if (selectedDocument) {
+        <button
+          type="button"
+          class="secondary-action"
+          (click)="chunkDocument()"
+          [disabled]="isChunking()"
+        >
+          {{
+            isChunking()
+              ? "Đang tách file... Vui lòng chờ đợi"
+              : "Tách file thành chunks"
+          }}
+        </button>
+        <button
+          type="button"
+          class="primary-action"
+          (click)="saveMetadata()"
+        >
+          Lưu cập nhật tiêu đề
+        </button>
+        <button
+          type="button"
+          class="danger-action"
+          (click)="deleteDocument()"
+        >
+          Xoá tài liệu
+        </button>
+      } @else {
+        <button
+          type="button"
+          class="primary-action"
+          (click)="upload()"
+        >
+          Tải lên mới
+        </button>
+      }
+    </div>
+  </article>
+</div>

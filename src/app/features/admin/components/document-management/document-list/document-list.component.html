@@ -1,0 +1,62 @@
+<article class="module-card">
+  <div class="module-head">
+    <div>
+      <p class="card-label">Danh sach tai lieu</p>
+      <h3>{{ totalCount }} tai lieu</h3>
+    </div>
+    <button
+      type="button"
+      class="secondary-action"
+      (click)="onAddNew()"
+    >
+      + Thêm mới
+    </button>
+  </div>
+
+  <div class="data-toolbar">
+    <div class="search-box">
+      <input
+        type="text"
+        placeholder="Tìm kiếm tài liệu..."
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+  </div>
+
+  <div class="document-grid">
+    @for (item of documents; track item.parentFileId) {
+      <div
+        class="document-card"
+        [class.active-item]="selectedDocumentId === item.parentFileId"
+        (click)="onSelect(item)"
+      >
+        <strong>{{ item.title }}</strong>
+        <span>{{ item.fileName }}</span>
+      </div>
+    } @empty {
+      <div class="empty">Chua co du lieu tai lieu.</div>
+    }
+  </div>
+
+  @if (totalPages > 1) {
+    <div class="pagination-controls">
+      <button
+        (click)="onPageChange(-1)"
+        [disabled]="currentPage === 1"
+      >
+        &lt;
+      </button>
+      <span
+        >Trang {{ currentPage }} /
+        {{ totalPages }}</span
+      >
+      <button
+        (click)="onPageChange(1)"
+        [disabled]="currentPage === totalPages"
+      >
+        &gt;
+      </button>
+    </div>
+  }
+</article>

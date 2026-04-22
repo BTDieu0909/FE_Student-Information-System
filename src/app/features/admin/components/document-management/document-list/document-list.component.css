@@ -1,0 +1,124 @@
+.module-card {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+  padding: 32px;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f1f5f9;
+}
+
+.module-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card-label {
+  margin: 0 0 12px;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.module-head h3 {
+  margin: 0;
+  color: #0f172a;
+}
+
+.data-toolbar {
+  margin-bottom: 8px;
+}
+
+.search-box input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  border-radius: 12px;
+  border: 1px solid #f1f5f9;
+  background: #f8fafc;
+}
+
+.document-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.document-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border-radius: 20px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.document-card:hover {
+  background: #ffffff;
+  border-color: #cbd5e1;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+.document-card.active-item {
+  background: #ffffff;
+  border-color: #002555;
+  box-shadow: 0 10px 15px -3px rgba(0, 37, 85, 0.1);
+}
+
+.document-card strong {
+  color: #0f172a;
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+.document-card span {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 12px;
+}
+
+.pagination-controls button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #f1f5f9;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.pagination-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondary-action {
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid #f1f5f9;
+  background: #f8fafc;
+  color: #334155;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.empty {
+  color: #64748b;
+  padding: 20px;
+  text-align: center;
+}
