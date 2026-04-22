@@ -9,7 +9,7 @@
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --border: #e2e8f0;
-  --primary: #0077C0;
+  --primary: #0077c0;
   --hover-surface: #f1f5f9;
   --topbar-bg: rgba(240, 244, 248, 0.85);
   --scrollbar-track: #f1f1f1;
@@ -24,7 +24,7 @@
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --border: #374151;
-  --primary: #0077C0;
+  --primary: #0077c0;
   --hover-surface: #243244;
   --topbar-bg: rgba(15, 23, 42, 0.88);
   --scrollbar-track: #111827;
@@ -36,10 +36,18 @@ html,
 body {
   margin: 0;
   min-height: 100%;
-  font-family: "Inter", "Manrope", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter",
+    "Manrope",
+    system-ui,
+    -apple-system,
+    sans-serif;
   color: var(--text-primary);
   background-color: var(--bg);
-  background-image: radial-gradient(rgba(148, 163, 184, 0.18) 1px, transparent 1px);
+  background-image: radial-gradient(
+    rgba(148, 163, 184, 0.18) 1px,
+    transparent 1px
+  );
   background-size: 40px 40px;
   transition:
     background-color 200ms ease,
@@ -52,7 +60,10 @@ body {
 }
 
 .dark body {
-  background-image: radial-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px);
+  background-image: radial-gradient(
+    rgba(148, 163, 184, 0.12) 1px,
+    transparent 1px
+  );
 }
 
 * {
@@ -69,11 +80,15 @@ body {
 }
 
 .primary-gradient {
-  background: linear-gradient(135deg, #0077C0 0%, #0099ee 100%);
+  background: linear-gradient(135deg, #0077c0 0%, #0099ee 100%);
 }
 
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
 }
 
 .app-shell-sidebar {
@@ -126,14 +141,19 @@ body {
 }
 
 .active-link {
-  background-color: var(--card);
+  background-color: #ffffff;
   color: var(--primary);
+  border-left: 0;
   border-right: 4px solid var(--primary);
+  border-top: 1px solid rgba(15, 51, 102, 0.08);
+  border-bottom: 1px solid rgba(15, 51, 102, 0.08);
+  border-radius: 18px;
   font-weight: 700;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
 }
 
 .active-link span {
-  font-variation-settings: 'FILL' 1;
+  font-variation-settings: "FILL" 1;
   color: inherit;
 }
 

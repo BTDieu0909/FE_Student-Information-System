@@ -1,68 +1,60 @@
-<main class="page-container">
-  <header class="page-header">
-    <div class="header-content">
-      @if (activeView() !== 'faculties') {
-        <div class="header-title-box">
-          <p class="header-eyebrow">Directory</p>
-          <h1 class="header-title">{{ pageHeaderTitle() }}</h1>
-          <p class="header-description">{{ pageHeaderDescription() }}</p>
-        </div>
-      } @else {
-        <div class="header-title-box empty-box"></div>
-      }
+<main class="departments-page">
+  <header class="page-hero">
+    <div class="hero-copy">
+      <p class="hero-kicker">STUDENT INFORMATION SYSTEM</p>
+      <h1 class="hero-title">{{ pageHeaderTitle() }}</h1>
+      <p class="hero-subtitle">{{ pageHeaderDescription() }}</p>
+    </div>
 
-      <nav class="view-switcher">
-        <div class="switcher-options">
-          <button
-            class="switcher-btn"
-            [class.active]="activeView() === 'departments'"
-            (click)="showDepartments($event)"
-          >
-            Tất cả phòng ban
-          </button>
+    <div class="hero-tabs" role="tablist" aria-label="Directory view switcher">
+      <button
+        class="hero-tab"
+        [class.active]="activeView() === 'departments'"
+        (click)="showDepartments()"
+      >
+        Phòng ban
+      </button>
 
-          <div
-            class="faculty-menu-trigger"
-            (mouseenter)="openFacultyMenu()"
-            (mouseleave)="scheduleFacultyMenuClose()"
-          >
-            <button
-              class="switcher-btn faculty-trigger"
-              [class.active]="activeView() === 'faculties'"
-            >
-              <span>Khoa CNTT</span>
-              <span class="material-symbols-outlined">expand_more</span>
-            </button>
-
-            @if (isFacultyMenuOpen()) {
-              <div class="faculty-dropdown-menu">
-                @for (opt of facultyMenuOptions; track opt.key) {
-                  <button
-                    class="dropdown-item"
-                    [class.active]="
-                      activeView() === 'faculties' &&
-                      selectedFacultyPageKey() === opt.key
-                    "
-                    (click)="selectFacultyPage(opt.key, $event)"
-                  >
-                    {{ opt.label }}
-                  </button>
-                }
-              </div>
-            }
-          </div>
-        </div>
-      </nav>
+      <button
+        class="hero-tab"
+        [class.active]="activeView() === 'faculties'"
+        (click)="showFaculties()"
+      >
+        Khoa
+      </button>
     </div>
   </header>
 
-  <section class="view-content">
+  <section class="content-panel">
     @if (activeView() === "departments") {
       <app-department-list [departments]="departments()"></app-department-list>
     }
 
     @if (activeView() === "faculties") {
-      <app-faculty-detail [selectedPageKey]="selectedFacultyPageKey()"></app-faculty-detail>
+      <div class="faculty-panel-shell">
+        <div class="faculty-panel-header">
+          <div>
+            <p class="faculty-panel-kicker">KHOA CÔNG NGHỆ THÔNG TIN</p>
+            <h2 class="faculty-panel-title">{{ pageHeaderDescription() }}</h2>
+          </div>
+
+          <div class="faculty-chip-row">
+            @for (opt of facultyMenuOptions; track opt.key) {
+              <button
+                class="faculty-chip"
+                [class.active]="selectedFacultyPageKey() === opt.key"
+                (click)="showFaculties(opt.key)"
+              >
+                {{ opt.label }}
+              </button>
+            }
+          </div>
+        </div>
+
+        <app-faculty-detail
+          [selectedPageKey]="selectedFacultyPageKey()"
+        ></app-faculty-detail>
+      </div>
     }
   </section>
 </main>

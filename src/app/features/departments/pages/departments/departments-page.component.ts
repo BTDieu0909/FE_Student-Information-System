@@ -1,6 +1,9 @@
 import { CommonModule } from "@angular/common";
-import { Component, HostListener, inject, signal } from "@angular/core";
-import { DepartmentItem, PortalDataService } from "../../../../core/services/portal-data.service";
+import { Component, inject, signal } from "@angular/core";
+import {
+  DepartmentItem,
+  PortalDataService,
+} from "../../../../core/services/portal-data.service";
 import { DepartmentListComponent } from "../../components/department-list/department-list.component";
 import { FacultyDetailComponent } from "../../components/faculty-detail/faculty-detail.component";
 
@@ -15,11 +18,9 @@ type DirectoryView = "departments" | "faculties";
 })
 export class DepartmentsPageComponent {
   private readonly portalDataService = inject(PortalDataService);
-  private facultyMenuCloseTimer: number | null = null;
 
   readonly departments = signal<DepartmentItem[]>([]);
   readonly activeView = signal<DirectoryView>("departments");
-  readonly isFacultyMenuOpen = signal(false);
   readonly selectedFacultyPageKey = signal("mission");
 
   readonly facultyMenuOptions = [
@@ -39,51 +40,26 @@ export class DepartmentsPageComponent {
     });
   }
 
-  @HostListener("document:click")
-  protected closeFacultyMenu(): void {
-    if (this.isFacultyMenuOpen()) {
-      this.isFacultyMenuOpen.set(false);
-    }
-  }
-
-  protected showDepartments(event?: Event): void {
-    event?.stopPropagation();
+  protected showDepartments(): void {
     this.activeView.set("departments");
-    this.isFacultyMenuOpen.set(false);
   }
 
-  protected selectFacultyPage(pageKey: string, event?: Event): void {
-    event?.stopPropagation();
+  protected showFaculties(pageKey = "mission"): void {
     this.activeView.set("faculties");
     this.selectedFacultyPageKey.set(pageKey);
-    this.isFacultyMenuOpen.set(false);
-  }
-
-  protected openFacultyMenu(): void {
-    if (this.facultyMenuCloseTimer !== null) {
-      window.clearTimeout(this.facultyMenuCloseTimer);
-      this.facultyMenuCloseTimer = null;
-    }
-    this.isFacultyMenuOpen.set(true);
-  }
-
-  protected scheduleFacultyMenuClose(): void {
-    if (this.facultyMenuCloseTimer !== null) {
-      window.clearTimeout(this.facultyMenuCloseTimer);
-    }
-    this.facultyMenuCloseTimer = window.setTimeout(() => {
-      this.isFacultyMenuOpen.set(false);
-      this.facultyMenuCloseTimer = null;
-    }, 160);
   }
 
   protected pageHeaderTitle(): string {
-    return this.activeView() === "faculties" ? "Khoa Công nghệ thông tin" : "Thông tin phòng ban";
+    return this.activeView() === "faculties"
+      ? "Khoa Công nghệ thông tin"
+      : "Thông tin phòng ban";
   }
 
   protected pageHeaderDescription(): string {
     if (this.activeView() === "faculties") {
-      const option = this.facultyMenuOptions.find(o => o.key === this.selectedFacultyPageKey());
+      const option = this.facultyMenuOptions.find(
+        (o) => o.key === this.selectedFacultyPageKey(),
+      );
       return option ? option.label : "Chi tiết về Khoa Công nghệ thông tin.";
     }
     return "Danh sách các phòng ban trong trường.";

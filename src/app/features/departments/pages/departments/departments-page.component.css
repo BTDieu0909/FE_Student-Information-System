@@ -1,127 +1,160 @@
-.page-container {
-  padding: 32px;
-  max-width: 1400px;
-  margin: 0 auto;
+.departments-page {
+  padding: 10px 0 24px;
 }
 
-.page-header {
-  margin-bottom: 32px;
-}
-
-.header-content {
+.page-hero {
   display: flex;
-  justify-content: space-between;
   align-items: flex-start;
+  justify-content: space-between;
   gap: 24px;
+  padding: 16px 6px 22px;
 }
 
-.header-title-box {
+.hero-copy {
   flex: 1;
+  min-width: 0;
 }
 
-.header-title {
+.hero-kicker {
   margin: 0 0 8px;
-  font-size: 1.5rem;
+  color: #1e3a8a;
+  font-size: 0.72rem;
   font-weight: 800;
+  letter-spacing: 0.18em;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: clamp(1.6rem, 2vw, 2.2rem);
+  line-height: 1.1;
+  font-weight: 900;
   color: #0f172a;
 }
 
-.header-description {
-  margin: 0;
+.hero-subtitle {
+  margin: 10px 0 0;
+  font-size: 1rem;
   color: #64748b;
-  font-size: 0.95rem;
 }
 
-/* View Switcher */
-.view-switcher {
-  display: flex;
-  background: #f1f5f9;
-  padding: 6px;
-  border-radius: 16px;
+.hero-tabs {
+  display: inline-flex;
+  gap: 14px;
+  flex-shrink: 0;
+  padding-top: 6px;
 }
 
-.switcher-options {
-  display: flex;
-  gap: 8px;
-  position: relative;
-}
-
-.switcher-btn {
-  padding: 10px 24px;
-  border-radius: 12px;
+.hero-tab {
+  min-width: 152px;
+  padding: 18px 28px;
   border: none;
-  background: transparent;
-  color: #64748b;
-  font-weight: 700;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.switcher-btn.active {
-  background: #002555;
-  color: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 37, 85, 0.2);
-}
-
-/* Faculty Dropdown */
-.faculty-menu-trigger {
-  position: relative;
-}
-
-.faculty-dropdown-menu {
-  position: absolute;
-  top: calc(100% + 12px);
-  right: 0;
-  width: 320px;
-  background: #3b60a0;
   border-radius: 18px;
-  padding: 8px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-  z-index: 100;
+  background: linear-gradient(180deg, #123c7a 0%, #0f3366 100%);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(15, 51, 102, 0.18);
+  cursor: pointer;
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    opacity 180ms ease;
+}
+
+.hero-tab:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(15, 51, 102, 0.22);
+}
+
+.hero-tab:not(.active) {
+  opacity: 0.92;
+}
+
+.content-panel {
+  padding: 4px 0 0;
+}
+
+.faculty-panel-shell {
   display: flex;
   flex-direction: column;
+  gap: 18px;
 }
 
-.dropdown-item {
-  width: 100%;
-  padding: 14px 20px;
-  border: none;
-  background: transparent;
-  color: #ffffff;
-  text-align: left;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: 12px;
-  cursor: pointer;
+.faculty-panel-header {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  transition: background 0.2s;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 0 6px;
 }
 
-.dropdown-item:hover,
-.dropdown-item.active {
-  background: rgba(255, 255, 255, 0.15);
+.faculty-panel-kicker {
+  margin: 0 0 6px;
+  color: #1d4ed8;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
 }
 
-.dropdown-item::before {
-  content: 'chevron_right';
-  font-family: 'Material Symbols Outlined';
-  font-size: 18px;
-  opacity: 0.7;
+.faculty-panel-title {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #0f172a;
 }
 
-.view-content {
-  margin-top: 24px;
+.faculty-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
-@media (max-width: 768px) {
-  .header-content {
+.faculty-chip {
+  border: 1px solid #dbe3ef;
+  background: #ffffff;
+  color: #0f172a;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 180ms ease;
+}
+
+.faculty-chip:hover,
+.faculty-chip.active {
+  background: #0f3366;
+  color: #ffffff;
+  border-color: #0f3366;
+}
+
+@media (max-width: 1080px) {
+  .page-hero {
     flex-direction: column;
-    align-items: stretch;
+  }
+
+  .hero-tabs {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .faculty-panel-header {
+    flex-direction: column;
+  }
+
+  .faculty-chip-row {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-tabs {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .hero-tab {
+    width: 100%;
   }
 }
