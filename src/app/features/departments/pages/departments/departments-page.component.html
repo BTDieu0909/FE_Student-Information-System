@@ -3,82 +3,11 @@
     <div class="hero-copy">
       <p class="hero-kicker">STUDENT INFORMATION SYSTEM</p>
       <h1 class="hero-title">{{ pageHeaderTitle() }}</h1>
-      @if (activeView() === 'departments') {
-        <p class="hero-subtitle">{{ pageHeaderDescription() }}</p>
-      }
-    </div>
-
-    <div class="hero-tabs" role="tablist" aria-label="Directory view switcher">
-      <button
-        class="hero-tab"
-        [class.active]="activeView() === 'departments'"
-        (click)="showDepartments()"
-      >
-        Phòng ban
-      </button>
-
-      <div class="khoa-dropdown-wrapper">
-        <button
-          class="hero-tab"
-          [class.active]="activeView() === 'faculties'"
-          (click)="showFaculties()"
-        >
-          Khoa
-          <span class="material-symbols-outlined khoa-chevron">expand_more</span>
-        </button>
-        <div class="khoa-dropdown">
-          @for (fac of faculties; track fac.key) {
-            <button
-              class="khoa-dropdown-item"
-              [class.active]="selectedFaculty() === fac.key && activeView() === 'faculties'"
-              (click)="selectFaculty(fac.key)"
-            >
-              <span class="material-symbols-outlined khoa-dropdown-icon">school</span>
-              {{ fac.shortLabel }}
-            </button>
-          }
-        </div>
-      </div>
+      <p class="hero-subtitle">{{ pageHeaderDescription() }}</p>
     </div>
   </header>
 
   <section class="content-panel">
-    @if (activeView() === "departments") {
-      <app-department-list [departments]="departments()"></app-department-list>
-    }
-
-    @if (activeView() === "faculties") {
-      <div class="faculty-panel-shell">
-        <div class="faculty-panel-header">
-
-
-          @if (selectedFaculty() === 'cntt') {
-            <div class="faculty-chip-row">
-              @for (opt of facultyMenuOptions; track opt.key) {
-                <button
-                  class="faculty-chip"
-                  [class.active]="selectedFacultyPageKey() === opt.key"
-                  (click)="showFaculties(opt.key)"
-                >
-                  {{ opt.label }}
-                </button>
-              }
-            </div>
-          }
-        </div>
-
-        @if (selectedFaculty() === 'cntt') {
-          <app-faculty-detail
-            [selectedPageKey]="selectedFacultyPageKey()"
-          ></app-faculty-detail>
-        } @else {
-          <div class="empty-faculty-data" style="text-align: center; padding: 60px 20px; color: #64748b; background: rgba(255,255,255,0.6); border-radius: 20px; border: 1px dashed #cbd5e1; margin-top: 10px;">
-            <span class="material-symbols-outlined" style="font-size: 48px; opacity: 0.5; margin-bottom: 16px;">construction</span>
-            <p style="font-size: 1.1rem; font-weight: 500;">Thông tin chi tiết về khoa đang được cập nhật...</p>
-            <p style="font-size: 0.9rem; margin-top: 8px; opacity: 0.8;">Vui lòng quay lại sau.</p>
-          </div>
-        }
-      </div>
-    }
+    <app-department-list [departments]="departments()"></app-department-list>
   </section>
 </main>
