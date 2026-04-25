@@ -38,9 +38,9 @@ export class FaqManagementComponent {
 
   protected loadFaqs(): void {
     this.portalDataService.getFaqs({ Query: this.faqSearchQuery() }).subscribe({
-      next: (items) => {
-        this.faqs.set(items || []);
-        this.faqTotalCount.set(items?.length || 0);
+      next: (response) => {
+        this.faqs.set(response.items || []);
+        this.faqTotalCount.set(response.totalItems || 0);
       },
       error: () => this.faqs.set([])
     });

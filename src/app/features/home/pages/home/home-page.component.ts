@@ -93,11 +93,12 @@ export class HomePageComponent {
       },
     });
 
-    this.portalDataService.getFaqs().subscribe({
+    this.portalDataService.getFaqs({ Page: 1, PageSize: 50 }).subscribe({
       next: (response) => {
-        const deduped = Array.from(new Map((response || []).map((f: FaqItem) => [f.id, f])).values());
+        const items = response.items || [];
+        const deduped = Array.from(new Map(items.map((f: FaqItem) => [f.id, f])).values());
         this.faqs.set(deduped);
-        this.faqTotalCount.set(deduped.length);
+        this.faqTotalCount.set(response.totalItems || deduped.length);
       },
     });
 

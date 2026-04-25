@@ -17,19 +17,46 @@ export class FaqPageComponent {
   readonly errorMessage = signal('');
   readonly keyword = signal('');
 
+  readonly currentPage = signal(1);
+  readonly totalPages = signal(1);
+  readonly totalCount = signal(0);
+  readonly pageSize = 5;
+
   constructor() {
-    this.load();
+    this.search();
   }
 
-  private load(): void {
+  onKeywordChange(value: string): void {
+    this.keyword.set(value);
+  }
+
+  onPageChange(delta: number): void {
+    const next = this.currentPage() + delta;
+    if (next >= 1 && next <= this.totalPages()) {
+      this.currentPage.set(next);
+      this.search(next);
+    }
+  }
+
+  search(page: number = 1): void {
+    this.currentPage.set(page);
     this.loading.set(true);
-    this.portalDataService.getFaqs().subscribe({
+    this.errorMessage.set('');
+
+    const params: Record<string, string | number> = {
+      Page: page,
+      PageSize: this.pageSize
+    };
+
+    if (this.keyword().trim()) {
+      params['Keyword'] = this.keyword().trim();
+    }
+
+    this.portalDataService.getFaqs(params).subscribe({
       next: (response) => {
-        const map = new Map<string, FaqItem>();
-        for (const it of response || []) {
-          if (it.id) map.set(it.id, it);
-        }
-        this.items.set(Array.from(map.values()));
+        this.items.set(response.items || []);
+        this.totalPages.set(response.totalPages || 1);
+        this.totalCount.set(response.totalItems || 0);
         this.loading.set(false);
       },
       error: () => {
@@ -38,46 +65,4 @@ export class FaqPageComponent {
       }
     });
   }
-
-onKeywordChange(value: string): void {
-  this.keyword.set(value);
-}
-  
- search(): void {
-  const q = this.keyword().trim();
-  this.loading.set(true);
-  this.errorMessage.set('');
-
-  const params = q ? { Keyword: q } : undefined;
-
-  this.portalDataService.getFaqs(params).subscribe({
-    next: (response) => {
-      const map = new Map<string, FaqItem>();
-
-      for (const it of response || []) {
-        const key = it?.id || (it.question ?? '');
-        map.set(key, it);
-      }
-
-      let deduped = Array.from(map.values());
-
-      // Nếu backend chưa filter đúng kiểu LIKE,
-      // thì filter phía client chỉ theo question
-      if (q) {
-        const keyword = q.toLowerCase();
-
-        deduped = deduped.filter((f) =>
-          (f.question || '').toLowerCase().includes(keyword)
-        );
-      }
-
-      this.items.set(deduped);
-      this.loading.set(false);
-    },
-    error: () => {
-      this.errorMessage.set('Khong the tim FAQ.');
-      this.loading.set(false);
-    }
-  });
-}
 }

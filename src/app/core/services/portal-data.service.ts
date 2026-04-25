@@ -26,6 +26,14 @@ export interface DocumentResponse {
   };
 }
 
+export interface FaqPagedResponse {
+  items: FaqItem[];
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+}
+
 export interface FaqItem {
   id?: string;
   question: string;
@@ -160,7 +168,7 @@ export class PortalDataService {
     return this.http.get<DocumentResponse>(url);
   }
 
-  getFaqs(params?: Record<string, string | number>): Observable<FaqItem[]> {
+  getFaqs(params?: Record<string, string | number>): Observable<FaqPagedResponse> {
     const searchParams = new URLSearchParams();
     Object.entries(params ?? {}).forEach(([key, value]) => {
       if (`${value}`.trim().length > 0) {
@@ -169,8 +177,8 @@ export class PortalDataService {
     });
 
     const query = searchParams.toString();
-    const url = query ? `/api/Faq?${query}` : "/api/Faq";
-    return this.http.get<FaqItem[]>(url);
+    const url = query ? `/api/Faq?${query}` : "/api/Faq?Page=1&PageSize=5";
+    return this.http.get<FaqPagedResponse>(url);
   }
 
   getCategories(): Observable<CategoryItem[]> {

@@ -5,14 +5,9 @@
     <p>Danh sách câu trả lời chuẩn hóa giúp sinh viên tra cứu nhanh thay vì phải hỏi lặp lại.</p>
   </div>
 
-  <!-- <div class="search-bar">
-    <input type="text" [ngModel]="keyword()" (ngModelChange)="keyword.set($event)"
-      placeholder="Nhap tu khoa tim tai lieu..." />
-    <button type="button" (click)="search()">Tim kiem</button>
-  </div> -->
   <div class="search-bar">
     <input type="text" [ngModel]="keyword()" (ngModelChange)="onKeywordChange($any($event))"
-      placeholder="Nhập từ khóa tìm câu hỏi..." />
+      placeholder="Nhập từ khóa tìm câu hỏi..." (keyup.enter)="search()" />
     <button type="button" (click)="search()">Tìm kiếm</button>
   </div>
 
@@ -30,6 +25,31 @@
       <h3>{{ item.question }}</h3>
       <p>{{ item.answer }}</p>
     </article>
+    } @empty {
+      @if (!loading()) {
+        <p class="status-text">Không tìm thấy câu hỏi nào.</p>
+      }
     }
   </div>
+
+  @if (totalPages() > 1) {
+    <div class="pagination-controls">
+      <button
+        (click)="onPageChange(-1)"
+        [disabled]="currentPage() === 1"
+      >
+        &lt;
+      </button>
+      <span
+        >Trang {{ currentPage() }} /
+        {{ totalPages() }}</span
+      >
+      <button
+        (click)="onPageChange(1)"
+        [disabled]="currentPage() === totalPages()"
+      >
+        &gt;
+      </button>
+    </div>
+  }
 </section>
