@@ -25,9 +25,7 @@
       <p class="meta">{{ item.fileType | uppercase }} • {{ item.uploadDate | date:'dd/MM/yyyy' }}</p>
       <h3>{{ item.title }}</h3>
       <p>{{ item.preview }}</p>
-      @if (item.fileType === 'link') {
       <a [href]="item.filePath" target="_blank" class="download-btn">Tải mẫu đơn / Xem chi tiết</a>
-      }
     </article>
     }
   </div>
