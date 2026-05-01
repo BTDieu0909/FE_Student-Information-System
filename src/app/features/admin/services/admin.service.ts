@@ -1,16 +1,21 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { SearchLogItem, SearchLogPageResponse, SearchLogSummary, ActorItem } from "../../../core/services/portal-data.service";
-import { 
-  DocumentResponse, 
-  CategoryPayload, 
-  DepartmentPayload, 
-  ActorPayload, 
-  UploadDocumentPayload, 
-  UploadDocumentLinkPayload, 
-  UpdateDocumentPayload, 
-  FaqPayload 
+import {
+  SearchLogItem,
+  SearchLogPageResponse,
+  SearchLogSummary,
+  ActorItem,
+} from "../../../core/services/portal-data.service";
+import {
+  DocumentResponse,
+  CategoryPayload,
+  DepartmentPayload,
+  ActorPayload,
+  UploadDocumentPayload,
+  UploadDocumentLinkPayload,
+  UpdateDocumentPayload,
+  FaqPayload,
 } from "../models/admin.models";
 
 @Injectable({ providedIn: "root" })
@@ -35,7 +40,10 @@ export class AdminService {
     return this.http.post("/api/Department", payload);
   }
 
-  updateDepartment(id: string, payload: DepartmentPayload): Observable<unknown> {
+  updateDepartment(
+    id: string,
+    payload: DepartmentPayload,
+  ): Observable<unknown> {
     return this.http.put(`/api/Department/${id}`, payload);
   }
 
@@ -61,7 +69,9 @@ export class AdminService {
   }
 
   // Document Management
-  getDocuments(params?: Record<string, string | number>): Observable<DocumentResponse> {
+  getDocuments(
+    params?: Record<string, string | number>,
+  ): Observable<DocumentResponse> {
     const searchParams = new URLSearchParams();
     Object.entries(params ?? {}).forEach(([key, value]) => {
       if (`${value}`.trim().length > 0) {
@@ -70,7 +80,9 @@ export class AdminService {
     });
 
     const query = searchParams.toString();
-    const url = query ? `/api/Document?${query}` : "/api/Document?Page=1&PageSize=10";
+    const url = query
+      ? `/api/Document?${query}`
+      : "/api/Document?Page=1&PageSize=10";
     return this.http.get<DocumentResponse>(url);
   }
 
@@ -91,7 +103,21 @@ export class AdminService {
     return this.http.post(`/api/Document/${parentFileId}/process-chunks`, {});
   }
 
-  updateDocument(id: string, payload: UpdateDocumentPayload): Observable<unknown> {
+  enableDocumentAi(parentFileId: string): Observable<unknown> {
+    return this.http.post(
+      `/api/Document/from-download-file/${parentFileId}`,
+      {},
+    );
+  }
+
+  processDocument(documentId: string): Observable<unknown> {
+    return this.http.post(`/api/Document/${documentId}/process`, {});
+  }
+
+  updateDocument(
+    id: string,
+    payload: UpdateDocumentPayload,
+  ): Observable<unknown> {
     return this.http.put(`/api/Document/${id}`, payload);
   }
 
@@ -113,7 +139,11 @@ export class AdminService {
   }
 
   // Search Logs
-  getSearchLogsPage(page = 1, pageSize = 10, params?: any): Observable<SearchLogPageResponse> {
+  getSearchLogsPage(
+    page = 1,
+    pageSize = 10,
+    params?: any,
+  ): Observable<SearchLogPageResponse> {
     const searchParams = new URLSearchParams({
       page: `${page}`,
       pageSize: `${pageSize}`,
@@ -121,12 +151,15 @@ export class AdminService {
 
     if (params) {
       if (params.query?.trim()) searchParams.set("query", params.query.trim());
-      if (params.source?.trim()) searchParams.set("source", params.source.trim());
+      if (params.source?.trim())
+        searchParams.set("source", params.source.trim());
       if (params.startDate) searchParams.set("startDate", params.startDate);
       if (params.endDate) searchParams.set("endDate", params.endDate);
     }
 
-    return this.http.get<SearchLogPageResponse>(`/api/SearchLog?${searchParams.toString()}`);
+    return this.http.get<SearchLogPageResponse>(
+      `/api/SearchLog?${searchParams.toString()}`,
+    );
   }
 
   getSearchLogSummary(): Observable<SearchLogSummary> {

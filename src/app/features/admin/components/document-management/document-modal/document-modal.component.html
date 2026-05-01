@@ -1,24 +1,13 @@
 <div class="modal-overlay" (click)="onClose()">
-  <article
-    class="module-card modal-content"
-    (click)="$event.stopPropagation()"
-  >
+  <article class="module-card modal-content" (click)="$event.stopPropagation()">
     <div class="module-head">
       <div>
         <p class="card-label">
-          {{
-            selectedDocument
-              ? "Cập nhật tài liệu"
-              : "Thêm tài liệu mới"
-          }}
+          {{ selectedDocument ? "Cập nhật tài liệu" : "Thêm tài liệu mới" }}
         </p>
         <h3>{{ selectedDocument?.title || "Đang tạo mới..." }}</h3>
       </div>
-      <button
-        type="button"
-        class="danger-action-close"
-        (click)="onClose()"
-      >
+      <button type="button" class="danger-action-close" (click)="onClose()">
         X
       </button>
     </div>
@@ -44,8 +33,8 @@
         </select>
         @if (isDepartmentMissing()) {
           <small class="field-warning">
-            Phong ban cua tai lieu nay dang khong khop voi du lieu
-            hien tai. Ban hay chon lai de cap nhat.
+            Phong ban cua tai lieu nay dang khong khop voi du lieu hien tai. Ban
+            hay chon lai de cap nhat.
           </small>
         }
       </label>
@@ -65,8 +54,8 @@
         </select>
         @if (isCategoryMissing()) {
           <small class="field-warning">
-            Danh muc dang luu trong tai lieu nay khong ton tai hoac
-            bi sai ID. Ban hay chon lai danh muc dung.
+            Danh muc dang luu trong tai lieu nay khong ton tai hoac bi sai ID.
+            Ban hay chon lai danh muc dung.
           </small>
         }
       </label>
@@ -74,7 +63,7 @@
       <label class="field-block">
         <span>File tai len</span>
         <small class="field-hint"
-          >File hien tai: {{ selectedDocument?.fileName || 'Khong co' }}</small
+          >File hien tai: {{ selectedDocument?.fileName || "Khong co" }}</small
         >
         <input
           #documentFileInput
@@ -92,8 +81,8 @@
           placeholder="https://..."
         />
         <small class="field-hint"
-          >Hệ thống chấp nhận file .pdf, .docx, .txt hoặc Link
-          Google Drive/Docs</small
+          >Hệ thống chấp nhận file .pdf, .docx, .txt hoặc Link Google
+          Drive/Docs</small
         >
       </label>
     </div>
@@ -107,9 +96,7 @@
     }
 
     @if (isChunking()) {
-      <p class="info-message">
-        Đang tách file... Vui lòng chờ đợi.
-      </p>
+      <p class="info-message">Đang tách file... Vui lòng chờ đợi.</p>
     }
 
     <div class="action-row">
@@ -128,24 +115,20 @@
         </button>
         <button
           type="button"
-          class="primary-action"
-          (click)="saveMetadata()"
+          class="secondary-action"
+          (click)="enableAi()"
+          [disabled]="isEnablingAi()"
         >
+          {{ isEnablingAi() ? "Đang bật AI..." : "Bật AI" }}
+        </button>
+        <button type="button" class="primary-action" (click)="saveMetadata()">
           Lưu cập nhật tiêu đề
         </button>
-        <button
-          type="button"
-          class="danger-action"
-          (click)="deleteDocument()"
-        >
+        <button type="button" class="danger-action" (click)="deleteDocument()">
           Xoá tài liệu
         </button>
       } @else {
-        <button
-          type="button"
-          class="primary-action"
-          (click)="upload()"
-        >
+        <button type="button" class="primary-action" (click)="upload()">
           Tải lên mới
         </button>
       }
