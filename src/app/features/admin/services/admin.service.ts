@@ -165,4 +165,13 @@ export class AdminService {
   getSearchLogSummary(): Observable<SearchLogSummary> {
     return this.http.get<SearchLogSummary>("/api/SearchLog/summary");
   }
+
+  // System Settings
+  getSystemSetting(key: string): Observable<{ key: string, value: string }> {
+    return this.http.get<{ key: string, value: string }>(`/api/SystemSetting/${key}`);
+  }
+
+  updateSystemSetting(key: string, value: string): Observable<{ key: string, value: string }> {
+    return this.http.put<{ key: string, value: string }>(`/api/SystemSetting/${key}`, { value });
+  }
 }

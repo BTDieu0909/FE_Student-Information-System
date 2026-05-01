@@ -56,6 +56,10 @@
         <app-search-log-viewer></app-search-log-viewer>
       }
 
+      @if (isActiveSection("ai-settings")) {
+        <app-ai-settings></app-ai-settings>
+      }
+
       @if (isActiveSection("actors")) {
         <app-actor-management [departments]="departments()"></app-actor-management>
       }

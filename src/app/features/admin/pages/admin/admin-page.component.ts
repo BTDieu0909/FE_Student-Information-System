@@ -11,6 +11,7 @@ import { DepartmentManagementComponent } from "../../components/department-manag
 import { ActorManagementComponent } from "../../components/actor-management/actor-management.component";
 import { SearchLogViewerComponent } from "../../components/search-log-viewer/search-log-viewer.component";
 import { AdminStatsComponent } from "../../components/admin-stats/admin-stats.component";
+import { AiSettingsComponent } from "../../components/ai-settings/ai-settings.component";
 
 @Component({
   selector: "app-admin-page",
@@ -24,7 +25,8 @@ import { AdminStatsComponent } from "../../components/admin-stats/admin-stats.co
     CategoryManagementComponent,
     DepartmentManagementComponent,
     ActorManagementComponent,
-    SearchLogViewerComponent
+    SearchLogViewerComponent,
+    AiSettingsComponent
   ],
   templateUrl: "./admin-page.component.html",
   styleUrl: "./admin-page.component.css",
@@ -96,6 +98,7 @@ export class AdminPageComponent {
       { key: "categories", label: "Quản trị danh mục" },
       { key: "departments", label: "Quản trị phòng ban" },
       { key: "search-logs", label: "Xem thống kê tra cứu" },
+      { key: "ai-settings", label: "Quản lí tra AI" },
     ];
 
     if (this.isAdminView()) {

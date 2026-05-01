@@ -1,0 +1,37 @@
+<div class="settings-container">
+  <div class="settings-card">
+    <div class="card-header">
+      <h2>Cấu hình quá trình tra cứu AI</h2>
+      <p class="subtitle">Quản lý cách hệ thống tra cứu và lấy dữ liệu trước khi sinh câu trả lời.</p>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">Đang tải cấu hình...</div>
+    } @else {
+      <div class="setting-item">
+        <div class="setting-info">
+          <h3>Quét FAQ trước khi gọi AI</h3>
+          <p>Khi được bật, hệ thống sẽ ưu tiên tìm kiếm trong bộ câu hỏi thường gặp (FAQ). Nếu độ trùng khớp cao, AI sẽ sử dụng câu trả lời sẵn có từ FAQ để phản hồi nhanh, bỏ qua bước tìm kiếm văn bản.</p>
+        </div>
+        
+        <div class="setting-action">
+          <button 
+            type="button" 
+            class="toggle-btn" 
+            [class.active]="enableFaqScan()" 
+            [disabled]="isSaving()"
+            (click)="toggleFaqScan()">
+            <div class="toggle-slider"></div>
+          </button>
+        </div>
+      </div>
+
+      @if (message()) {
+        <div class="status-msg success">{{ message() }}</div>
+      }
+      @if (error()) {
+        <div class="status-msg error">{{ error() }}</div>
+      }
+    }
+  </div>
+</div>
