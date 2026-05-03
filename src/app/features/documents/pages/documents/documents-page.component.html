@@ -19,14 +19,23 @@
   <p class="status-text error">{{ errorMessage() }}</p>
   }
 
-  <div class="document-grid">
+  <div class="document-list">
     @for (item of items(); track item.parentFileId ?? item.fileName) {
-    <article class="document-card">
-      <p class="meta">{{ item.fileType | uppercase }} • {{ item.uploadDate | date:'dd/MM/yyyy' }}</p>
-      <h3>{{ item.title }}</h3>
-      <p>{{ item.preview }}</p>
-      <button type="button" (click)="openDocument(item)" class="download-btn">Tải mẫu đơn / Xem chi tiết</button>
-    </article>
+    <div class="document-item" (click)="openDocument(item)">
+      <div class="doc-icon">
+        <span class="material-symbols-outlined">{{ item.fileType === 'link' ? 'link' : 'description' }}</span>
+      </div>
+      <div class="doc-info">
+        <div class="doc-meta">{{ item.fileType | uppercase }} • {{ item.uploadDate | date:'dd/MM/yyyy' }}</div>
+        <h3 class="doc-title">{{ item.title }}</h3>
+      </div>
+      <div class="doc-action">
+        <button type="button" class="view-btn">
+          <span class="material-symbols-outlined">visibility</span>
+          <span>XEM CHI TIẾT</span>
+        </button>
+      </div>
+    </div>
     }
   </div>
 </section>
