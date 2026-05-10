@@ -19,7 +19,7 @@
       [categories]="categories"
       [selectedDocument]="selectedDocument()"
       (close)="closeModal()"
-      (saved)="loadDocuments(currentPage())"
+      (saved)="onSaved()"
     >
     </app-document-modal>
   }

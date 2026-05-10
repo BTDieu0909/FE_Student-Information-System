@@ -81,8 +81,8 @@ export class AdminService {
 
     const query = searchParams.toString();
     const url = query
-      ? `/api/Document?${query}`
-      : "/api/Document?Page=1&PageSize=10";
+      ? `/api/document?${query}`
+      : "/api/document?Page=1&PageSize=10";
     return this.http.get<DocumentResponse>(url);
   }
 
@@ -92,37 +92,37 @@ export class AdminService {
     formData.append("Title", payload.title);
     formData.append("DepartmentId", payload.departmentId);
     formData.append("CategoryId", payload.categoryId);
-    return this.http.post("/api/Document/upload", formData);
+    return this.http.post("/api/document/upload", formData);
   }
 
   uploadDocumentLink(payload: UploadDocumentLinkPayload): Observable<unknown> {
-    return this.http.post("/api/Document/upload-link", payload);
+    return this.http.post("/api/document/upload-link", payload);
   }
 
   processDocumentChunks(parentFileId: string): Observable<unknown> {
-    return this.http.post(`/api/Document/${parentFileId}/process-chunks`, {});
+    return this.http.post(`/api/document/${parentFileId}/process-chunks`, {});
   }
 
   enableDocumentAi(parentFileId: string): Observable<unknown> {
     return this.http.post(
-      `/api/Document/from-download-file/${parentFileId}`,
+      `/api/document/from-download-file/${parentFileId}`,
       {},
     );
   }
 
   processDocument(documentId: string): Observable<unknown> {
-    return this.http.post(`/api/Document/${documentId}/process`, {});
+    return this.http.post(`/api/document/${documentId}/process`, {});
   }
 
   updateDocument(
     id: string,
     payload: UpdateDocumentPayload,
   ): Observable<unknown> {
-    return this.http.put(`/api/Document/${id}`, payload);
+    return this.http.put(`/api/document/${id}`, payload);
   }
 
   deleteDocument(id: string): Observable<unknown> {
-    return this.http.delete(`/api/Document/${id}`);
+    return this.http.delete(`/api/document/${id}`);
   }
 
   // FAQ Management

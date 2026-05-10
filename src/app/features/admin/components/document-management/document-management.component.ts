@@ -33,18 +33,35 @@ export class DocumentManagementComponent {
 
   protected loadDocuments(page = 1): void {
     this.currentPage.set(page);
+    
     this.adminService.getDocuments({ 
       Page: page, 
       PageSize: 10,
-      Query: this.searchQuery()
+      Keyword: this.searchQuery(),
+      _t: new Date().getTime()
     }).subscribe({
       next: (res) => {
-        this.documents.set(res.items);
+        // Force a new array reference and update metadata
+        this.documents.set([...res.items]);
         this.totalPages.set(res.pagination.totalPages);
         this.totalCount.set(res.pagination.totalItems);
+        
+        // If current page is empty and not on page 1, go back
+        if (res.items.length === 0 && page > 1) {
+          this.loadDocuments(page - 1);
+        }
       },
       error: () => this.documents.set([])
     });
+  }
+
+  protected onSaved(): void {
+    // Thêm một khoảng trễ nhỏ để đảm bảo Backend đã xử lý xong DB
+    // và tránh xung đột với lúc Modal đang đóng.
+    setTimeout(() => {
+      this.selectedDocument.set(null);
+      this.loadDocuments(this.currentPage());
+    }, 500);
   }
 
   protected onSearch(query: string): void {
