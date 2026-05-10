@@ -24,6 +24,7 @@ export interface ChatMessage {
   retrievedDepartments?: RetrievedDepartmentReference[];
   detectedIntent?: string;
   confidenceScore?: number;
+  formattedText?: import("@angular/platform-browser").SafeHtml;
 }
 
 @Component({
@@ -47,6 +48,7 @@ export class ChatPageComponent {
     {
       role: "bot",
       text: "Chào bạn! Tôi là trợ lý ảo Z-Bot của Đại học Quy Nhơn. Tôi có thể giúp bạn tra cứu điểm số, lịch học, các quy định đào tạo hoặc hỗ trợ giải đáp thắc mắc về đời sống sinh viên. Bạn cần giúp gì hôm nay?",
+      formattedText: "Chào bạn! Tôi là trợ lý ảo Z-Bot của Đại học Quy Nhơn. Tôi có thể giúp bạn tra cứu điểm số, lịch học, các quy định đào tạo hoặc hỗ trợ giải đáp thắc mắc về đời sống sinh viên. Bạn cần giúp gì hôm nay?",
       timestamp: new Date(),
       botName: "Z-BOT ASSISTANT",
     },
@@ -111,6 +113,7 @@ export class ChatPageComponent {
           retrievedDepartments: response.retrievedDepartments,
           detectedIntent: response.detectedIntent,
           confidenceScore: response.confidenceScore,
+          formattedText: this.parseMarkdown(response.answer),
         };
         this.messages.update((prev) => [...prev, botMsg]);
       },
@@ -130,6 +133,39 @@ export class ChatPageComponent {
   useSuggestion(title: string): void {
     this.question.set(title);
     this.submit();
+  }
+
+  private parseMarkdown(text: string | undefined): import("@angular/platform-browser").SafeHtml {
+    if (!text) return '';
+    let formatted = text;
+    
+    // Bold
+    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-slate-800">$1</strong>');
+    
+    // Italic
+    formatted = formatted.replace(/\*(.*?)\*/g, '<em class="italic text-slate-700">$1</em>');
+    
+    // Tự động xuống dòng và làm nổi bật các mục a), b), c)...
+    formatted = formatted.replace(/(?:^|\s+)([a-h]\))\s+/g, '<br/><span class="inline-block ml-6 font-bold text-[#002555] mb-1 mt-2">$1</span> ');
+
+    // Tự động xuống dòng và làm nổi bật các Khoản 1., 2., 3... (chỉ áp dụng nếu từ tiếp theo viết hoa)
+    formatted = formatted.replace(/(?:^|\s+)(\d+\.)\s+(?=\p{Lu})/gu, '<br/><span class="inline-block ml-2 mt-2 font-bold text-[#00347a]">$1</span> ');
+
+    // List items (lines starting with * or - and a space)
+    formatted = formatted.replace(/^[\s]*[\*\-]\s+(.*)$/gm, '<li class="ml-6 list-disc my-1.5 pl-1 text-slate-700 marker:text-[#002555]">$1</li>');
+    
+    // Wrap lists
+    formatted = formatted.replace(/(<li.*?>.*?<\/li>\n?)+/g, '<ul class="my-4 space-y-1 block">$&</ul>');
+
+    // Paragraphs / Newlines
+    formatted = formatted.replace(/\n/g, '<br/>');
+    formatted = formatted.replace(/<br\/>\s*<ul/g, '<ul');
+    formatted = formatted.replace(/<\/ul>\s*<br\/>/g, '</ul>');
+    
+    // Clean up empty lines
+    formatted = formatted.replace(/(<br\/>){3,}/g, '<br/><br/>');
+    
+    return this.sanitizer.bypassSecurityTrustHtml(formatted);
   }
 
   openDocument(doc: any): void {
