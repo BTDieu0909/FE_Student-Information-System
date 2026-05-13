@@ -1,20 +1,20 @@
 import { CommonModule } from "@angular/common";
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  Output,
-  ViewChild,
-  inject,
-  signal,
-} from "@angular/core";
-import { FormsModule } from "@angular/forms";
 import { HttpErrorResponse } from "@angular/common/http";
 import {
-  DocumentItem,
-  CategoryItem,
-  DepartmentItem,
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    Output,
+    ViewChild,
+    inject,
+    signal,
+} from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import {
+    CategoryItem,
+    DepartmentItem,
+    DocumentItem,
 } from "../../../../../core/services/portal-data.service";
 import { AdminService } from "../../../services/admin.service";
 
@@ -32,6 +32,7 @@ export class DocumentModalComponent {
 
   @Output() close = new EventEmitter<void>();
   @Output() saved = new EventEmitter<void>();
+  @Output() deleted = new EventEmitter<string>();
 
   private readonly adminService = inject(AdminService);
 
@@ -99,13 +100,13 @@ export class DocumentModalComponent {
         })
         .subscribe({
           next: () => {
-            this.message.set("Da tai len lien ket tai lieu.");
+            this.message.set("Bạn đã tạo tài liệu thành công.");
             this.saved.emit();
             setTimeout(() => this.onClose(), 1500);
           },
           error: (err: HttpErrorResponse) => {
-            this.error.set(err.error?.message || "Khong the tai len lien ket.");
-          },
+              this.error.set(err.error?.message || "Không thể tải lên liên kết.");
+            },
         });
       return;
     }
@@ -125,13 +126,13 @@ export class DocumentModalComponent {
       })
       .subscribe({
         next: () => {
-          this.message.set("Da tai len tai lieu moi.");
+          this.message.set("Bạn đã tạo tài liệu thành công.");
           this.isChunking.set(false);
           this.saved.emit();
           setTimeout(() => this.onClose(), 1500);
         },
         error: (err: HttpErrorResponse) => {
-          this.error.set(err.error?.message || "Khong the tai len tai lieu.");
+          this.error.set(err.error?.message || "Không thể tải lên tài liệu.");
           this.isChunking.set(false);
         },
       });
@@ -149,11 +150,17 @@ export class DocumentModalComponent {
       })
       .subscribe({
         next: () => {
-          this.message.set("Da cap nhat thong tin tai lieu.");
+          this.message.set('Đã cập nhật thành công');
           this.saved.emit();
         },
         error: (err: HttpErrorResponse) => {
-          this.error.set(err.error?.message || "Khong the cap nhat.");
+          if (err && (err.status === 200 || err.status === 204)) {
+            this.message.set('Đã cập nhật thành công');
+            this.saved.emit();
+            return;
+          }
+
+          this.error.set(err.error?.message || 'Không thể cập nhật.');
         },
       });
   }
@@ -187,7 +194,7 @@ export class DocumentModalComponent {
         this.saved.emit();
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.error?.message || "Khong the bat AI.");
+        this.error.set(err.error?.message || "Không thể bật AI.");
         this.isEnablingAi.set(false);
       },
     });
@@ -195,16 +202,35 @@ export class DocumentModalComponent {
 
   protected deleteDocument(): void {
     const id = this.selectedDocument?.parentFileId;
-    if (!id || !confirm("Ban co chac muon xoa tai lieu nay?")) return;
+    if (!id || !confirm('Bạn có chắc chắn muốn xóa tài liệu này? Thao tác này không thể hoàn tác.')) return;
 
     this.adminService.deleteDocument(id).subscribe({
       next: () => {
-        this.message.set("Da xoa tai lieu.");
+        this.message.set('Đã xóa tài liệu thành công.');
+        this.selectedFile = null;
+        this.uploadFileName.set('Chua chon file');
+        this.form.title = '';
+        this.form.departmentId = '';
+        this.form.categoryId = '';
         this.saved.emit();
+        this.deleted.emit(id);
         setTimeout(() => this.onClose(), 1000);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.error?.message || "Khong the xoa.");
+        if (err && (err.status === 200 || err.status === 204)) {
+          this.message.set('Đã xóa tài liệu thành công.');
+          this.selectedFile = null;
+          this.uploadFileName.set('Chua chon file');
+          this.form.title = '';
+          this.form.departmentId = '';
+          this.form.categoryId = '';
+          this.saved.emit();
+          this.deleted.emit(id);
+          setTimeout(() => this.onClose(), 1000);
+          return;
+        }
+
+        this.error.set(err.error?.message || 'Không thể xóa tài liệu.');
       },
     });
   }

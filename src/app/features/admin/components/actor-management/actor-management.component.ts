@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Component, inject, Input, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActorItem, DepartmentItem, PortalDataService } from '../../../../core/services/portal-data.service';
 
 @Component({
@@ -93,7 +93,7 @@ export class ActorManagementComponent {
         setTimeout(() => this.closeActorModal(), 1500);
       },
       error: (err: HttpErrorResponse) => {
-        this.actorError.set(err.error?.message || 'Khong the tao tai khoan.');
+        this.actorError.set(err.error?.message || 'Không thể tạo tài khoản.');
       }
     });
   }
@@ -109,28 +109,43 @@ export class ActorManagementComponent {
       departmentId: this.actorForm.departmentId || undefined
     }).subscribe({
       next: () => {
-        this.actorMessage.set('Da cap nhat tai khoan.');
+        this.actorMessage.set('Đã cập nhật thành công');
         this.loadActors();
         setTimeout(() => this.closeActorModal(), 1000);
       },
       error: (err: HttpErrorResponse) => {
-        this.actorError.set(err.error?.message || 'Khong the cap nhat.');
+        if (err && (err.status === 200 || err.status === 204)) {
+          this.actorMessage.set('Đã cập nhật thành công');
+          this.loadActors();
+          setTimeout(() => this.closeActorModal(), 1000);
+          return;
+        }
+
+        this.actorError.set(err.error?.message || 'Không thể cập nhật.');
       }
     });
   }
 
   protected deleteSelectedActor(): void {
     const id = this.selectedActorId();
-    if (!id || !confirm('Ban co chac muon xoa tai khoan nay?')) return;
+    if (!id || !confirm('Bạn có chắc chắn muốn xóa tài khoản này? Thao tác này không thể hoàn tác.')) return;
 
     this.portalDataService.deleteActor(id).subscribe({
       next: () => {
-        this.actorMessage.set('Da xoa tai khoan.');
-        this.loadActors();
+        this.actorMessage.set('Đã xóa tài khoản thành công.');
+        // remove from local list so UI updates immediately
+        const remaining = this.actors().filter((a) => a.id !== id);
+        this.actors.set(remaining);
+        this.actorTotalCount.set(remaining.length);
+        this.selectedActorId.set(null);
+        this.actorForm.username = '';
+        this.actorForm.fullName = '';
+        this.actorForm.role = '';
+        this.actorForm.departmentId = '';
         setTimeout(() => this.closeActorModal(), 1000);
       },
       error: (err: HttpErrorResponse) => {
-        this.actorError.set(err.error?.message || 'Khong the xoa.');
+        this.actorError.set(err.error?.message || 'Không thể xóa tài khoản.');
       }
     });
   }

@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { FaqItem, CategoryItem, DepartmentItem, PortalDataService } from '../../../../core/services/portal-data.service';
+import { Component, inject, Input, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { CategoryItem, DepartmentItem, FaqItem, PortalDataService } from '../../../../core/services/portal-data.service';
 
 @Component({
   selector: 'app-faq-management',
@@ -37,13 +37,16 @@ export class FaqManagementComponent {
   }
 
   protected loadFaqs(): void {
-    this.portalDataService.getFaqs({ Query: this.faqSearchQuery() }).subscribe({
-      next: (response) => {
-        this.faqs.set(response.items || []);
-        this.faqTotalCount.set(response.totalItems || 0);
-      },
-      error: () => this.faqs.set([])
-    });
+    // Request a large page size so all FAQs are returned and displayed
+    this.portalDataService
+      .getFaqs({ Query: this.faqSearchQuery(), Page: 1, PageSize: 1000 })
+      .subscribe({
+        next: (response) => {
+          this.faqs.set(response.items || []);
+          this.faqTotalCount.set(response.totalItems || 0);
+        },
+        error: () => this.faqs.set([]),
+      });
   }
 
   protected searchFaqs(): void {
@@ -94,12 +97,12 @@ export class FaqManagementComponent {
       categoryId: this.faqForm.categoryId
     }).subscribe({
       next: () => {
-        this.faqMessage.set('Da tao FAQ moi.');
+        this.faqMessage.set('Bạn đã tạo FAQ thành công.');
         this.loadFaqs();
         setTimeout(() => this.closeFaqModal(), 1500);
       },
       error: (err: HttpErrorResponse) => {
-        this.faqError.set(err.error?.message || 'Khong the tao FAQ.');
+        this.faqError.set(err.error?.message || 'Không thể tạo FAQ.');
       }
     });
   }
@@ -115,28 +118,57 @@ export class FaqManagementComponent {
       categoryId: this.faqForm.categoryId
     }).subscribe({
       next: () => {
-        this.faqMessage.set('Da cap nhat FAQ.');
+        this.faqMessage.set('Đã cập nhật thành công');
         this.loadFaqs();
         setTimeout(() => this.closeFaqModal(), 1000);
       },
       error: (err: HttpErrorResponse) => {
-        this.faqError.set(err.error?.message || 'Khong the cap nhat.');
+        if (err && (err.status === 200 || err.status === 204)) {
+          this.faqMessage.set('Đã cập nhật thành công');
+          this.loadFaqs();
+          setTimeout(() => this.closeFaqModal(), 1000);
+          return;
+        }
+
+        this.faqError.set(err.error?.message || 'Không thể cập nhật.');
       }
     });
   }
 
   protected deleteSelectedFaq(): void {
     const id = this.selectedFaqId();
-    if (!id || !confirm('Ban co chac muon xoa FAQ nay?')) return;
+    if (!id || !confirm('Bạn có chắc chắn muốn xóa FAQ này? Thao tác này không thể hoàn tác.')) return;
 
     this.portalDataService.deleteFaq(id).subscribe({
       next: () => {
-        this.faqMessage.set('Da xoa FAQ.');
-        this.loadFaqs();
+        this.faqMessage.set('Đã xóa FAQ thành công.');
+        // remove from local list so UI updates immediately
+        const remaining = this.faqs().filter((f) => f.id !== id);
+        this.faqs.set(remaining);
+        this.faqTotalCount.set(remaining.length);
+        this.selectedFaqId.set(null);
+        this.faqForm.question = '';
+        this.faqForm.answer = '';
+        this.faqForm.departmentId = '';
+        this.faqForm.categoryId = '';
         setTimeout(() => this.closeFaqModal(), 1000);
       },
       error: (err: HttpErrorResponse) => {
-        this.faqError.set(err.error?.message || 'Khong the xoa.');
+        if (err && (err.status === 200 || err.status === 204)) {
+          this.faqMessage.set('Đã xóa FAQ thành công.');
+          const remaining = this.faqs().filter((f) => f.id !== id);
+          this.faqs.set(remaining);
+          this.faqTotalCount.set(remaining.length);
+          this.selectedFaqId.set(null);
+          this.faqForm.question = '';
+          this.faqForm.answer = '';
+          this.faqForm.departmentId = '';
+          this.faqForm.categoryId = '';
+          setTimeout(() => this.closeFaqModal(), 1000);
+          return;
+        }
+
+        this.faqError.set(err.error?.message || 'Không thể cập nhật.');
       }
     });
   }

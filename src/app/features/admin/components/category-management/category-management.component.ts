@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
 import { CategoryItem, PortalDataService } from '../../../../core/services/portal-data.service';
 
 @Component({
@@ -73,12 +73,12 @@ export class CategoryManagementComponent {
       slug: this.categoryForm.slug
     }).subscribe({
       next: () => {
-        this.categoryMessage.set('Da tao danh muc moi.');
+        this.categoryMessage.set('Bạn đã tạo danh mục thành công.');
         this.loadCategories();
         setTimeout(() => this.closeCategoryModal(), 1500);
       },
       error: (err: HttpErrorResponse) => {
-        this.categoryError.set(err.error?.message || 'Khong the tao danh muc.');
+        this.categoryError.set(err.error?.message || 'Không thể tạo danh mục.');
       }
     });
   }
@@ -92,28 +92,55 @@ export class CategoryManagementComponent {
       slug: this.categoryForm.slug
     }).subscribe({
       next: () => {
-        this.categoryMessage.set('Da cap nhat danh muc.');
+        this.categoryMessage.set('Đã cập nhật thành công');
         this.loadCategories();
         setTimeout(() => this.closeCategoryModal(), 1000);
       },
       error: (err: HttpErrorResponse) => {
-        this.categoryError.set(err.error?.message || 'Khong the cap nhat.');
+        if (err && (err.status === 200 || err.status === 204)) {
+          this.categoryMessage.set('Đã cập nhật thành công');
+          this.loadCategories();
+          setTimeout(() => this.closeCategoryModal(), 1000);
+          return;
+        }
+
+        this.categoryError.set(err.error?.message || 'Không thể cập nhật.');
       }
     });
   }
 
   protected deleteSelectedCategory(): void {
     const id = this.selectedCategoryId();
-    if (!id || !confirm('Ban co chac muon xoa danh muc nay?')) return;
+    if (!id || !confirm('Bạn có chắc chắn muốn xóa danh mục này? Thao tác này không thể hoàn tác.')) return;
 
     this.portalDataService.deleteCategory(id).subscribe({
       next: () => {
-        this.categoryMessage.set('Da xoa danh muc.');
-        this.loadCategories();
+        this.categoryMessage.set('Đã xóa danh mục thành công.');
+        // remove locally for immediate UI feedback
+        const remaining = this.categories().filter((c) => c.id !== id);
+        this.categories.set(remaining);
+        this.categoryTotalCount.set(remaining.length);
+        this.selectedCategoryId.set(null);
+        this.categoryForm.name = '';
+        this.categoryForm.slug = '';
         setTimeout(() => this.closeCategoryModal(), 1000);
       },
       error: (err: HttpErrorResponse) => {
-        this.categoryError.set(err.error?.message || 'Khong the xoa.');
+        // Some backends return an empty body (204/200) which may cause a parse error
+        // Treat common successful statuses as success to avoid false error messages.
+        if (err && (err.status === 200 || err.status === 204)) {
+          this.categoryMessage.set('Đã xóa danh mục thành công.');
+          const remaining = this.categories().filter((c) => c.id !== id);
+          this.categories.set(remaining);
+          this.categoryTotalCount.set(remaining.length);
+          this.selectedCategoryId.set(null);
+          this.categoryForm.name = '';
+          this.categoryForm.slug = '';
+          setTimeout(() => this.closeCategoryModal(), 1000);
+          return;
+        }
+
+        this.categoryError.set(err.error?.message || 'Không thể xóa danh mục.');
       }
     });
   }

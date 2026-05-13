@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, signal, Input } from '@angular/core';
-import { DocumentItem, CategoryItem, DepartmentItem } from '../../../../core/services/portal-data.service';
+import { Component, inject, Input, signal } from '@angular/core';
+import { CategoryItem, DepartmentItem, DocumentItem } from '../../../../core/services/portal-data.service';
 import { AdminService } from '../../services/admin.service';
 import { DocumentListComponent } from './document-list/document-list.component';
 import { DocumentModalComponent } from './document-modal/document-modal.component';
@@ -87,6 +87,19 @@ export class DocumentManagementComponent {
   }
 
   protected closeModal(): void {
+    this.isModalOpen.set(false);
+  }
+
+  protected onDeleted(id: string): void {
+    // remove deleted document immediately from local list
+    const remaining = this.documents().filter((d) => d.parentFileId !== id);
+    this.documents.set(remaining);
+    this.totalCount.set(remaining.length);
+    // if current page became empty and not first page, reload previous page
+    if (remaining.length === 0 && this.currentPage() > 1) {
+      this.loadDocuments(this.currentPage() - 1);
+    }
+    this.selectedDocument.set(null);
     this.isModalOpen.set(false);
   }
 }
