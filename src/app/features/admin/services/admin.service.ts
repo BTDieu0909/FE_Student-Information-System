@@ -103,12 +103,14 @@ export class AdminService {
     return this.http.post(`/api/document/${parentFileId}/process-chunks`, {});
   }
 
-  enableDocumentAi(parentFileId: string): Observable<unknown> {
+  // Demo: đẩy chunks vào collection DocumentChunks_Test (không ảnh hưởng dữ liệu production)
+  processDocumentChunksTest(parentFileId: string): Observable<unknown> {
     return this.http.post(
-      `/api/document/from-download-file/${parentFileId}`,
+      `/api/document/${parentFileId}/process-chunks-test`,
       {},
     );
   }
+
 
   processDocument(documentId: string): Observable<unknown> {
     return this.http.post(`/api/document/${documentId}/process`, {});

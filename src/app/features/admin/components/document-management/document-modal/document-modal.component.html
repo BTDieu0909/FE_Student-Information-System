@@ -116,10 +116,15 @@
         <button
           type="button"
           class="secondary-action"
-          (click)="enableAi()"
-          [disabled]="isEnablingAi()"
+          (click)="chunkDocumentTest()"
+          [disabled]="isChunking()"
+          title="Đẩy chunks vào collection DocumentChunks_Test (không ảnh hưởng prod)"
         >
-          {{ isEnablingAi() ? "Đang bật AI..." : "Bật AI" }}
+          {{
+            isChunking()
+              ? "Đang tách file... Vui lòng chờ đợi"
+              : "Tách file (Demo - bảng test)"
+          }}
         </button>
         <button type="button" class="primary-action" (click)="saveMetadata()">
           Lưu cập nhật tiêu đề

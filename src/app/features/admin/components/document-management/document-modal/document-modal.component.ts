@@ -40,7 +40,6 @@ export class DocumentModalComponent {
   private documentFileInput?: ElementRef<HTMLInputElement>;
 
   protected readonly isChunking = signal(false);
-  protected readonly isEnablingAi = signal(false);
   protected readonly message = signal("");
   protected readonly error = signal("");
   protected readonly uploadFileName = signal("Chua chon file");
@@ -182,23 +181,23 @@ export class DocumentModalComponent {
     });
   }
 
-  protected enableAi(): void {
+  protected chunkDocumentTest(): void {
     const id = this.selectedDocument?.parentFileId;
     if (!id) return;
 
-    this.isEnablingAi.set(true);
-    this.adminService.enableDocumentAi(id).subscribe({
+    this.isChunking.set(true);
+    this.adminService.processDocumentChunksTest(id).subscribe({
       next: () => {
-        this.message.set("Da bat AI cho tai lieu.");
-        this.isEnablingAi.set(false);
-        this.saved.emit();
+        this.message.set("Đã tách file vào collection DocumentChunks_Test (demo).");
+        this.isChunking.set(false);
       },
       error: (err: HttpErrorResponse) => {
-        this.error.set(err.error?.message || "Không thể bật AI.");
-        this.isEnablingAi.set(false);
+        this.error.set(err.error?.message || "Lỗi khi tách file (test).");
+        this.isChunking.set(false);
       },
     });
   }
+
 
   protected deleteDocument(): void {
     const id = this.selectedDocument?.parentFileId;
