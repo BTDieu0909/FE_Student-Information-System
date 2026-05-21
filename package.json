@@ -5,6 +5,7 @@
   "scripts": {
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
+    "build:prod": "ng build --configuration production --base-href=/FE_Student-Information-System/",
     "watch": "ng build --watch --configuration development"
   },
   "dependencies": {
