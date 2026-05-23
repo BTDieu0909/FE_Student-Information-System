@@ -76,39 +76,7 @@
   grid-column: span 2;
 }
 
-.action-row {
-  display: flex;
-  gap: 12px;
-  margin-top: 24px;
-}
 
-.primary-action,
-.secondary-action,
-.danger-action {
-  min-height: 48px;
-  padding: 0 24px;
-  border-radius: 12px;
-  border: none;
-  font-weight: 800;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.primary-action {
-  background: #002555;
-  color: #ffffff;
-}
-
-.secondary-action {
-  background: #f8fafc;
-  color: #334155;
-  border: 1px solid #f1f5f9;
-}
-
-.danger-action {
-  background: #fff1f2;
-  color: #e11d48;
-}
 
 .danger-action-close {
   padding: 0 12px;

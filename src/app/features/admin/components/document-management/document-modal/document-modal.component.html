@@ -60,31 +60,22 @@
         }
       </label>
 
-      <label class="field-block">
-        <span>File tai len</span>
-        <small class="field-hint"
-          >File hien tai: {{ selectedDocument?.fileName || "Khong co" }}</small
-        >
-        <input
-          #documentFileInput
-          type="file"
-          (change)="onFileSelected($event)"
-        />
-        <small>File thay the moi: {{ uploadFileName() }}</small>
-      </label>
+      @if (!selectedDocument) {
 
-      <label class="field-block full-width">
-        <span>Hoặc thêm từ đường Link</span>
-        <input
-          type="text"
-          [(ngModel)]="form.fileLink"
-          placeholder="https://..."
-        />
-        <small class="field-hint"
-          >Hệ thống chấp nhận file .pdf, .docx, .txt hoặc Link Google
-          Drive/Docs</small
-        >
-      </label>
+
+        <label class="field-block full-width">
+          <span>Hoặc thêm từ đường Link</span>
+          <input
+            type="text"
+            [(ngModel)]="form.fileLink"
+            placeholder="https://..."
+          />
+          <small class="field-hint"
+            >Hệ thống chấp nhận file .pdf, .docx, .txt hoặc Link Google
+            Drive/Docs</small
+          >
+        </label>
+      }
     </div>
 
     @if (message()) {
@@ -99,42 +90,54 @@
       <p class="info-message">Đang tách file... Vui lòng chờ đợi.</p>
     }
 
-    <div class="action-row">
+    <div class="mt-8 flex flex-wrap gap-3 items-center justify-end w-full border-t border-slate-100 pt-6">
       @if (selectedDocument) {
         <button
           type="button"
-          class="secondary-action"
+          class="px-5 py-2.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-slate-100 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex-1 sm:flex-none"
           (click)="chunkDocument()"
           [disabled]="isChunking()"
         >
           {{
             isChunking()
-              ? "Đang tách file... Vui lòng chờ đợi"
-              : "Tách file thành chunks"
+              ? "Đang xử lý..."
+              : "Tách File"
           }}
         </button>
         <button
           type="button"
-          class="secondary-action"
+          class="px-5 py-2.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-slate-100 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex-1 sm:flex-none"
           (click)="chunkDocumentTest()"
           [disabled]="isChunking()"
           title="Đẩy chunks vào collection DocumentChunks_Test (không ảnh hưởng prod)"
         >
           {{
             isChunking()
-              ? "Đang tách file... Vui lòng chờ đợi"
-              : "Tách file (Demo - bảng test)"
+              ? "Đang xử lý..."
+              : "Tách Demo"
           }}
         </button>
-        <button type="button" class="primary-action" (click)="saveMetadata()">
-          Lưu cập nhật tiêu đề
+        <button 
+          type="button" 
+          class="px-5 py-2.5 bg-[#002555] text-white rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-blue-900 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex-1 sm:flex-none" 
+          (click)="saveMetadata()"
+        >
+          Lưu Cập Nhật
         </button>
-        <button type="button" class="danger-action" (click)="deleteDocument()">
-          Xoá tài liệu
+        <button 
+          type="button" 
+          class="px-5 py-2.5 bg-rose-50 text-rose-600 rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-rose-100 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex-1 sm:flex-none" 
+          (click)="deleteDocument()"
+        >
+          Xoá
         </button>
       } @else {
-        <button type="button" class="primary-action" (click)="upload()">
-          Tải lên mới
+        <button 
+          type="button" 
+          class="px-6 py-3 bg-[#002555] text-white rounded-xl font-bold text-sm uppercase tracking-wide hover:bg-blue-900 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto" 
+          (click)="upload()"
+        >
+          Tải Lên Mới
         </button>
       }
     </div>
