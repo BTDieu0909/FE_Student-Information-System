@@ -1,0 +1,53 @@
+
+actor student as "Sinh viên"
+actor staff as "Staff (Nhân viên)"
+actor admin as "Admin"
+actor ai as "AI Assistant"
+actor external as "Nguồn tài liệu ngoài"
+
+usecase UC_SearchDocs as "Tìm kiếm tài liệu"
+usecase UC_ViewDoc as "Xem/Preview tài liệu"
+usecase UC_DownloadDoc as "Tải xuống tài liệu"
+usecase UC_UploadDoc as "Tải lên tài liệu (Staff)"
+usecase UC_ProcessDoc as "Xử lý/Index tài liệu"
+usecase UC_SearchFaq as "Tìm kiếm FAQ"
+usecase UC_ViewFaq as "Xem FAQ"
+usecase UC_ChatAI as "Hỏi/Trả lời AI (Chat)"
+usecase UC_ViewDept as "Xem phòng ban"
+usecase UC_Auth as "Đăng nhập/Đăng xuất"
+usecase UC_ManageContent as "Quản lý nội dung (Docs/FAQ/DM)\n(Staff/Admin)"
+usecase UC_ManageUsers as "Quản lý người dùng (Admin)"
+usecase UC_ViewLogs as "Xem Search Logs (Admin)"
+usecase UC_ConfigAI as "Cấu hình AI/RAG (Admin)"
+
+student --> UC_Auth
+student --> UC_SearchDocs
+student --> UC_ViewDoc
+student --> UC_DownloadDoc
+student --> UC_SearchFaq
+student --> UC_ViewFaq
+student --> UC_ChatAI
+student --> UC_ViewDept
+
+staff --> UC_Auth
+staff --> UC_UploadDoc
+staff --> UC_ProcessDoc
+staff --> UC_ManageContent
+
+admin --> UC_Auth
+admin --> UC_ManageContent
+admin --> UC_ManageUsers
+admin --> UC_ViewLogs
+admin --> UC_ConfigAI
+
+ai ..> UC_SearchDocs : truy vấn nguồn
+ai --> UC_ChatAI
+external ..> UC_ViewDoc : cung cấp link/preview
+
+UC_ProcessDoc ..> UC_SearchDocs : cập nhật chỉ mục
+UC_UploadDoc ..> UC_ProcessDoc : kích hoạt xử lý
+UC_ManageContent ..> UC_SearchDocs : cập nhật nội dung
+
+note right of student: Người dùng hệ thống
+note right of staff: Người quản trị nội dung
+note right of admin: Người quản trị hệ thống

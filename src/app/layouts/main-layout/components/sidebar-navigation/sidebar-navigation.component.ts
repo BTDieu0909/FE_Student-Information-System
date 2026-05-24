@@ -19,7 +19,7 @@ export class SidebarNavigationComponent {
     { label: 'Tra cứu AI', route: '/chat', description: 'Hỏi đáp thông minh', icon: 'smart_toy' },
     { label: 'Kho tài liệu', route: '/documents', description: 'Thư viện tài liệu', icon: 'folder_open' },
     { label: 'FAQ', route: '/faq', description: 'Câu hỏi thường gặp', icon: 'quiz' },
-    { label: 'Cơ cấu tổ chức', route: '/departments', description: 'Thông tin liên hệ', icon: 'contact_support' }
+    { label: 'Phòng ban', route: '/departments', description: 'Thông tin liên hệ', icon: 'apartment' }
   ];
 
   protected managementRoute(): string {
