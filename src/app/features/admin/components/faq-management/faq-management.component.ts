@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, effect, inject, Input, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CategoryItem, DepartmentItem, FaqItem, PortalDataService } from '../../../../core/services/portal-data.service';
 
@@ -18,8 +18,10 @@ export class FaqManagementComponent {
   private readonly portalDataService = inject(PortalDataService);
   
   protected readonly faqs = signal<FaqItem[]>([]);
+  protected readonly allFaqs = signal<FaqItem[]>([]);
   protected readonly faqTotalCount = signal(0);
   protected readonly faqSearchQuery = signal('');
+  protected readonly faqLoading = signal(false);
   protected readonly isFaqModalOpen = signal(false);
   protected readonly selectedFaqId = signal<string | null>(null);
   protected readonly faqMessage = signal('');
@@ -34,19 +36,63 @@ export class FaqManagementComponent {
 
   constructor() {
     this.loadFaqs();
+
+    // Auto-search when query changes with debounce
+    effect((onCleanup) => {
+      const q = this.faqSearchQuery();
+      const timer = setTimeout(() => {
+        // if we already have data, filter client-side for instant feedback
+        if (this.allFaqs().length > 0) {
+          this.applyFilter();
+        } else if (!this.faqLoading()) {
+          this.loadFaqs();
+        }
+      }, 150);
+      onCleanup(() => clearTimeout(timer));
+    });
   }
 
   protected loadFaqs(): void {
-    // Request a large page size so all FAQs are returned and displayed
+    this.faqLoading.set(true);
+    this.faqError.set('');
+
     this.portalDataService
       .getFaqs({ Query: this.faqSearchQuery(), Page: 1, PageSize: 1000 })
       .subscribe({
         next: (response) => {
-          this.faqs.set(response.items || []);
-          this.faqTotalCount.set(response.totalItems || 0);
+          const items = response.items || [];
+          this.allFaqs.set(items);
+          this.faqTotalCount.set(items.length);
+          this.applyFilter();
+          this.faqLoading.set(false);
         },
-        error: () => this.faqs.set([]),
+        error: (err: any) => {
+          this.allFaqs.set([]);
+          this.faqs.set([]);
+          this.faqError.set(err?.error?.message || err?.message || 'Không thể tải danh sách FAQ.');
+          this.faqLoading.set(false);
+        },
       });
+  }
+
+  protected applyFilter(): void {
+    const q = this.faqSearchQuery().trim().toLowerCase();
+    if (!q) {
+      const all = this.allFaqs();
+      this.faqs.set(all);
+      this.faqTotalCount.set(all.length);
+      return;
+    }
+
+    const filtered = this.allFaqs().filter((f) => {
+      return (
+        f.question.toLowerCase().includes(q) ||
+        (f.answer || '').toLowerCase().includes(q)
+      );
+    });
+
+    this.faqs.set(filtered);
+    this.faqTotalCount.set(filtered.length);
   }
 
   protected searchFaqs(): void {
@@ -55,7 +101,7 @@ export class FaqManagementComponent {
 
   protected currentFaq(): FaqItem | null {
     const id = this.selectedFaqId();
-    return id ? (this.faqs().find(f => f.id === id) ?? null) : null;
+    return id ? (this.allFaqs().find(f => f.id === id) ?? null) : null;
   }
 
   protected selectFaq(item: FaqItem): void {
@@ -142,10 +188,10 @@ export class FaqManagementComponent {
     this.portalDataService.deleteFaq(id).subscribe({
       next: () => {
         this.faqMessage.set('Đã xóa FAQ thành công.');
-        // remove from local list so UI updates immediately
-        const remaining = this.faqs().filter((f) => f.id !== id);
-        this.faqs.set(remaining);
-        this.faqTotalCount.set(remaining.length);
+        // remove from local lists so UI updates immediately
+        const remainingAll = this.allFaqs().filter((f) => f.id !== id);
+        this.allFaqs.set(remainingAll);
+        this.applyFilter();
         this.selectedFaqId.set(null);
         this.faqForm.question = '';
         this.faqForm.answer = '';
@@ -156,9 +202,9 @@ export class FaqManagementComponent {
       error: (err: HttpErrorResponse) => {
         if (err && (err.status === 200 || err.status === 204)) {
           this.faqMessage.set('Đã xóa FAQ thành công.');
-          const remaining = this.faqs().filter((f) => f.id !== id);
-          this.faqs.set(remaining);
-          this.faqTotalCount.set(remaining.length);
+          const remainingAll = this.allFaqs().filter((f) => f.id !== id);
+          this.allFaqs.set(remainingAll);
+          this.applyFilter();
           this.selectedFaqId.set(null);
           this.faqForm.question = '';
           this.faqForm.answer = '';
@@ -168,7 +214,7 @@ export class FaqManagementComponent {
           return;
         }
 
-        this.faqError.set(err.error?.message || 'Không thể cập nhật.');
+        this.faqError.set(err.error?.message || 'Không thể xóa FAQ.');
       }
     });
   }

@@ -18,7 +18,8 @@
         <input
           type="text"
           placeholder="Tìm kiếm FAQ..."
-          [(ngModel)]="faqSearchQuery"
+          [ngModel]="faqSearchQuery()"
+          (ngModelChange)="faqSearchQuery.set($any($event))"
           (keyup.enter)="searchFaqs()"
         />
       </div>
