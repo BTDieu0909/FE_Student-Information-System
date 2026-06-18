@@ -16,7 +16,7 @@ export class SidebarNavigationComponent {
 
   protected readonly navItems = [
     { label: 'Trang chủ', route: '/home', description: 'Tổng quan hệ thống', icon: 'home' },
-    { label: 'Tra cứu AI', route: '/chat', description: 'Hỏi đáp thông minh', icon: 'smart_toy' },
+    { label: 'Hỏi đáp tự động', route: '/chat', description: 'Hỏi đáp thông minh', icon: 'smart_toy' },
     { label: 'Kho tài liệu', route: '/documents', description: 'Thư viện tài liệu', icon: 'folder_open' },
     { label: 'FAQ', route: '/faq', description: 'Câu hỏi thường gặp', icon: 'quiz' },
     { label: 'Phòng ban', route: '/departments', description: 'Thông tin liên hệ', icon: 'apartment' }

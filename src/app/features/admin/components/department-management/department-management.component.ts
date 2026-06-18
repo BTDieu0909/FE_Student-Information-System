@@ -92,7 +92,7 @@ export class DepartmentManagementComponent {
     }).subscribe({
       next: () => {
         this.departmentMessage.set('Đã cập nhật thành công');
-        // update local list immediately for instant UI feedback
+      
         const updated = this.departments().map((d) =>
           d.id === id ? { ...d, name: this.departmentForm.name, description: this.departmentForm.description } : d
         );
@@ -103,7 +103,7 @@ export class DepartmentManagementComponent {
         setTimeout(() => this.closeDepartmentModal(), 1000);
       },
       error: (err: HttpErrorResponse) => {
-        // Treat 200/204 as success in case backend returns empty body causing parse error
+        
         if (err && (err.status === 200 || err.status === 204)) {
           this.departmentMessage.set('Đã cập nhật thành công');
           const updated = this.departments().map((d) =>
@@ -129,7 +129,7 @@ export class DepartmentManagementComponent {
     this.portalDataService.deleteDepartment(id).subscribe({
       next: () => {
         this.departmentMessage.set('Đã xóa phòng ban thành công.');
-        // remove from local list so UI updates immediately
+
         const remaining = this.departments().filter((d) => d.id !== id);
         this.departments.set(remaining);
         this.departmentTotalCount.set(remaining.length);
@@ -139,7 +139,7 @@ export class DepartmentManagementComponent {
         setTimeout(() => this.closeDepartmentModal(), 1000);
       },
       error: (err: HttpErrorResponse) => {
-        // Treat 200/204 as success in case backend returns empty body causing parse error
+  
         if (err && (err.status === 200 || err.status === 204)) {
           this.departmentMessage.set('Đã xóa phòng ban thành công.');
           const remaining = this.departments().filter((d) => d.id !== id);

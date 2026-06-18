@@ -47,8 +47,8 @@ export class ChatPageComponent {
   readonly messages = signal<ChatMessage[]>([
     {
       role: "bot",
-      text: "Chào bạn! Tôi là trợ lý ảo Z-Bot của Đại học Quy Nhơn. Tôi có thể giúp bạn tra cứu điểm số, lịch học, các quy định đào tạo hoặc hỗ trợ giải đáp thắc mắc về đời sống sinh viên. Bạn cần giúp gì hôm nay?",
-      formattedText: "Chào bạn! Tôi là trợ lý ảo Z-Bot của Đại học Quy Nhơn. Tôi có thể giúp bạn tra cứu điểm số, lịch học, các quy định đào tạo hoặc hỗ trợ giải đáp thắc mắc về đời sống sinh viên. Bạn cần giúp gì hôm nay?",
+      text: "Chào bạn! Tôi là trợ lý ảo Z-Bot của Đại học Quy Nhơn. Tôi có thể giúp bạn tra cứu các quy định đào tạo hoặc hỗ trợ giải đáp thắc mắc về đời sống sinh viên. Bạn cần giúp gì hôm nay?",
+      formattedText: "Chào bạn! Tôi là trợ lý ảo Z-Bot của Đại học Quy Nhơn. Tôi có thể giúp bạn tra cứu các quy định đào tạo hoặc hỗ trợ giải đáp thắc mắc về đời sống sinh viên. Bạn cần giúp gì hôm nay?",
       timestamp: new Date(),
       botName: "Z-BOT ASSISTANT",
     },

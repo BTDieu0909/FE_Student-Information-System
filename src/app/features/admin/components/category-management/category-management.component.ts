@@ -116,7 +116,7 @@ export class CategoryManagementComponent {
     this.portalDataService.deleteCategory(id).subscribe({
       next: () => {
         this.categoryMessage.set('Đã xóa danh mục thành công.');
-        // remove locally for immediate UI feedback
+       
         const remaining = this.categories().filter((c) => c.id !== id);
         this.categories.set(remaining);
         this.categoryTotalCount.set(remaining.length);
@@ -126,8 +126,7 @@ export class CategoryManagementComponent {
         setTimeout(() => this.closeCategoryModal(), 1000);
       },
       error: (err: HttpErrorResponse) => {
-        // Some backends return an empty body (204/200) which may cause a parse error
-        // Treat common successful statuses as success to avoid false error messages.
+  
         if (err && (err.status === 200 || err.status === 204)) {
           this.categoryMessage.set('Đã xóa danh mục thành công.');
           const remaining = this.categories().filter((c) => c.id !== id);
